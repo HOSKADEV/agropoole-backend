@@ -24,14 +24,16 @@ class ProductController extends Controller
   }
   public function create(Request $request){
     //dd($request->all());
-    $validator = Validator::make($request->all(), [
+    $request->merge(['user_id' => auth()->id()]);
 
+    $validator = Validator::make($request->all(), [
+      'user_id' => 'required|exists:users,id',
       'subcategory_id' => 'required|exists:subcategories,id',
       'unit_name' => 'required|string',
       'pack_name'=> 'sometimes|string',
       'image' => 'sometimes|mimetypes:image/*',
       'unit_price' => 'required|numeric',
-      'unit_type' => 'required|in:1,2,3',
+      //'unit_type' => 'required|in:1,2,3',
       'pack_price' => 'required_with:pack_units|nullable|numeric',
       'pack_units' => 'required_with:pack_price|nullable|integer',
       'status' => 'required|in:1,2'
@@ -49,16 +51,15 @@ class ProductController extends Controller
       $product = Product::create($request->except('image'));
 
       if($request->hasFile('image')){
-        //$path = $request->image->store('/uploads/products/images','upload');
-        $file = $request->image;
+        $path = $request->image->store('uploads/products/images/'.strval($product->id),'upload');
+
+        /* $file = $request->image;
         $name = $file->getClientOriginalName();
         $extension = $file->getClientOriginalExtension();
-
         $filename = 'products/' . $product->id . '/' . md5(time().$name) . '.' . $extension;
-
         $url = $this->firestore($file->get(),$filename);
-
-        $product->image = $url;
+        $product->image = $url;*/
+        $product->image = $path;
         $product->save();
       }
 
@@ -107,17 +108,15 @@ class ProductController extends Controller
       $product->update($request->except('image','product_id'));
 
       if($request->hasFile('image')){
-        //$path = $request->image->store('/uploads/products/images','upload');
+        $path = $request->image->store('uploads/products/images/'.strval($product->id),'upload');
 
-        $file = $request->image;
+        /* $file = $request->image;
         $name = $file->getClientOriginalName();
         $extension = $file->getClientOriginalExtension();
-
         $filename = 'products/' . $product->id . '/' . md5(time().$name) . '.' . $extension;
-
         $url = $this->firestore($file->get(),$filename);
-
-        $product->image = $url;
+        $product->image = $url;*/
+        $product->image = $path;
         $product->save();
       }
 
@@ -210,6 +209,7 @@ class ProductController extends Controller
 
   public function get(Request $request){  //paginated
     $validator = Validator::make($request->all(), [
+      'user_id' => 'required|exists:users,id',
       'category_id' => 'sometimes|missing_with:subcategory_id|exists:categories,id',
       'subcategory_id' => 'sometimes|exists:subcategories,id',
       'search' => 'sometimes|string',
@@ -227,11 +227,13 @@ class ProductController extends Controller
     try{
 
 
-    if(!is_null($request->bearerToken())){
+    /* if(!is_null($request->bearerToken())){
       Session::put('user_id', $this->get_user_from_token($request->bearerToken())->id);
-    }
+    } */
 
-    $products = Product::where('status','available')->orderBy('created_at','DESC');
+    //$products = Product::where('status','available')->orderBy('created_at','DESC');
+
+    $products = Product::where('user_id',$request->user_id)->orderBy('created_at','DESC');
 
     if($request->has('category_id')){
 

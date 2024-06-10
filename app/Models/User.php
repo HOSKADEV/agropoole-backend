@@ -21,6 +21,7 @@ class User extends Authenticatable
     protected $fillable = [
         //'firstname',
         //'lastname',
+        'city_id',
         'name',
         'email',
         'phone',
@@ -28,7 +29,10 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
-        'fcm_token'
+        'fcm_token',
+        'enterprise_name',
+        'longitude',
+        'latitude'
     ];
 
     /**
@@ -49,6 +53,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function city(){
+      return $this->belongsTo(City::class);
+    }
 
     public function carts(){
       return $this->hasMany(Cart::class);
@@ -87,6 +95,5 @@ class User extends Authenticatable
 
       return $cart;
     }
-
 
 }

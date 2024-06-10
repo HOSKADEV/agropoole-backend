@@ -37,6 +37,7 @@ Route::get('/v1/about','App\Http\Controllers\DocumentationController@about');
   Route::post('/v1/subcategory/get','App\Http\Controllers\SubcategoryController@get');
   Route::post('/v1/family/get','App\Http\Controllers\FamilyController@get');
   Route::post('/v1/product/get','App\Http\Controllers\ProductController@get');
+  Route::post('/v1/stock/get','App\Http\Controllers\StockController@get');
   Route::post('/v1/ad/get','App\Http\Controllers\AdController@get');
   Route::post('/v1/offer/get','App\Http\Controllers\OfferController@get');
  // Route::post('/v1/driver/get','App\Http\Controllers\DriverController@get');
@@ -69,6 +70,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
   Route::post('/v1/product/update','App\Http\Controllers\ProductController@update');
   Route::post('/v1/product/delete','App\Http\Controllers\ProductController@delete');
   Route::post('/v1/product/restore','App\Http\Controllers\ProductController@restore');
+
+  Route::post('/v1/stock/create','App\Http\Controllers\StockController@create');
+  Route::post('/v1/stock/update','App\Http\Controllers\StockController@update');
+  Route::post('/v1/stock/delete','App\Http\Controllers\StockController@delete');
+  Route::post('/v1/stock/restore','App\Http\Controllers\StockController@restore');
 
 
   Route::post('/v1/discount/create','App\Http\Controllers\DiscountController@create');

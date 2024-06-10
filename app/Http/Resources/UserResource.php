@@ -20,6 +20,10 @@ class UserResource extends JsonResource
           'email' => $this->email,
           'phone' => $this->phone(),
           'image' => empty($this->image) ? null : url($this->image),
+          'role' => $this->role,
+          'enterprise_name' => $this->enterprise_name,
+          'longitude' => $this->longitude,
+          'latitude' => $this->latitude,
         ];
     }
 }

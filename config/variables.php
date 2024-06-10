@@ -3,7 +3,7 @@
   return [
     "creatorName" => "",
     "creatorUrl" => "",
-    "templateName" => "Agropool",
+    "templateName" => "Agropole",
     "templateDescription" => "",
     "templateKeyword" =>  "",
     "licenseUrl" =>  "",

@@ -18,22 +18,24 @@ class ProductResource extends JsonResource
 
         return [
           'id' => $this->id,
-          'subcategory_id' => $this->subcategory_id,
-          'category_id' => $this->subcategory->category_id,
+          //'subcategory_id' => $this->subcategory_id,
+          //'category_id' => $this->subcategory->category_id,
+          'subcategory' => new SubcategoryResource($this->subcategory),
+          'category' => new CategoryResource($this->category()),
           'unit_name' => $this->unit_name,
-          'pack_name' => $this->pack_name,
+          //'pack_name' => $this->pack_name,
           'unit_price' => $this->unit_price,
-          'pack_price' => $this->pack_price,
-          'pack_units' => $this->pack_units,
-          'unit_type' => $this->unit_type,
+          //'pack_price' => $this->pack_price,
+          //'pack_units' => $this->pack_units,
+          //'unit_type' => $this->unit_type,
           'status' => $this->status,
           'image' => empty($this->image) ? null : url($this->image),
-          'is_discounted' => is_null($discount) ? false : true,
-          'discount_amount' => is_null($discount) ? 0 : $discount->amount,
-          'start_date' => is_null($discount) ? null : $discount->start_date,
-          'end_date' => is_null($discount) ? null : $discount->end_date,
-          'in_cart' => empty($this->in_cart()) ? false : true,
-          'quantity' => $this->in_cart()
+          //'is_discounted' => is_null($discount) ? false : true,
+          //'discount_amount' => is_null($discount) ? 0 : $discount->amount,
+          //'start_date' => is_null($discount) ? null : $discount->start_date,
+          //'end_date' => is_null($discount) ? null : $discount->end_date,
+          //'in_cart' => empty($this->in_cart()) ? false : true,
+          //'quantity' => $this->in_cart()
         ];
     }
 }

@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\UserResource;
-use App\Models\User;
 use Exception;
+use App\Models\User;
+use App\Models\Depot;
+use App\Models\Store;
+use App\Models\Factory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Kreait\Firebase\Auth\UserQuery;
-use Kreait\Firebase\Exception\Auth\FailedToVerifyToken;
-use Kreait\Laravel\Firebase\Facades\Firebase;
-use Kreait\Firebase\JWT\Error\IdTokenVerificationFailed;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Kreait\Firebase\JWT\IdTokenVerifier;
+use Illuminate\Support\Facades\Validator;
+use Kreait\Laravel\Firebase\Facades\Firebase;
+use Kreait\Firebase\Exception\Auth\FailedToVerifyToken;
+use Kreait\Firebase\JWT\Error\IdTokenVerificationFailed;
 
 class AuthController extends Controller
 {
@@ -20,7 +25,15 @@ class AuthController extends Controller
     public function register(Request $request){
 
       $validator = Validator::make($request->all(), [
-        'uid' => 'required',
+        'city_id' => 'required|exists:cities,id',
+        'email' => 'required|unique:users',
+        'phone' => 'required',
+        'name' => 'required',
+        'enterprise_name' => 'sometimes',
+        'password' => 'required',
+        'role' => 'required|in:1,2,3,4',
+        'longitude' => 'sometimes',
+        'latitude' => 'sometimes',
       ]);
 
       if ($validator->fails()){
@@ -32,25 +45,23 @@ class AuthController extends Controller
       }
 
 
-      $auth = Firebase::auth();
+
 
       try {
-        //$firebase_user = $auth->getUser($request->uid);
 
-        //$firebase_token = $auth->verifyIdToken($request->firebase_token);
+        DB::beginTransaction();
 
-        //$uid = $firebase_token->claims()->get('sub');
+        if($request->role != '4'){
+          $request->mergeIfMissing(['enterprise_name' => $request->name]);
+        }
+        $request->merge(['password' => Hash::make($request->password)]);
+        $user = User::create($request->all());
 
-        $firebase_user = $auth->getUser($request->uid);
+        //return ($user);
 
-        $user = User::create([
-          'name' => $firebase_user->displayName,
-          'email' => $firebase_user->email,
-          'phone' => $firebase_user->phoneNumber,
-          'image' => $firebase_user->photoUrl,
-        ]);
+        $token = $user->createToken($this->random())->plainTextToken;
 
-      $token = $user->createToken($this->random())->plainTextToken;
+        DB::commit();
 
         return response()->json([
           'status'=> 1,
@@ -61,7 +72,7 @@ class AuthController extends Controller
 
       } catch (Exception $e) {
           //dd($e->getMessage());
-
+          DB::rollBack();
           return response()->json([
           'status'=> 0,
           'message' => $e->getMessage(),
@@ -72,7 +83,9 @@ class AuthController extends Controller
     public function login(Request $request){
 
       $validator = Validator::make($request->all(), [
-        'uid' => 'required',
+        'email' => 'required_without:uid',
+        'password' => 'required_without:uid',
+        'uid' => 'required_without:email,password',
         'fcm_token' => 'sometimes',
       ]);
 
@@ -84,41 +97,36 @@ class AuthController extends Controller
         );
       }
 
-      $auth = Firebase::auth();
-
       try {
 
-        //$firebase_user = $auth->getUser($request->uid);
+        if($request->uid){
+          $auth = Firebase::auth();
 
-        //$firebase_token = $auth->verifyIdToken(request()->bearerToken());
+          $firebase_user = $auth->getUser($request->uid);
 
-        //$uid = $firebase_token->claims()->get('sub');
+          $user = User::where('email',$firebase_user->email)->first();
 
-        $firebase_user = $auth->getUser($request->uid);
-
-        $user = User::where('email',$firebase_user->email)->first();
-
-        if(is_null($user)){
-          $user = User::create([
-            'name' => $firebase_user->displayName,
-            'email' => $firebase_user->email,
-            'phone' => $firebase_user->phoneNumber,
-            'image' => $firebase_user->photoUrl,
-          ]);
-        }
-
-        /* User::withTrashed()->updateOrInsert(
-          ['email' => $firebase_user->email],
-          [
+          if(is_null($user)){
+            $user = User::create([
               'name' => $firebase_user->displayName,
               'email' => $firebase_user->email,
               'phone' => $firebase_user->phoneNumber,
               'image' => $firebase_user->photoUrl,
-              'deleted_at' => null
-          ]
-      ); */
+            ]);
+          }
+        }else{
 
-      $user = User::where('email',$firebase_user->email)->first();
+          $credentials = $request->only('email', 'password');
+
+          $user = Auth::attempt($credentials) ? User::where('email',$request->email)->first() : NULL;
+
+        }
+
+      #$user = User::where('email',$firebase_user->email)->first();
+
+      if(empty($user)){
+        throw new Exception('wrong credentails');
+      }
 
       switch($user->status){
         case 0 : throw new Exception('blocked account');
