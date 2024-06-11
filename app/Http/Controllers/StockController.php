@@ -23,7 +23,8 @@ class StockController extends Controller
       'price' => 'required|numeric',
       'quantity' => 'required|integer',
       'min_quantity' => 'required|integer',
-      'show_price' => 'required|in:0,1'
+      'show_price' => 'required|in:0,1',
+      'status' => 'required|in:1,2'
     ]);
 
     if ($validator->fails()) {
@@ -60,7 +61,8 @@ class StockController extends Controller
       'price' => 'sometimes|numeric',
       'quantity' => 'sometimes|integer',
       'min_quantity' => 'sometimes|integer',
-      'show_price' => 'sometimes|in:0,1'
+      'show_price' => 'sometimes|in:0,1',
+      'status' => 'sometimes|in:1,2'
     ]);
 
     if ($validator->fails()){

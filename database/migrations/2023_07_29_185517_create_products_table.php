@@ -22,7 +22,7 @@ return new class extends Migration
             $table->double('unit_price')->default(0);
             $table->double('pack_price')->default(0);
             $table->integer('pack_units')->nullable()->default(null);
-            $table->enum('status',['available','unavailable'])->nullable()->default(null);
+            //$table->enum('status',['available','unavailable'])->nullable()->default(null);
             $table->timestamps();
             $table->softDeletes();
         });

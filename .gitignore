@@ -21,3 +21,5 @@ yarn-error.log
 /public/assets/css
 /public/assets/vendor
 /public/uploads/*
+.env
+

@@ -40,6 +40,8 @@ Route::get('/v1/about','App\Http\Controllers\DocumentationController@about');
   Route::post('/v1/stock/get','App\Http\Controllers\StockController@get');
   Route::post('/v1/ad/get','App\Http\Controllers\AdController@get');
   Route::post('/v1/offer/get','App\Http\Controllers\OfferController@get');
+  Route::post('/v1/state/get','App\Http\Controllers\StateController@get');
+  Route::post('/v1/city/get','App\Http\Controllers\CityController@get');
  // Route::post('/v1/driver/get','App\Http\Controllers\DriverController@get');
 
 Route::group(['middleware' => ['auth:sanctum']], function () {

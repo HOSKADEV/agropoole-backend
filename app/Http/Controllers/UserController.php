@@ -25,12 +25,17 @@ class UserController extends Controller
         //'firstname' => 'sometimes|string',
         //'lastname' => 'sometimes|string',
         'user_id' => 'required|exists:users,id',
+        'city_id' => 'sometimes|exists:cities,id',
         'name' => 'sometimes|string',
         'phone' => 'sometimes|numeric',
         /* 'phone' => ['sometimes','numeric','digits:10',Rule::unique('users')->ignore($user->id)], */
         //'email' => ['sometimes','email',Rule::unique('users')->ignore($user->id)],
         'image' => 'sometimes|mimetypes:image/*',
-        'status' => 'sometimes|in:0,1,2'
+        'status' => 'sometimes|in:0,1,2',
+
+        'enterprise_name' => 'sometimes',
+        'longitude' => 'sometimes',
+        'latitude' => 'sometimes',
       ]);
 
       if ($validator->fails()){
@@ -48,16 +53,17 @@ class UserController extends Controller
         $user->update($request->except('image'));
 
         if($request->hasFile('image')){
-          //$path = $request->image->store('/uploads/users/images','upload');
-            $file = $request->image;
+            $path = $request->image->store('/uploads/users/images/'.strval($user->id),'upload');
+
+            /* $file = $request->image;
             $name = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension();
-
             $filename = 'users/' . $user->id . '/' . md5(time().$name) . '.' . $extension;
-
             $url = $this->firestore($file->get(),$filename);
+            $user->image = $url; */
 
-            $user->image = $url;
+            $user->image = $path;
+
             $user->save();
         }
 
