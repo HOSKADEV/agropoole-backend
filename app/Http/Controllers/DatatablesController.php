@@ -602,9 +602,19 @@ class DatatablesController extends Controller
       ->make(true);
   }
 
-  public function users(){
+  public function users(Request $request){
 
-    $users = User::where('role',1)->whereIn('status',[0,1])->get();
+    $users = User::whereNot('role',0)->latest();
+
+    if(!empty($request->type)){
+      $users = $users->where('role', $request->type);
+    }
+
+    if(!empty($request->status)){
+      $users = $users->where('status', $request->status);
+    }
+
+    $users = $users->get();
 
     return datatables()
       ->of($users)
@@ -613,14 +623,18 @@ class DatatablesController extends Controller
       ->addColumn('action', function ($row) {
           $btn = '';
 
-          if($row->status == 1){
-            $btn .= '<a class="dropdown-item-inline delete" title="'.__('Block').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-x-circle me-2"></i></a>';
+          if($row->status == 'active'){
+            $btn .= '<a class="dropdown-item-inline delete" title="'.__('Block').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-x-circle me-2" style="color:#FF0017"></i></a>';
           }else{
-            $btn .= '<a class="dropdown-item-inline restore" title="'.__('Activate').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-check-circle me-2"></i></a>';
+            $btn .= '<a class="dropdown-item-inline restore" title="'.__('Activate').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-check-circle me-2" style="color:#00EF2E"></i></a>';
           }
 
 
+          $btn .= '<a class="dropdown-item-inline reset_password" title="'.__('Reset password').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-reset me-2"></i></a>';
 
+          if($row->longitude && $row->latitude){
+            $btn .= '<a class="dropdown-item-inline" title="'.__('Location').'" href="'.$row->address().'" target="_blank" ><i class="bx bx-map me-2"></i></a>';
+          }
 
           return $btn;
       })
@@ -628,6 +642,12 @@ class DatatablesController extends Controller
       ->addColumn('name', function ($row) {
 
         return $row->fullname();
+
+      })
+
+      ->addColumn('enterprise', function ($row) {
+
+        return $row->enterprise_name;
 
       })
 
@@ -645,11 +665,14 @@ class DatatablesController extends Controller
 
       ->addColumn('status', function ($row) {
 
-        if($row->status == 1){
-            return true;
-          }else{
-            return false;
-          }
+        return $row->status;
+
+
+      })
+
+      ->addColumn('type', function ($row) {
+
+        return $row->role;
 
       })
 

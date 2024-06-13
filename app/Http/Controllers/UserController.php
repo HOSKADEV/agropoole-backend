@@ -31,7 +31,7 @@ class UserController extends Controller
         /* 'phone' => ['sometimes','numeric','digits:10',Rule::unique('users')->ignore($user->id)], */
         //'email' => ['sometimes','email',Rule::unique('users')->ignore($user->id)],
         'image' => 'sometimes|mimetypes:image/*',
-        'status' => 'sometimes|in:0,1,2',
+        'status' => 'sometimes|in:1,2,3',
 
         'enterprise_name' => 'sometimes',
         'longitude' => 'sometimes',
@@ -49,6 +49,11 @@ class UserController extends Controller
       try{
 
         $user = User::find($request->user_id);
+
+        if($request->status == 3){
+          $request->merge(['fcm_token' => null]);
+          $user->tokens()->delete();
+        }
 
         $user->update($request->except('image'));
 
@@ -191,6 +196,42 @@ class UserController extends Controller
           ]);
 
         }
+
+    }
+
+    public function reset_password(Request $request){
+
+      $validator = Validator::make($request->all(), [
+        'user_id' => 'required|exists:users,id',
+      ]);
+
+
+
+      if ($validator->fails()) {
+        return response()->json([
+          'status'=> 0,
+          'message' => $validator->errors()->first()
+        ]);
+
+      }
+
+      try{
+        $user = User::findOrFail($request->user_id);
+        $user->password = Hash::make($user->name?? $user->email);
+        $user->save();
+
+        return response()->json([
+          'status'=> 1,
+          'message' => 'password reseted'
+        ]);
+      }catch(Exception $e){
+
+        return response()->json([
+          'status'=> 0,
+          'message' => $e->getMessage()
+        ]);
+
+      }
 
     }
 

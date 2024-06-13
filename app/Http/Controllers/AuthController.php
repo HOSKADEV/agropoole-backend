@@ -53,6 +53,7 @@ class AuthController extends Controller
 
         if($request->role != '4'){
           $request->mergeIfMissing(['enterprise_name' => $request->name]);
+          $request->mergeIfMissing(['status'=> 2]);
         }
         $request->merge(['password' => Hash::make($request->password)]);
         $user = User::create($request->all());
@@ -126,11 +127,13 @@ class AuthController extends Controller
 
       if(empty($user)){
         throw new Exception('wrong credentails');
+      }else{
+        $user->refresh();
       }
 
       switch($user->status){
-        case 0 : throw new Exception('blocked account');
-        case 2 : throw new Exception('deactivated account');
+        case 'blocked' : throw new Exception('blocked account');
+        case 'inactive' : throw new Exception('inactive account');
       }
 
       if($request->has('fcm_token')){

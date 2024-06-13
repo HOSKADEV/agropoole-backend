@@ -96,4 +96,8 @@ class User extends Authenticatable
       return $cart;
     }
 
+    public function address(){
+      return 'https://maps.google.com/?q='.$this->latitude.','.$this->longitude;
+    }
+
 }

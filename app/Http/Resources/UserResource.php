@@ -24,6 +24,8 @@ class UserResource extends JsonResource
           'enterprise_name' => $this->enterprise_name,
           'longitude' => $this->longitude,
           'latitude' => $this->latitude,
+          'state' => new StateResource($this->city->state),
+          'city' => new CityResource($this->city)
         ];
     }
 }

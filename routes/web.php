@@ -43,7 +43,7 @@ Route::group(['middleware' => ['auth']], function () {
   Route::post('/order/list', 'App\Http\Controllers\DatatablesController@orders')->name('order-list');
   Route::post('/item/list', 'App\Http\Controllers\DatatablesController@items')->name('item-list');
   Route::get('/driver/list', 'App\Http\Controllers\DatatablesController@drivers')->name('driver-list');
-  Route::get('/user/list', 'App\Http\Controllers\DatatablesController@users')->name('user-list');
+  Route::post('/user/list', 'App\Http\Controllers\DatatablesController@users')->name('user-list');
   Route::get('/notice/list', 'App\Http\Controllers\DatatablesController@notices')->name('notice-list');
   Route::get('/ad/list', 'App\Http\Controllers\DatatablesController@ads')->name('ad-list');
 });
@@ -52,6 +52,7 @@ Route::group(['middleware' => ['auth']], function () {
   Route::get('/logout','App\Http\Controllers\AuthController@logout');
   Route::post('/user/update','App\Http\Controllers\UserController@update');
   Route::post('/user/change_password','App\Http\Controllers\UserController@change_password');
+  Route::post('/user/reset_password','App\Http\Controllers\UserController@reset_password');
 
   Route::post('/category/create','App\Http\Controllers\CategoryController@create');
   Route::post('/category/update','App\Http\Controllers\CategoryController@update');

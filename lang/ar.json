@@ -26,7 +26,8 @@
 "Block" : "توقيف",
 "Activate" : "تفعيل",
 "Active" : "مفعل",
-"Inactive" : "موقوف",
+"Inactive" : "غير مفعل",
+"Blocked" : "موقوف",
 "Dashboard" : "لوحة التحكم",
 "You are logged in!" : "لقد تم تسجيل دخولك",
 "Login" : "تسجيل الدخول",
@@ -259,7 +260,15 @@
 "print_date":"تاريخ الطباعة",
 "notes":"ملاحطات",
 "is_available" : "متوفر حاليا",
-"Availability filter" : "حسب التوفر"
+"Availability filter" : "حسب التوفر",
 
+"Enterprise" : "الشركة",
+"Factory" : "المزود",
+"Depot" : "المورد",
+"Store" : "التاجر",
+"Client" : "العميل",
+"Type filter" : "حسب النوع",
+"Status filter" : "حسب الحالة",
+"Reset password" : "اعادة تعيين كلمة المرور"
 
 }
