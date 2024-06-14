@@ -51,7 +51,7 @@ class ProductController extends Controller
       $product = Product::create($request->except('image'));
 
       if($request->hasFile('image')){
-        $path = $request->image->store('uploads/products/images/'.strval($product->id),'upload');
+        $path = $request->image->store('uploads/products/images','upload');
 
         /* $file = $request->image;
         $name = $file->getClientOriginalName();
@@ -108,7 +108,7 @@ class ProductController extends Controller
       $product->update($request->except('image','product_id'));
 
       if($request->hasFile('image')){
-        $path = $request->image->store('uploads/products/images/'.strval($product->id),'upload');
+        $path = $request->image->store('uploads/products/images','upload');
 
         /* $file = $request->image;
         $name = $file->getClientOriginalName();

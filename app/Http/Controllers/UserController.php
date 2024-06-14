@@ -58,7 +58,7 @@ class UserController extends Controller
         $user->update($request->except('image'));
 
         if($request->hasFile('image')){
-            $path = $request->image->store('/uploads/users/images/'.strval($user->id),'upload');
+            $path = $request->image->store('/uploads/users/images','upload');
 
             /* $file = $request->image;
             $name = $file->getClientOriginalName();
