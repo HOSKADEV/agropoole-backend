@@ -131,10 +131,10 @@ class AuthController extends Controller
         $user->refresh();
       }
 
-      switch($user->status){
+      /* switch($user->status){
         case 'blocked' : throw new Exception('blocked account');
         case 'inactive' : throw new Exception('inactive account');
-      }
+      } */
 
       if($request->has('fcm_token')){
         $user->fcm_token = $request->fcm_token;
