@@ -14,16 +14,16 @@ class ItemResource extends JsonResource
      */
     public function toArray($request)
     {
-      $product = $this->product()->withTrashed()->first();
+      /* $product = $this->product()->withTrashed()->first();
       $subcategory = is_null($product) ? null : $product->subcategory()->withTrashed()->first();
 
       if($this->cart->type == 'current'){
         $discount = is_null($product) ? 0 : (is_null($product->discount()) ? 0 : $product->discount()->amount);
       }else{
         $discount = $this->discount;
-      }
+      } */
         return [
-          'product_id' => $this->product_id,
+          /* 'product_id' => $this->product_id,
           'subcategory_id' => is_null($product) ? null : $product->subcategory_id,
           'category_id' => is_null($subcategory) ? null : $subcategory->category_id,
           'unit_name' => empty($this->unit_name) ? $product->unit_name : $this->unit_name ,
@@ -35,7 +35,14 @@ class ItemResource extends JsonResource
           'discount_amount' => $discount ,
           'status' => is_null($product) ? null : $product->status,
           'image' => is_null($product) ? null : (empty($product->image) ? null : url($product->image)),
-          'quantity' => $this->quantity
+          'quantity' => $this->quantity */
+
+          'id' => $this->id,
+          'unit_name' => $this->unit_name,
+          'unit_price' => $this->unit_price,
+          'quantity' => $this->quantity,
+          'amount' => $this->amount,
+          'stock' => new StockResource($this->stock),
         ];
     }
 }

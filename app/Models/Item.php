@@ -12,7 +12,8 @@ class Item extends Model
 
     protected $fillable = [
       'cart_id',
-      'product_id',
+      //'product_id',
+      'stock_id',
       'unit_name',
       'pack_name',
       'unit_price',
@@ -25,7 +26,8 @@ class Item extends Model
     ];
 
     protected $casts = [
-      'product_id' => 'integer',
+      //'product_id' => 'integer',
+      'stock_id' => 'integer',
       'cart_id' => 'integer',
       'unit_price' => 'double',
       'pack_price' => 'double',
@@ -39,8 +41,12 @@ class Item extends Model
       return $this->belongsTo(Cart::class);
     }
 
-    public function product(){
+    /* public function product(){
       return $this->belongsTo(Product::class);
+    } */
+
+    public function stock(){
+      return $this->belongsTo(Stock::class);
     }
 
     public function name(){
@@ -51,7 +57,7 @@ class Item extends Model
       return $this->type == 'unit' ? $this->unit_price : $this->pack_price;
     }
 
-    public function amount(){
+    /* public function amount(){
 
       $product = $this->product;
       $discount = is_null($product->discount()) ? 0 : $product->discount()->amount;
@@ -69,6 +75,13 @@ class Item extends Model
       }
 
       return $amount;
+    } */
+
+    public function amount(){
+
+      return $this->unit_price * $this->quantity;
     }
+
+
 
 }

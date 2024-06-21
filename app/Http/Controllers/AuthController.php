@@ -53,6 +53,8 @@ class AuthController extends Controller
 
         if($request->role != '4'){
           $request->mergeIfMissing(['enterprise_name' => $request->name]);
+        }
+        if($request->role == '1'){
           $request->mergeIfMissing(['status'=> 2]);
         }
         $request->merge(['password' => Hash::make($request->password)]);

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PaginatedUserCollection;
+use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Exception;
@@ -256,4 +258,42 @@ class UserController extends Controller
       }
 
     }
+
+    public function get(Request $request){
+      $validator = Validator::make($request->all(), [
+        'role' => 'required|in:1,2,3,4',
+      ]);
+
+      if ($validator->fails()){
+        return response()->json([
+            'status' => 0,
+            'message' => $validator->errors()->first()
+          ]
+        );
+      }
+
+      try{
+
+        $users = User::where('role', $request->role);
+
+
+
+        $users = $request->has('all') ? new UserCollection($users->get())
+                                      : new PaginatedUserCollection($users->paginate(10));
+
+        return response()->json([
+          'status' => 1,
+          'message' => 'success',
+          'data' => $users
+        ]);
+
+      }catch(Exception $e){
+        return response()->json([
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
+      );
+      }
+    }
+
 }

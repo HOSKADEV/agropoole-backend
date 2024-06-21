@@ -21,10 +21,23 @@ class Stock extends Model
     ];
 
     public function product(){
-      return $this->belongsTo(Product::class);
+      return $this->belongsTo(Product::class)->withTrashed();
     }
 
     public function owner(){
       return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function add_to_cart($cart_id, $quantity){
+
+        Item::create([
+          'cart_id' => $cart_id,
+          'stock_id' => $this->id,
+          'unit_name' => $this->product->unit_name,
+          'unit_price' => $this->price,
+          'quantity' => $quantity,
+          'amount' => $quantity * $this->price
+        ]);
+
     }
 }

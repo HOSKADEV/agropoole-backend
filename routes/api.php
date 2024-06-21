@@ -27,10 +27,7 @@ Route::post('/v1/discounts','App\Http\Controllers\DiscountController@get');
 Route::get('/v1/privacy_policy','App\Http\Controllers\DocumentationController@privacy_policy');
 Route::get('/v1/about','App\Http\Controllers\DocumentationController@about');
 
-/* Route::group(['middleware' => ['auth:sanctum']], function () {
-
-
-}); */
+Route::group(['middleware' => ['auth:sanctum']], function () {
 
 
   Route::post('/v1/category/get','App\Http\Controllers\CategoryController@get');
@@ -42,7 +39,13 @@ Route::get('/v1/about','App\Http\Controllers\DocumentationController@about');
   Route::post('/v1/offer/get','App\Http\Controllers\OfferController@get');
   Route::post('/v1/state/get','App\Http\Controllers\StateController@get');
   Route::post('/v1/city/get','App\Http\Controllers\CityController@get');
+  Route::post('/v1/user/get','App\Http\Controllers\UserController@get');
  // Route::post('/v1/driver/get','App\Http\Controllers\DriverController@get');
+
+});
+
+
+
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
   Route::get('/v1/logout','App\Http\Controllers\AuthController@logout');
@@ -77,6 +80,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
   Route::post('/v1/stock/update','App\Http\Controllers\StockController@update');
   Route::post('/v1/stock/delete','App\Http\Controllers\StockController@delete');
   Route::post('/v1/stock/restore','App\Http\Controllers\StockController@restore');
+  Route::post('/v1/stock/multi_create','App\Http\Controllers\StockController@multi_create');
 
 
   Route::post('/v1/discount/create','App\Http\Controllers\DiscountController@create');
@@ -118,4 +122,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
   Route::get('/v1/cart/get','App\Http\Controllers\CartController@get');
   Route::get('/v1/cart/products','App\Http\Controllers\CartController@products');
 
+  //Route::post('/v1/item/add','App\Http\Controllers\ItemController@add');
+  Route::post('/v1/item/update','App\Http\Controllers\ItemController@update');
+  //Route::post('/v1/item/delete','App\Http\Controllers\ItemController@delete');
+  //Route::post('/v1/item/restore','App\Http\Controllers\ItemController@restore');
 });

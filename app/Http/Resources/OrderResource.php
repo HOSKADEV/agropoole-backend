@@ -16,14 +16,16 @@ class OrderResource extends JsonResource
     {
       return [
         'id' => $this->id,
-        'cart_id' => $this->cart_id,
+        //'cart_id' => $this->cart_id,
         'phone' => $this->phone(),
         'longitude' => $this->longitude,
         'latitude' => $this->latitude,
-        'status' => $this->status,
-        'created_at' => date_format($this->created_at,'Y-m-d H:i:s'),
-        'updated_at' => date_format($this->updated_at,'Y-m-d H:i:s'),
-        'invoice' => is_null($this->invoice) ? null :new InvoiceResource($this->invoice),
+        //'created_at' => date_format($this->created_at,'Y-m-d H:i:s'),
+        //'updated_at' => date_format($this->updated_at,'Y-m-d H:i:s'),
+        //'invoice' => is_null($this->invoice) ? null :new InvoiceResource($this->invoice),
+        'status' => $this->histories()->latest()->first()->status,
+        'history' => new HistoryCollection($this->histories),
+        'cart' => new CartResource($this->cart)
       ];
     }
 }

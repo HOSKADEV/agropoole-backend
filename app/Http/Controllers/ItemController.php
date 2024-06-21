@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ItemResource;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Order;
@@ -163,6 +164,59 @@ class ItemController extends Controller
         return response()->json([
           'status' => 1,
           'message' => 'success',
+        ]);
+
+      }catch(Exception $e){
+        DB::rollBack();
+        return response()->json([
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
+      );
+      }
+
+    }
+
+    public function update(Request $request){
+
+      $validator = Validator::make($request->all(), [
+        'order_id' => ['required', Rule::exists('orders','id')->where(function (Builder $query) {
+          return $query->where('status', 'pending');
+          }),],
+        'item_id' => 'required|exists:items,id',
+        'quantity' => 'required|integer|min:1',
+        'unit_price' => 'required|numeric',
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'status'=> 0,
+          'message' => $validator->errors()->first()
+        ]);
+      }
+
+      try{
+
+        DB::beginTransaction();
+
+          $item = Item::findOrFail($request->item_id);
+
+          $item->update($request->except('order_id','item_id'));
+
+          //$item->refresh();
+
+          $item->amount = $item->amount();
+
+          $item->save();
+
+          //return($item);
+
+        DB::commit();
+
+        return response()->json([
+          'status' => 1,
+          'message' => 'success',
+          'data' => new ItemResource($item)
         ]);
 
       }catch(Exception $e){

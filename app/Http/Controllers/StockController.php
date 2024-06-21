@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Stock;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Subcategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\StockResource;
 use App\Http\Resources\StockCollection;
 use Illuminate\Support\Facades\Validator;
@@ -173,6 +177,9 @@ class StockController extends Controller
 
     $validator = Validator::make($request->all(), [
       'user_id' => 'required|exists:users,id',
+      'category_id' => 'sometimes|missing_with:subcategory_id|exists:categories,id',
+      'subcategory_id' => 'sometimes|exists:subcategories,id',
+      'search' => 'sometimes|string',
     ]);
 
     if ($validator->fails()){
@@ -187,7 +194,27 @@ class StockController extends Controller
 
 
 
-    $stocks = Stock::where('user_id',$request->user_id)->orderBy('created_at','DESC');
+    $stocks = Stock::join('products','stocks.product_id','products.id')
+    ->select('stocks.*','products.subcategory_id','products.unit_name')
+    ->where('stocks.user_id',$request->user_id)->orderBy('stocks.created_at','DESC');
+
+    if($request->has('category_id')){
+
+      $category = Category::findOrFail($request->category_id);
+      $category_subs = $category->subcategories()->pluck('id')->toArray();
+      $stocks = $stocks->whereIn('subcategory_id',$category_subs);
+    }
+
+    if($request->has('subcategory_id')){
+
+      $stocks = $stocks->where('subcategory_id',$request->subcategory_id);
+    }
+
+    if($request->has('search')){
+
+      $stocks = $stocks->where('unit_name', 'like', '%' . $request->search . '%');
+                            //->orWhere('pack_name', 'like', '%' . $request->search . '%');
+    }
 
 
 
@@ -218,4 +245,51 @@ class StockController extends Controller
   }
 
   }
+
+  public function multi_create(Request $request){
+
+    try{
+
+      DB::beginTransaction();
+
+      $user = $request->user();
+
+
+      if($user->role == '1'){
+        $products = $user->products()->whereNotIn('id',$user->stocks()->pluck('product_id')->toArray())->get();
+
+        $stocks = [];
+        foreach($products as $product){
+          $stocks += [$product->id => [
+            'product_id' => $product->id,
+            'user_id' => $user->id,
+            'price' => $product->unit_price,
+            'quantity' => 0,
+            'min_quantity' => 0,
+            'show_price' => 0,
+            'status' => 'unavailable'
+          ]] ;
+        }
+
+        $stocks = Stock::insert($stocks);
+
+        DB::commit();
+
+      }
+
+      return response()->json([
+        'status' => 1,
+        'message' => 'success',
+      ]);
+
+    }catch(Exception $e){
+      DB::rollBack();
+      return response()->json([
+        'status' => 0,
+        'message' => $e->getMessage()
+      ]
+    );
+    }
+  }
+
 }

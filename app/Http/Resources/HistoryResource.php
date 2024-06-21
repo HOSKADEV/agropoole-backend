@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CartResource extends JsonResource
+class HistoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,10 +15,9 @@ class CartResource extends JsonResource
     public function toArray($request)
     {
         return [
-          'id' => $this->id,
-          'amount' => $this->items()->sum('amount'),
-          'items' => new ItemCollection($this->items)
-          //'items' => new PaginatedItemCollection($this->items()->paginate(10))
+          'id'=> $this->id,
+          'status' => $this->status,
+          'created_at' => $this->created_at,
         ];
     }
 }

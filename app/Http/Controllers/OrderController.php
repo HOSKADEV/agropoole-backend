@@ -2,24 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\OrderDetailResource;
-use App\Http\Resources\OrderResource;
-use App\Http\Resources\PaginatedOrderCollection;
-use App\Models\Cart;
-use App\Models\Delivery;
-use App\Models\Driver;
-use App\Models\Invoice;
-use App\Models\Item;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\Set;
-use App\Models\User;
 use Auth;
 use Exception;
+use App\Models\Set;
+use App\Models\Cart;
+use App\Models\Item;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\Stock;
+use App\Models\Driver;
+use App\Models\History;
+use App\Models\Invoice;
+use App\Models\Product;
+use App\Models\Delivery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\Config;
+use App\Http\Resources\OrderCollection;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\OrderDetailResource;
+use App\Http\Resources\PaginatedOrderCollection;
 use Kreait\Firebase\Exception\FirebaseException;
 
 class OrderController extends Controller
@@ -81,7 +85,7 @@ class OrderController extends Controller
       );
     }
   }
-  public function create(Request $request)
+ /*  public function create(Request $request)
   {
     $validator = Validator::make($request->all(), [
 
@@ -133,8 +137,8 @@ class OrderController extends Controller
       ];
 
       $distance = $this->calc_distance($start_point,$end_point);
-      /* $true_price = ($distance/1000) * 20;
-      $actual_price = min(max($true_price,100),500); */
+      //$true_price = ($distance/1000) * 20;
+      //$actual_price = min(max($true_price,100),500);
       $price = $this->delivery_price($distance);
 
       $invoice = Invoice::create([
@@ -160,6 +164,73 @@ class OrderController extends Controller
       ]);
 
     } catch (Exception $e) {
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
+      );
+    }
+  } */
+
+
+  public function create(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+
+      'phone' => 'required|numeric|digits:10',
+      'longitude' => 'required|string',
+      'latitude' => 'required|string',
+      'stocks' => 'required|array',
+      'stocks.*.stock_id' => 'required|distinct|exists:stocks,id',
+      'stocks.*.quantity' => 'required|numeric'
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json([
+        'status' => 0,
+        'message' => $validator->errors()->first()
+      ]);
+    }
+    try {
+
+      DB::beginTransaction();
+
+
+      $stocks = Stock::whereIn('id',array_column($request->stocks, 'stock_id'));
+      $buyer = $request->user();
+      $seller = User::find($stocks->distinct('user_id')->first()->user_id);
+
+
+
+      $request->merge([
+        'buyer_id' => $buyer->id,
+        'seller_id' => $seller->id,
+      ]);
+
+      $order = Order::create($request->except('stocks'));
+
+      History::create(['order_id' => $order->id, 'user_id' => $buyer->id]);
+
+      $cart = Cart::create(['order_id' => $order->id]);
+
+      foreach ($request->stocks as $stock) {
+        $quantity = $stock['quantity'];
+        $stock = Stock::find($stock['stock_id']);
+        $stock->add_to_cart($cart->id,$quantity);
+      }
+
+
+      DB::commit();
+
+      return response()->json([
+        'status' => 1,
+        'message' => 'success',
+        'data' => new OrderResource($order)
+      ]);
+
+    } catch (Exception $e) {
+      DB::rollBack();
       return response()->json(
         [
           'status' => 0,
@@ -336,7 +407,9 @@ class OrderController extends Controller
   public function get(Request $request){
 
     $validator = Validator::make($request->all(), [
-      'order_id' => 'sometimes',
+      //'order_id' => 'sometimes',
+      'type' => 'required|in:1,2',
+      'status' => 'sometimes|in:pending,accepted,canceled,confirmed,ongoing,delivered'
     ]);
 
     if ($validator->fails()){
@@ -351,24 +424,27 @@ class OrderController extends Controller
 
     $user = Auth::user();
 
-    if($request->has('order_id')){
+    $orders = Order::where($request->type == '1' ? 'buyer_id' : 'seller_id', $user->id);
 
-      $order = Order::where('id',$request->order_id)->where('user_id',$user->id)->first();
+    if($request->has('status')){
 
-      return response()->json([
-        'status' => 1,
-        'message' => 'success',
-        'data' => new OrderDetailResource($order)
-      ]);
+      $orders = Order::where('status',$request->status);
 
     }
 
-    $orders = $user->orders()->orderBy('updated_at','DESC')->paginate(10);
+    if($request->has('all')){
+
+      $orders = new OrderCollection($orders->get());
+
+    }else{
+      $orders = new PaginatedOrderCollection($orders->paginate(10));
+    }
+
 
     return response()->json([
       'status' => 1,
       'message' => 'success',
-      'data' => new PaginatedOrderCollection($orders)
+      'data' => $orders
     ]);
 
   }catch(Exception $e){
