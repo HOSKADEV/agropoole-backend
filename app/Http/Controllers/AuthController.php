@@ -31,7 +31,7 @@ class AuthController extends Controller
         'name' => 'required',
         'enterprise_name' => 'sometimes',
         'password' => 'required',
-        'role' => 'required|in:1,2,3,4',
+        'role' => 'required|in:1,2,3,4,5',
         'longitude' => 'sometimes',
         'latitude' => 'sometimes',
       ]);

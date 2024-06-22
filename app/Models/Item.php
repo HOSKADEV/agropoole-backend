@@ -83,5 +83,24 @@ class Item extends Model
     }
 
 
+    public function refresh_stocks(){
+      $seller_stock = $this->stock;
+      $seller_stock->quantity -= $this->quantity;
+      $seller_stock->save();
+
+      $buyer_stock = Stock::firstOrNew([
+        'user_id' => $this->cart->order->buyer_id,
+        'product_id' => $seller_stock->product_id,
+        'price'=> $this->unit_price,
+        'status'=> 'unavailable'
+      ],[
+        'quantity' => 0,
+        'min_quantity' => 0,
+        'show_price' => 0,
+      ]);
+
+      $buyer_stock->quantity += $this->quantity;
+      $buyer_stock->save();
+    }
 
 }

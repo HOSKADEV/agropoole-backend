@@ -17,7 +17,7 @@ class Delivery extends Model
     ];
 
     public function driver(){
-      return $this->belongsTo(Driver::class);
+      return $this->belongsTo(User::class);
     }
 
     public function order(){

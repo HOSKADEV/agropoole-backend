@@ -194,39 +194,47 @@ class OrderController extends Controller
     }
     try {
 
+
+
       DB::beginTransaction();
 
-
-      $stocks = Stock::whereIn('id',array_column($request->stocks, 'stock_id'));
       $buyer = $request->user();
-      $seller = User::find($stocks->distinct('user_id')->first()->user_id);
+
+      $stock_ids = array_column($request->stocks, 'stock_id');
+      $seller_ids = Stock::whereIn('id',$stock_ids)->distinct('user_id')->pluck('user_id')->toArray();
+
+      foreach($seller_ids as $seller_id){
+
+        $request->merge([
+          'buyer_id' => $buyer->id,
+          'seller_id' => $seller_id,
+        ]);
+
+        $order = Order::create($request->except('stocks'));
+
+        History::create(['order_id' => $order->id, 'user_id' => $buyer->id]);
+
+        $cart = Cart::create(['order_id' => $order->id]);
+
+        $stocks = array_filter($request->stocks, function($value) use ($seller_id){
+          return Stock::where('id',$value['stock_id'])->where('user_id',$seller_id)->count();
+        });
+
+        foreach ($stocks as $stock) {
+          $quantity = $stock['quantity'];
+          $stock = Stock::find($stock['stock_id']);
+          $stock->add_to_cart($cart->id,$quantity);
+        }
 
 
-
-      $request->merge([
-        'buyer_id' => $buyer->id,
-        'seller_id' => $seller->id,
-      ]);
-
-      $order = Order::create($request->except('stocks'));
-
-      History::create(['order_id' => $order->id, 'user_id' => $buyer->id]);
-
-      $cart = Cart::create(['order_id' => $order->id]);
-
-      foreach ($request->stocks as $stock) {
-        $quantity = $stock['quantity'];
-        $stock = Stock::find($stock['stock_id']);
-        $stock->add_to_cart($cart->id,$quantity);
       }
-
 
       DB::commit();
 
       return response()->json([
         'status' => 1,
         'message' => 'success',
-        'data' => new OrderResource($order)
+        //'data' => new OrderResource($order)
       ]);
 
     } catch (Exception $e) {
@@ -241,7 +249,7 @@ class OrderController extends Controller
   }
 
 
-  public function update(Request $request){
+  /* public function update(Request $request){
 
     //dd($request->only(['status','note']));
 
@@ -320,6 +328,88 @@ class OrderController extends Controller
       ]);
 
     } catch (Exception $e) {
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
+      );
+    }
+
+  } */
+
+
+  public function update(Request $request){
+
+    //dd($request->only(['status','note']));
+
+    $validator = Validator::make($request->all(), [
+      'order_id' => 'required|exists:orders,id',
+      'driver_id' => 'required_if:status,ongoing|exists:users,id',
+      'status' => 'sometimes|in:pending,accepted,canceled,confirmed,ongoing,delivered,received',
+      //'tax_type' => 'sometimes|in:1,2',
+      //'tax_amount' => 'sometimes|numeric',
+      //'payment_method' => 'sometimes|in:1,2',
+      'note' => 'sometimes'
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json([
+        'status' => 0,
+        'message' => $validator->errors()->first()
+      ]);
+    }
+    try {
+
+      DB::beginTransaction();
+
+      $user = $request->user();
+
+      $order = Order::find($request->order_id);
+
+      if($request->has('status')){
+
+        if($request->status == 'ongoing'){
+
+          Delivery::create([
+            'order_id' => $request->order_id,
+            'driver_id' => $request->driver_id,
+          ]);
+
+
+        }
+
+        if($request->status == 'received'){
+
+          foreach($order->cart->items as $item){
+            $item->refresh_stocks();
+          }
+
+        }
+
+
+        History::create(['order_id' => $order->id, 'user_id' => $user->id, 'status' => $request->status]);
+
+
+        //$order->notify();
+      }
+
+      //dd($request->only(['status','note']));
+
+      $order->update($request->only(['status','note']));
+
+
+      DB::commit();
+
+
+      return response()->json([
+        'status' => 1,
+        'message' => 'success',
+        'data' => new OrderResource($order)
+      ]);
+
+    } catch (Exception $e) {
+      DB::rollBack();
       return response()->json(
         [
           'status' => 0,
@@ -409,7 +499,7 @@ class OrderController extends Controller
     $validator = Validator::make($request->all(), [
       //'order_id' => 'sometimes',
       'type' => 'required|in:1,2',
-      'status' => 'sometimes|in:pending,accepted,canceled,confirmed,ongoing,delivered'
+      'status' => 'sometimes|in:pending,accepted,canceled,confirmed,ongoing,delivered,received'
     ]);
 
     if ($validator->fails()){
@@ -428,7 +518,7 @@ class OrderController extends Controller
 
     if($request->has('status')){
 
-      $orders = Order::where('status',$request->status);
+      $orders = $orders->where('status',$request->status);
 
     }
 

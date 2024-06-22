@@ -66,6 +66,10 @@ class User extends Authenticatable
       return $this->hasMany(Stock::class);
     }
 
+    public function deliveries(){
+      return $this->hasMany(Delivery::class,'driver_id');
+    }
+
     public function carts(){
       return $this->hasMany(Cart::class);
     }

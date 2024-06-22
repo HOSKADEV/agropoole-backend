@@ -261,7 +261,7 @@ class UserController extends Controller
 
     public function get(Request $request){
       $validator = Validator::make($request->all(), [
-        'role' => 'required|in:1,2,3,4',
+        'role' => 'required|in:1,2,3,4,5',
       ]);
 
       if ($validator->fails()){

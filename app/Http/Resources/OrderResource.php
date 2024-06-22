@@ -20,11 +20,14 @@ class OrderResource extends JsonResource
         'phone' => $this->phone(),
         'longitude' => $this->longitude,
         'latitude' => $this->latitude,
-        //'created_at' => date_format($this->created_at,'Y-m-d H:i:s'),
-        //'updated_at' => date_format($this->updated_at,'Y-m-d H:i:s'),
+        'created_at' => date_format($this->created_at,'Y-m-d H:i:s'),
+        'updated_at' => date_format($this->updated_at,'Y-m-d H:i:s'),
         //'invoice' => is_null($this->invoice) ? null :new InvoiceResource($this->invoice),
         'status' => $this->histories()->latest()->first()->status,
         'history' => new HistoryCollection($this->histories),
+        'buyer' => new UserResource($this->buyer),
+        'seller' => new UserResource($this->seller),
+        'driver' => new UserResource($this->delivery?->driver),
         'cart' => new CartResource($this->cart)
       ];
     }
