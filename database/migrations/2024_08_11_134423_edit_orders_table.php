@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('histories', function (Blueprint $table) {
-          $table->enum('status',['pending','accepted','canceled','confirmed','ongoing','delivered','received'])->default('pending')->after('user_id');
+        Schema::table('orders', function (Blueprint $table) {
+          $table->enum('status',['pending','accepted','canceled','confirmed','shipped','ongoing','delivered','received'])->default('pending')->after('latitude');
         });
     }
 
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('histories', function (Blueprint $table) {
+        Schema::table('orders', function (Blueprint $table) {
             //
         });
     }

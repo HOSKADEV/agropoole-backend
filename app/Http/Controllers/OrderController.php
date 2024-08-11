@@ -345,8 +345,8 @@ class OrderController extends Controller
 
     $validator = Validator::make($request->all(), [
       'order_id' => 'required|exists:orders,id',
-      'driver_id' => 'required_if:status,ongoing|exists:users,id',
-      'status' => 'sometimes|in:pending,accepted,canceled,confirmed,ongoing,delivered,received',
+      'driver_id' => 'required_if:status,shipped|exists:users,id',
+      'status' => 'sometimes|in:pending,accepted,canceled,confirmed,shipped,ongoing,delivered,received',
       //'tax_type' => 'sometimes|in:1,2',
       //'tax_amount' => 'sometimes|numeric',
       //'payment_method' => 'sometimes|in:1,2',
@@ -369,7 +369,7 @@ class OrderController extends Controller
 
       if($request->has('status')){
 
-        if($request->status == 'ongoing'){
+        if($request->status == 'shipped'){
 
           Delivery::create([
             'order_id' => $request->order_id,
@@ -499,7 +499,7 @@ class OrderController extends Controller
     $validator = Validator::make($request->all(), [
       //'order_id' => 'sometimes',
       'type' => 'required|in:1,2',
-      'status' => 'sometimes|in:pending,accepted,canceled,confirmed,ongoing,delivered,received'
+      'status' => 'sometimes|in:pending,accepted,canceled,confirmed,shipped,ongoing,delivered,received'
     ]);
 
     if ($validator->fails()){

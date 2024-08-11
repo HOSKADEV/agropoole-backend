@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UserCollection;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\PaginatedUserCollection;
+use App\Http\Resources\UserWithStockCollection;
+use App\Http\Resources\PaginatedUserWithStockCollection;
 
 class UserController extends Controller
 {
@@ -290,7 +292,7 @@ class UserController extends Controller
 
     try {
 
-      $users = User::where('role', $request->role);
+      $users = User::where('users.status','active')->where('users.role', $request->role);
 
 
       if ($request->role != '5') {
@@ -299,9 +301,13 @@ class UserController extends Controller
           ->groupBy('stocks.user_id');
       }
 
-
-      $users = $request->has('all') ? new UserCollection($users->get())
-        : new PaginatedUserCollection($users->paginate(10));
+      $users = $request->has('all')
+    ? ($request->has('with_stocks')
+        ? new UserWithStockCollection($users->get())
+        : new UserCollection($users->get()))
+    : ($request->has('with_stocks')
+        ? new PaginatedUserWithStockCollection($users->paginate(10))
+        : new PaginatedUserCollection($users->paginate(10)));
 
       return response()->json([
         'status' => 1,
@@ -316,6 +322,40 @@ class UserController extends Controller
           'message' => $e->getMessage()
         ]
       );
+    }
+  }
+
+  public function info(Request $request){
+    $validator = Validator::make($request->all(), [
+      'user_id' => 'required|exists:users,id',
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $validator->errors()->first()
+        ]
+      );
+    }
+
+    try{
+
+      $user = User::find($request->user_id);
+
+      return response()->json([
+        'status'=> 1,
+        'message' => 'success',
+        'data' => new UserResource($user),
+      ]);
+
+    } catch (Exception $e) {
+        //dd($e->getMessage());
+
+        return response()->json([
+        'status'=> 0,
+        'message' => $e->getMessage(),
+      ]);
     }
   }
 

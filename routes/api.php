@@ -37,6 +37,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
   Route::post('/v1/ad/get','App\Http\Controllers\AdController@get');
   Route::post('/v1/offer/get','App\Http\Controllers\OfferController@get');
   Route::post('/v1/user/get','App\Http\Controllers\UserController@get');
+  Route::post('/v1/user/info','App\Http\Controllers\UserController@info');
+
  // Route::post('/v1/driver/get','App\Http\Controllers\DriverController@get');
 });
 
