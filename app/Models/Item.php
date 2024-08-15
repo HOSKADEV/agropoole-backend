@@ -46,7 +46,7 @@ class Item extends Model
     } */
 
     public function stock(){
-      return $this->belongsTo(Stock::class);
+      return $this->belongsTo(Stock::class)->withTrashed();
     }
 
     public function name(){
