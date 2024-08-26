@@ -36,7 +36,7 @@ class NoticeController extends Controller
 
         $notice = Notice::create($request->all());
 
-        $users = User::where('status',1)->where('role',1)->get();
+        $users = User::where('status','active')->get();
 
         $fcm_tokens = [];
 
