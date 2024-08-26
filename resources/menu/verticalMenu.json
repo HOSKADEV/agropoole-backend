@@ -33,6 +33,13 @@
       "name": "Subcategories",
       "icon": "menu-icon tf-icons bx bxs-shapes",
       "slug": "subcategory-browse"
+    },
+
+    {
+      "url": "/notice/browse",
+      "name": "Notices",
+      "icon": "menu-icon tf-icons bx bxs-bell",
+      "slug": "notice-browse"
     }
 
   ]

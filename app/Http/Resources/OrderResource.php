@@ -23,7 +23,7 @@ class OrderResource extends JsonResource
         'created_at' => date_format($this->created_at,'Y-m-d H:i:s'),
         'updated_at' => date_format($this->updated_at,'Y-m-d H:i:s'),
         //'invoice' => is_null($this->invoice) ? null :new InvoiceResource($this->invoice),
-        'status' => $this->histories()->latest()->first()->status,
+        'status' => $this->histories()->latest()->first()?->status ?? $this->status,
         'history' => new HistoryCollection($this->histories),
         'buyer' => new UserResource($this->buyer),
         'seller' => new UserResource($this->seller),

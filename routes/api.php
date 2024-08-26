@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -128,4 +129,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
   Route::post('/v1/item/update','App\Http\Controllers\ItemController@update');
   //Route::post('/v1/item/delete','App\Http\Controllers\ItemController@delete');
   //Route::post('/v1/item/restore','App\Http\Controllers\ItemController@restore');
+});
+
+Route::post('/test', function(){
+  $controller =  new Controller();
+  return $controller->send_fcm_device('title','content','dWsk_c6pTwmb4HFLbI12BX:APA91bE3xFDPPgTcKiIf8j8osN68kBXk45B082xAuiyIIGGrDOkY46VDgyhHddEs-ohYRr5l9dpXsyG9tRVU5vFm8rn4H3CUmvdX1YvcXKRZKyWRM6XFCoZY4oAKLBmcFVpmW-0Z7qUI');
 });

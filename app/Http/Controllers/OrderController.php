@@ -498,7 +498,7 @@ class OrderController extends Controller
 
     $validator = Validator::make($request->all(), [
       //'order_id' => 'sometimes',
-      'type' => 'required|in:1,2',
+      'type' => 'required|in:1,2,3',
       'status' => 'sometimes|in:pending,accepted,canceled,confirmed,shipped,ongoing,delivered,received'
     ]);
 
@@ -514,7 +514,15 @@ class OrderController extends Controller
 
     $user = Auth::user();
 
-    $orders = Order::where($request->type == '1' ? 'buyer_id' : 'seller_id', $user->id);
+    $attribute = match($request->type){
+      '1' => 'buyer_id',
+      '2' => 'seller_id',
+      '3' => 'driver_id',
+    };
+
+    $orders = Order::leftJoin('deliveries','orders.id','deliveries.order_id')
+    ->where($attribute, $user->id);
+
 
     if($request->has('status')){
 
