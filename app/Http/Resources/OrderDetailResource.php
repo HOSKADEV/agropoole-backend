@@ -21,8 +21,8 @@ class OrderDetailResource extends JsonResource
           'longitude' => $this->longitude,
           'latitude' => $this->latitude,
           'status' => $this->status,
-          'created_at' => date_format($this->created_at,'Y-m-d H:i:s'),
-          'updated_at' => date_format($this->updated_at,'Y-m-d H:i:s'),
+          'created_at' => $this->created_at,
+          'updated_at' => $this->updated_at,
           'invoice' => is_null($this->invoice) ? null :new InvoiceResource($this->invoice),
           'items' => new PaginatedItemCollection($this->cart->items()->paginate(10))
         ];
