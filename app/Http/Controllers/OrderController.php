@@ -512,7 +512,7 @@ class OrderController extends Controller
 
   try{
 
-    $user = Auth::user();
+    $user = $request->user();
 
     $attribute = match($request->type){
       '1' => 'buyer_id',
