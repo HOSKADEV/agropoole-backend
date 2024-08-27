@@ -514,10 +514,10 @@ class OrderController extends Controller
 
     $user = $request->user();
 
-    $attribute = match($request->type){
-      '1' => 'buyer_id',
-      '2' => 'seller_id',
-      '3' => 'driver_id',
+    $attribute = match(intval($request->type)){
+      1 => 'buyer_id',
+      2 => 'seller_id',
+      3 => 'driver_id',
     };
 
     $orders = Order::leftJoin('deliveries','orders.id','deliveries.order_id')
