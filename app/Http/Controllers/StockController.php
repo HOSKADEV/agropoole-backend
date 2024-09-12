@@ -194,7 +194,10 @@ class StockController extends Controller
 
 
 
-    $stocks = Stock::join('products','stocks.product_id','products.id')
+    $stocks = Stock::join('products', function($join){
+      $join->on('stocks.product_id', '=', 'products.id')
+      ->where('products.deleted_at', null);
+    })
     ->select('stocks.*','products.subcategory_id','products.unit_name')
     ->where('stocks.user_id',$request->user_id)->orderBy('stocks.created_at','DESC');
 
