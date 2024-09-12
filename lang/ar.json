@@ -269,6 +269,8 @@
 "Client" : "العميل",
 "Type filter" : "حسب النوع",
 "Status filter" : "حسب الحالة",
-"Reset password" : "اعادة تعيين كلمة المرور"
+"Reset password" : "اعادة تعيين كلمة المرور",
+
+"Order n°" : "الطلب رقم "
 
 }

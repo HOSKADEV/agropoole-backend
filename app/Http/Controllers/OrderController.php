@@ -194,8 +194,6 @@ class OrderController extends Controller
     }
     try {
 
-
-
       DB::beginTransaction();
 
       $buyer = $request->user();
@@ -226,10 +224,13 @@ class OrderController extends Controller
           $stock->add_to_cart($cart->id,$quantity);
         }
 
-
+        $order->refresh();
+        $order->notify();
       }
 
       DB::commit();
+
+
 
       return response()->json([
         'status' => 1,
@@ -390,8 +391,6 @@ class OrderController extends Controller
 
         History::create(['order_id' => $order->id, 'user_id' => $user->id, 'status' => $request->status]);
 
-
-        //$order->notify();
       }
 
       //dd($request->only(['status','note']));
@@ -400,6 +399,12 @@ class OrderController extends Controller
 
 
       DB::commit();
+
+
+      if($request->has('status')){
+        $order->refresh();
+        $order->notify();
+      }
 
 
       return response()->json([
@@ -521,6 +526,7 @@ class OrderController extends Controller
     };
 
     $orders = Order::leftJoin('deliveries','orders.id','deliveries.order_id')
+    ->select('orders.*','deliveries.driver_id')
     ->where($attribute, $user->id);
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -69,6 +70,10 @@ class Order extends Model
       return $this->hasOne(Delivery::class);
     }
 
+    public function driver(){
+      return $this->hasOneThrough(User::class,Delivery::class,'order_id', 'id', 'id', 'driver_id');
+    }
+
     public function phone(){
       /* return is_null($this->phone) ? null : '0'.$this->phone; */
       return $this->phone;
@@ -76,6 +81,21 @@ class Order extends Model
 
     public function address(){
       return 'https://maps.google.com/?q='.$this->longitude.','.$this->latitude;
+    }
+
+    public function notify(){
+
+      $controller = new Controller();
+
+      if($this->buyer?->fcm_token){
+        $controller->send_fcm_device(__('Order n°').$this->id , __('order.buyer.'.$this->status), $this->buyer->fcm_token);
+      }
+      if($this->seller?->fcm_token){
+        $controller->send_fcm_device(__('Order n°').$this->id , __('order.seller.'.$this->status), $this->seller->fcm_token);
+      }
+      if($this->driver?->fcm_token){
+        $controller->send_fcm_device(__('Order n°').$this->id , __('order.driver.'.$this->status), $this->driver->fcm_token);
+      }
     }
 
 }

@@ -44,11 +44,11 @@
   "Browse subcategories" : "Parcourir les sous-catégories",
   "Add Subcategory" : "Ajouter une sous-catégorie",
   "Subcategories table" : "Table des sous-catégories",
-  "Driver" : "Chauffeur",
-  "Drivers" : "Chauffeurs",
-  "Browse drivers" : "Parcourir les chauffeurs",
-  "Add driver" : "Ajouter un chauffeur",
-  "Drivers table" : "Table des chauffeurs",
+  "Driver" : "Livreur",
+  "Drivers" : "Livreurs",
+  "Browse drivers" : "Parcourir les livreurs",
+  "Add driver" : "Ajouter un livreur",
+  "Drivers table" : "Table des livreurs",
   "Families" : "Familles",
   "Browse families" : "Parcourir les familles",
   "Add Family" : "Ajouter une famille",
@@ -143,7 +143,7 @@
   "Card" : "Carte",
   "Cash" : "Espèces",
   "Approve order" : "Approuver la commande",
-  "Select driver" : "Sélectionner un chauffeur",
+  "Select driver" : "Sélectionner un livreur",
   "Category filter" : "Filtrer par catégorie",
   "Subcategory filter" : "Filtrer par sous-catégorie",
   "Discount filter" : "Filtrer par remise",
@@ -263,11 +263,13 @@
   "Availability filter": "Filtre de disponibilité",
 
   "Enterprise": "Entreprise",
-  "Factory": "Usine",
-  "Depot": "Dépôt",
+  "Factory": "Fournisseur",
+  "Depot": "Distributeur",
   "Store": "Magasin",
-  "Client": "Client",
+  "Client": "Citoyen",
   "Type filter": "Filtrer par type",
   "Status filter": "Filtrer par statut",
-  "Reset password": "Réinitialiser le mot de passe"
+  "Reset password": "Réinitialiser le mot de passe",
+
+  "Order n°" : "Commande n°"
 }

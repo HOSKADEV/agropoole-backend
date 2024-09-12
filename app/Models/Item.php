@@ -92,11 +92,11 @@ class Item extends Model
         'user_id' => $this->cart->order->buyer_id,
         'product_id' => $seller_stock->product_id,
         'price'=> $this->unit_price,
-        'status'=> 'unavailable'
       ],[
         'quantity' => 0,
         'min_quantity' => 0,
         'show_price' => 0,
+        'status'=> 'unavailable'
       ]);
 
       $buyer_stock->quantity += $this->quantity;

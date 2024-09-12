@@ -257,8 +257,16 @@ class StockController extends Controller
 
       if($user->role == '1'){
         $products = $user->products()->whereNotIn('id',$user->stocks()->pluck('product_id')->toArray())->get();
+      }else{
+        $stocked_products = $user->stocks()->pluck('product_id')->toArray();
+        $product_owners = Product::whereIn('id',$stocked_products)->pluck('user_id')->toArray();
+        $products = Product::whereIn('user_id',$product_owners)
+        ->where('status','available')
+        ->whereNotIn('id',$stocked_products)
+        ->get();
+      }
 
-        $stocks = [];
+      $stocks = [];
         foreach($products as $product){
           $stocks += [$product->id => [
             'product_id' => $product->id,
@@ -274,8 +282,6 @@ class StockController extends Controller
         $stocks = Stock::insert($stocks);
 
         DB::commit();
-
-      }
 
       return response()->json([
         'status' => 1,
