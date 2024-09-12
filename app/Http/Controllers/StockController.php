@@ -261,7 +261,7 @@ class StockController extends Controller
         $stocked_products = $user->stocks()->pluck('product_id')->toArray();
         $product_owners = Product::whereIn('id',$stocked_products)->pluck('user_id')->toArray();
         $products = Product::whereIn('user_id',$product_owners)
-        ->where('status','available')
+        //->where('status','available')
         ->whereNotIn('id',$stocked_products)
         ->get();
       }
