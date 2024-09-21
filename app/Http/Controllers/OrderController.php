@@ -346,7 +346,7 @@ class OrderController extends Controller
 
     $validator = Validator::make($request->all(), [
       'order_id' => 'required|exists:orders,id',
-      'driver_id' => 'required_if:status,shipped|exists:users,id',
+      'driver_id' => 'sometimes|exists:users,id',
       'status' => 'sometimes|in:pending,accepted,canceled,confirmed,shipped,ongoing,delivered,received',
       //'tax_type' => 'sometimes|in:1,2',
       //'tax_amount' => 'sometimes|numeric',
@@ -372,12 +372,15 @@ class OrderController extends Controller
 
         if($request->status == 'shipped'){
 
-          Delivery::create([
-            'order_id' => $request->order_id,
-            'driver_id' => $request->driver_id,
-          ]);
+          $delivery = $order->deliveries()->where('driver_id',$request->driver_id ?? $request->user()->id)->first();
 
+          if(empty($delivery)){
+            throw new Exception('the select driver is not assigned to the order');
+          }
 
+          Delivery::where('order_id', $request->order_id)
+          ->whereNot('id', $delivery->id)
+          ->delete();
         }
 
         if($request->status == 'received'){
@@ -393,6 +396,17 @@ class OrderController extends Controller
 
       }
 
+      if($request->has('driver_id')){
+        Delivery::updateOrInsert([
+          'order_id' => $request->order_id,
+          'driver_id' => $request->driver_id,
+          'deleted_at' => null
+        ],[
+          'created_at' => Carbon::now(),
+          'updated_at' => Carbon::now(),
+        ]);
+      }
+
       //dd($request->only(['status','note']));
 
       $order->update($request->only(['status','note']));
@@ -404,7 +418,17 @@ class OrderController extends Controller
       if($request->has('status')){
         $order->refresh();
         $order->notify();
+
+        if($request->status == 'received'){
+
+          foreach($order->cart->items as $item){
+            $item->stock->notify();
+          }
+
+        }
       }
+
+
 
 
       return response()->json([
@@ -519,22 +543,23 @@ class OrderController extends Controller
 
     $user = $request->user();
 
-    $attribute = match(intval($request->type)){
-      1 => 'buyer_id',
-      2 => 'seller_id',
-      3 => 'driver_id',
+    $orders = match(intval($request->type)){
+      1 => Order::where('buyer_id', $user->id),
+      2 => Order::where('seller_id', $user->id),
+      3 => Order::leftJoin('deliveries', function($join) use($user) {
+        $join->on('orders.id', '=', 'deliveries.order_id');
+        $join->where('deliveries.driver_id', '=', $user->id);
+        $join->where('deliveries.deleted_at', '=', null);
+      })->select('orders.*')
     };
-
-    $orders = Order::leftJoin('deliveries','orders.id','deliveries.order_id')
-    ->select('orders.*','deliveries.driver_id')
-    ->where($attribute, $user->id);
-
 
     if($request->has('status')){
 
       $orders = $orders->where('status',$request->status);
 
     }
+
+    $orders = $orders->orderBy('updated_at', 'DESC');
 
     if($request->has('all')){
 

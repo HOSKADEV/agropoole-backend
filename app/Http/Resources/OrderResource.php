@@ -27,7 +27,7 @@ class OrderResource extends JsonResource
         'history' => new HistoryCollection($this->histories),
         'buyer' => new UserResource($this->buyer),
         'seller' => new UserResource($this->seller),
-        'driver' => new UserResource($this->delivery?->driver),
+        'driver' => in_array($this->status, ['shipped','ongoing','delivered','received']) ? new UserResource($this->delivery?->driver) : null,
         'cart' => new CartResource($this->cart)
       ];
     }

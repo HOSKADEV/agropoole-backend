@@ -70,6 +70,10 @@ class Order extends Model
       return $this->hasOne(Delivery::class);
     }
 
+    public function deliveries(){
+      return $this->hasMany(Delivery::class);
+    }
+
     public function driver(){
       return $this->hasOneThrough(User::class,Delivery::class,'order_id', 'id', 'id', 'driver_id');
     }

@@ -17,13 +17,13 @@ return [
     'accepted' => 'Vous avez accepté la commande.',
     'canceled' => 'Vous avez annulé la commande.',
     'confirmed' => 'L\'acheteur a confirmé la commande.',
-    'shipped' => 'Un livreur a été assigné pour livrer la commande.',
+    'shipped' => 'Le livreur assigné a confirmé la livraison.',
     'ongoing' => 'La commande est en transit vers l\'acheteur.',
     'delivered' => 'Le livreur est arrivé chez l\'acheteur avec la commande.',
     'received' => 'L\'acheteur a confirmé la réception de la commande.'
   ],
   'driver' => [
-    'shipped' => 'Vous avez été assigné pour livrer une commande.',
+    'shipped' => 'Vous avez confirmé la livraison.',
     'ongoing' => 'Vous êtes en train de livrer la commande à l\'acheteur.',
     'delivered' => 'Vous êtes arrivé chez l\'acheteur avec la commande.',
     'received' => 'L\'acheteur a confirmé la réception de la commande.'

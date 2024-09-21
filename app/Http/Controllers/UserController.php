@@ -58,11 +58,6 @@ class UserController extends Controller
 
       $user = User::find($request->user_id);
 
-      if ($request->status == 3) {
-        $request->merge(['fcm_token' => null]);
-        $user->tokens()->delete();
-      }
-
       $user->update($request->except('image'));
 
       if ($request->hasFile('image')) {
@@ -78,6 +73,21 @@ class UserController extends Controller
         $user->image = $path;
 
         $user->save();
+      }
+
+      if($request->has('status')){
+
+        $user->refresh();
+
+        if($user->fcm_token){
+          $this->send_fcm_device(__('user.account.title'), __('user.account.'.$user->status), $user->fcm_token);
+        }
+
+        if ($request->status == 3) {
+          $user->fcm_token = null;
+          $user->tokens()->delete();
+          $user->save();
+        }
       }
 
       return response()->json([

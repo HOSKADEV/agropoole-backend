@@ -28,7 +28,7 @@ class StockController extends Controller
       'quantity' => 'required|integer',
       'min_quantity' => 'required|integer',
       'show_price' => 'required|in:0,1',
-      'status' => 'required|in:1,2'
+      'status' => 'sometimes|in:available,unavailable'
     ]);
 
     if ($validator->fails()) {
@@ -66,7 +66,7 @@ class StockController extends Controller
       'quantity' => 'sometimes|integer',
       'min_quantity' => 'sometimes|integer',
       'show_price' => 'sometimes|in:0,1',
-      'status' => 'sometimes|in:1,2'
+      'status' => 'sometimes|in:available,unavailable'
     ]);
 
     if ($validator->fails()){
@@ -201,6 +201,10 @@ class StockController extends Controller
     ->select('stocks.*','products.subcategory_id','products.unit_name')
     ->where('stocks.user_id',$request->user_id)->orderBy('stocks.created_at','DESC');
 
+    if($request->user()->id != $request->user_id){
+      $stocks = $stocks->where('stocks.status','available');
+    }
+
     if($request->has('category_id')){
 
       $category = Category::findOrFail($request->category_id);
@@ -262,11 +266,25 @@ class StockController extends Controller
         $products = $user->products()->whereNotIn('id',$user->stocks()->pluck('product_id')->toArray())->get();
       }else{
         $stocked_products = $user->stocks()->pluck('product_id')->toArray();
-        $product_owners = Product::whereIn('id',$stocked_products)->pluck('user_id')->toArray();
+        /* $product_owners = Product::whereIn('id',$stocked_products)->pluck('user_id')->toArray();
         $products = Product::whereIn('user_id',$product_owners)
         //->where('status','available')
         ->whereNotIn('id',$stocked_products)
+        ->get(); */
+
+        $categories = Product::whereIN('products.id',$stocked_products)
+        ->leftJoin('subcategories', 'products.subcategory_id', 'subcategories.id')
+        ->leftJoin('categories', 'subcategories.category_id', 'categories.id')
+        ->pluck('categories.id')->toArray();
+
+        $subcategories = Subcategory::whereIn('category_id', $categories)
+        ->pluck('subcategories.id')->toArray();
+
+        $products = Product::where('status','available')
+        ->whereIn('subcategory_id',$subcategories)
+        ->whereNotIn('id',$stocked_products)
         ->get();
+
       }
 
       $stocks = [];

@@ -131,5 +131,4 @@ class User extends Authenticatable
       $controller->send_fcm_device($title, $content, $this->fcm_token);
     }
   }
-
 }

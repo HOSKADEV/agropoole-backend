@@ -22,6 +22,7 @@ class UserResource extends JsonResource
           'image' => empty($this->image) ? null : url($this->image),
           'role' => $this->role,
           'status' => $this->status,
+          'fcm_token' => $this->fcm_token,
           'enterprise_name' => $this->enterprise_name,
           'longitude' => $this->longitude,
           'latitude' => $this->latitude,

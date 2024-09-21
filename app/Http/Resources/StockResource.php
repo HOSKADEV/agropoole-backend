@@ -21,6 +21,7 @@ class StockResource extends JsonResource
           'price' => $this->price,
           'min_quantity' => $this->min_quantity,
           'show_price' => $this->show_price,
+          'status' => $this->status,
         ];
     }
 }

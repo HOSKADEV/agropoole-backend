@@ -115,6 +115,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
   //Route::post('/v1/order/cancel','App\Http\Controllers\OrderController@cancel');
   Route::post('/v1/order/get','App\Http\Controllers\OrderController@get');
 
+  Route::post('/v1/delivery/create','App\Http\Controllers\DeliveryController@create');
+  Route::post('/v1/delivery/delete','App\Http\Controllers\DeliveryController@delete');
+
   Route::post('/v1/driver/create','App\Http\Controllers\DriverController@create');
   Route::post('/v1/driver/update','App\Http\Controllers\DriverController@update');
   Route::post('/v1/driver/delete','App\Http\Controllers\DriverController@delete');

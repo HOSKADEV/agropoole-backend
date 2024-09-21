@@ -36,7 +36,7 @@ class ProductController extends Controller
       //'unit_type' => 'required|in:1,2,3',
       'pack_price' => 'required_with:pack_units|nullable|numeric',
       'pack_units' => 'required_with:pack_price|nullable|integer',
-      //'status' => 'required|in:1,2'
+      'status' => 'sometimes|in:available,unavailable'
     ]);
 
     if ($validator->fails()) {
@@ -90,7 +90,7 @@ class ProductController extends Controller
       'unit_type' => 'sometimes|in:1,2,3',
       'pack_price' => 'required_with:pack_units|nullable|numeric',
       'pack_units' => 'required_with:pack_price|nullable|integer',
-      //'status' => 'sometimes|in:1,2'
+      'status' => 'sometimes|in:available,unavailable'
     ]);
 
     if ($validator->fails()){
@@ -233,7 +233,12 @@ class ProductController extends Controller
 
     //$products = Product::where('status','available')->orderBy('created_at','DESC');
 
-    $products = Product::where('user_id',$request->user_id)->orderBy('created_at','DESC');
+    $products = Product::where('user_id',$request->user_id)
+    ->orderBy('created_at','DESC');
+
+    if($request->user()->id != $request->user_id){
+      $products = $products->where('status','available');
+    }
 
     if($request->has('category_id')){
 

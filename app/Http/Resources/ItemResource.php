@@ -42,6 +42,7 @@ class ItemResource extends JsonResource
           'unit_price' => $this->unit_price,
           'quantity' => $this->quantity,
           'amount' => $this->amount,
+          'show_price' => $this->stock->show_price,
           'stock' => new StockResource($this->stock),
         ];
     }

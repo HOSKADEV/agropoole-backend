@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Delivery extends Model
 {
@@ -21,6 +22,18 @@ class Delivery extends Model
     }
 
     public function order(){
-      return $this->belongsTo(Driver::class);
+      return $this->belongsTo(Order::class);
+    }
+
+    public function notify($type){
+
+      $controller = new Controller();
+
+      if($this->order?->seller?->fcm_token){
+        $controller->send_fcm_device(__('Order n°').$this->order_id , __('delivery.seller.'.$type), $this->order->seller->fcm_token);
+      }
+      if($this->driver?->fcm_token){
+        $controller->send_fcm_device(__('Order n°').$this->order_id , __('delivery.driver.'.$type), $this->driver->fcm_token);
+      }
     }
 }
