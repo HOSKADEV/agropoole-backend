@@ -15,4 +15,8 @@ class Ad extends Model
       'image',
       'url',
     ];
+
+    public function types(){
+      return $this->hasMany(AdType::class);
+    }
 }

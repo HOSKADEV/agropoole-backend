@@ -18,6 +18,7 @@ class AdResource extends JsonResource
           'name' => $this->name,
           'url' => $this->url,
           'image' => empty($this->image) ? null : url($this->image),
+          'types' => $this->types()->pluck('type')->toArray()
         ];
     }
 }

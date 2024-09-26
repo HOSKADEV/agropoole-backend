@@ -751,6 +751,11 @@ class DatatablesController extends Controller
         return $row->name;
       })
 
+      ->addColumn('types', function ($row) {
+        return $row->types()->pluck('type')->toArray();
+      })
+
+
 
       ->addColumn('created_at', function ($row) {
 
