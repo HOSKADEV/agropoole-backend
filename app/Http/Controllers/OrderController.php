@@ -546,7 +546,7 @@ class OrderController extends Controller
     $orders = match(intval($request->type)){
       1 => Order::where('buyer_id', $user->id),
       2 => Order::where('seller_id', $user->id),
-      3 => Order::leftJoin('deliveries', function($join) use($user) {
+      3 => Order::join('deliveries', function($join) use($user) {
         $join->on('orders.id', '=', 'deliveries.order_id');
         $join->where('deliveries.driver_id', '=', $user->id);
         $join->where('deliveries.deleted_at', '=', null);

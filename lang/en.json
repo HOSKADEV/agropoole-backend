@@ -271,5 +271,7 @@
   "Status filter": "Filtrer par statut",
   "Reset password": "Réinitialiser le mot de passe",
 
-  "Order n°" : "Commande n°"
+  "Order n°" : "Commande n°",
+
+  "This option will determine who will see this ad" : "Cette option détermine qui verra cette annonce"
 }
