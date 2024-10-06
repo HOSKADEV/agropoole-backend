@@ -397,13 +397,19 @@ class OrderController extends Controller
       }
 
       if($request->has('driver_id')){
-        Delivery::updateOrInsert([
+        /* Delivery::updateOrInsert([
           'order_id' => $request->order_id,
-          //'driver_id' => $request->driver_id,
+          'driver_id' => $request->driver_id,
           'deleted_at' => null
         ],[
           'created_at' => Carbon::now(),
           'updated_at' => Carbon::now(),
+        ]); */
+
+        $order->deliveries()->delete();
+        Delivery::create([
+          'order_id' => $request->order_id,
+          'driver_id' => $request->driver_id,
         ]);
       }
 
