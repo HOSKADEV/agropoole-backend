@@ -139,7 +139,7 @@ Route::group(['middleware' => ['auth']], function () {
 
   //language
   Route::get('/lang', function () {
-  $locale = session()->get('locale') == 'ar' ? 'en' : 'ar';
+  $locale = session()->get('locale') == 'ar' ? 'fr' : 'ar';
   Session::put('locale', $locale);
   App::setLocale(Session::get('locale'));
   return redirect()->back();
