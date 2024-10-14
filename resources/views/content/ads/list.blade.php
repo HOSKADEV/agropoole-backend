@@ -77,8 +77,8 @@
                         <div class="mb-3">
                             <label class="form-label" for="categories">{{ __('Categories') }}</label>
                             <select class="selectpicker form-control" id="types" name="types[]" multiple>
-                                <option value="1"> {{ __('Factory') }} </option>
-                                <option value="2"> {{ __('Depot') }} </option>
+                                <option value="1"> {{ __('Provider') }} </option>
+                                <option value="2"> {{ __('Broker') }} </option>
                                 <option value="3"> {{ __('Store') }} </option>
                                 <option value="4"> {{ __('Client') }} </option>
                                 <option value="5"> {{ __('Driver') }} </option>
@@ -138,9 +138,9 @@
                               var html = '';
                                 data.forEach(element => {
                                     if (element == 1) {
-                                      html += '<span class="badge bg-label-primary">{{ __('Factory') }}</span> ';
+                                      html += '<span class="badge bg-label-primary">{{ __('Provider') }}</span> ';
                                     } else if (element == 2) {
-                                      html += '<span class="badge bg-label-success">{{ __('Depot') }}</span> ';
+                                      html += '<span class="badge bg-label-success">{{ __('Broker') }}</span> ';
                                     } else if (element == 3) {
                                       html += '<span class="badge bg-label-warning">{{ __('Store') }}</span> ';
                                     } else if (element == 4) {

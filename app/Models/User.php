@@ -131,4 +131,18 @@ class User extends Authenticatable
       $controller->send_fcm_device($title, $content, $this->fcm_token);
     }
   }
+
+  public function role_is($role = null){
+
+    $roles = [
+      0 => 'admin',
+      1 => 'provider',
+      2 => 'broker',
+      3 => 'store',
+      4 => 'client',
+      5 => 'driver',
+    ];
+
+    return $role ? $roles[$this->role] == $role : $roles[$this->role];
+  }
 }

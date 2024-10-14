@@ -69,8 +69,8 @@ $navbarDetached = ($navbarDetached ?? '');
                       </div>
                     </div>
                     <div class="flex-grow-1">
-                      <span class="fw-semibold d-block">{{__('Administration')}}</span>
-                      <small class="text-muted">{{__('Admin')}}</small>
+                      <span class="fw-semibold d-block">{{auth()->user()->name}}</span>
+                      <small class="text-muted">{{__(auth()->user()->role_is())}}</small>
                     </div>
                   </div>
                 </a>
@@ -91,12 +91,15 @@ $navbarDetached = ($navbarDetached ?? '');
                   <span class="align-middle">{{__('Switch language')}}</span>
                 </a>
               </li>
+              @if (auth()->user()->role_is('admin'))
               <li>
                 <a class="dropdown-item" href="{{url('/version')}}">
                   <i class='bx bx-cog me-2'></i>
                   <span class="align-middle">{{__('Settings')}}</span>
                 </a>
               </li>
+              @endif
+
               {{-- <li>
                 <a class="dropdown-item" href="javascript:void(0);">
                   <span class="d-flex align-items-center align-middle">

@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\User;
-use App\Models\Depot;
-use App\Models\Store;
-use App\Models\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Kreait\Firebase\Auth\UserQuery;

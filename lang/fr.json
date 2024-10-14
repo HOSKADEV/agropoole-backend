@@ -263,10 +263,18 @@
   "Availability filter": "Filtre de disponibilité",
 
   "Enterprise": "Entreprise",
-  "Factory": "Fournisseur",
-  "Depot": "Distributeur",
+  "Provider": "Fournisseur",
+  "Broker": "Distributeur",
   "Store": "Magasin",
   "Client": "Citoyen",
+
+  "admin": "Adminstrateur",
+  "provider": "Fournisseur",
+  "broker": "Distributeur",
+  "store": "Magasin",
+  "client": "Citoyen",
+  "driver" : "Livreur",
+
   "Type filter": "Filtrer par type",
   "Status filter": "Filtrer par statut",
   "Reset password": "Réinitialiser le mot de passe",

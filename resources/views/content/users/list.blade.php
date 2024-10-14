@@ -21,8 +21,8 @@
 
             <select class="filter-select" id="type" name="type">
                 <option value=""> {{ __('Type filter') }} </option>
-                <option value="1"> {{ __('Factory') }} </option>
-                <option value="2"> {{ __('Depot') }} </option>
+                <option value="1"> {{ __('Provider') }} </option>
+                <option value="2"> {{ __('Broker') }} </option>
                 <option value="3"> {{ __('Store') }} </option>
                 <option value="4"> {{ __('Client') }} </option>
                 <option value="5"> {{ __('Driver') }} </option>
@@ -112,9 +112,9 @@
                             name: 'type',
                             render: function(data) {
                                 if (data == 1) {
-                                    return '<span class="badge bg-label-primary">{{ __('Factory') }}</span>';
+                                    return '<span class="badge bg-label-primary">{{ __('Provider') }}</span>';
                                 } else if (data == 2) {
-                                    return '<span class="badge bg-label-success">{{ __('Depot') }}</span>';
+                                    return '<span class="badge bg-label-success">{{ __('Broker') }}</span>';
                                 } else if (data == 3) {
                                     return '<span class="badge bg-label-warning">{{ __('Store') }}</span>';
                                 } else if (data == 4) {

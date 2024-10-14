@@ -263,10 +263,18 @@
 "Availability filter" : "حسب التوفر",
 
 "Enterprise" : "الشركة",
-"Factory" : "المزود",
-"Depot" : "المورد",
+"Provider" : "المزود",
+"Broker" : "المورد",
 "Store" : "التاجر",
 "Client" : "العميل",
+
+"admin" : "المسؤول",
+"provider" : "المزود",
+"broker" : "المورد",
+"store" : "التاجر",
+"client" : "العميل",
+"driver" : "السائق",
+
 "Type filter" : "حسب النوع",
 "Status filter" : "حسب الحالة",
 "Reset password" : "اعادة تعيين كلمة المرور",
