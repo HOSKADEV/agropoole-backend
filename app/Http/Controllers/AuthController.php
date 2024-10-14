@@ -125,14 +125,14 @@ class AuthController extends Controller
       #$user = User::where('email',$firebase_user->email)->first();
 
       if(empty($user)){
-        throw new Exception('wrong credentails');
+        throw new Exception(__('wrong credentails'));
       }else{
         $user->refresh();
       }
 
       /* switch($user->status){
-        case 'blocked' : throw new Exception('blocked account');
-        case 'inactive' : throw new Exception('inactive account');
+        case 'blocked' : throw new Exception(__('blocked account'));
+        case 'inactive' : throw new Exception(__('inactive account'));
       } */
 
       if($request->has('fcm_token')){

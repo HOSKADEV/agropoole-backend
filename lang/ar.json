@@ -281,6 +281,13 @@
 
 "Order n°" : "الطلب رقم ",
 
-"This option will determine who will see this ad" : "سيحدد هذا الخيار من سيشاهد هذا الإعلان"
+"This option will determine who will see this ad" : "سيحدد هذا الخيار من سيشاهد هذا الإعلان",
+
+"wrong credentails": "بيانات الاعتماد خاطئة",
+"blocked account": "الحساب محظور",
+"inactive account": "الحساب غير نشط",
+"delivery already exists": "التوصيل موجود بالفعل",
+"empty cart": "السلة فارغة",
+"the selected driver is not assigned to the order": "السائق المحدد غير معين للطلب"
 
 }

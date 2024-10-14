@@ -281,5 +281,12 @@
 
   "Order n°" : "Commande n°",
 
-  "This option will determine who will see this ad" : "Cette option détermine qui verra cette annonce"
+  "This option will determine who will see this ad" : "Cette option détermine qui verra cette annonce",
+
+  "wrong credentails": "Identifiants incorrects",
+  "blocked account": "Compte bloqué",
+  "inactive account": "Compte inactif",
+  "delivery already exists": "La livraison existe déjà",
+  "empty cart": "Panier vide",
+  "the selected driver is not assigned to the order": "Le chauffeur sélectionné n'est pas assigné à la commande"
 }

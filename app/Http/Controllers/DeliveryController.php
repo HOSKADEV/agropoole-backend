@@ -28,7 +28,7 @@ class DeliveryController extends Controller
         $delivery = $order->deliveries()->where('driver_id',$request->driver_id)->first();
 
         if($delivery){
-          throw new Exception('delivery already exists');
+          throw new Exception(__('delivery already exists'));
         }
 
         $delivery = Delivery::create($request->all());

@@ -110,7 +110,7 @@ class OrderController extends Controller
       $items = $user->cart()->items;
 
       if($items->count() == 0){
-        throw new Exception('empty cart');
+        throw new Exception(__('empty cart'));
       }
 
       $cart = Cart::create(['user_id' => $user->id , 'type' => 'order']);
@@ -375,7 +375,7 @@ class OrderController extends Controller
           $delivery = $order->deliveries()->where('driver_id',$request->driver_id ?? $request->user()->id)->first();
 
           if(empty($delivery)){
-            throw new Exception('the select driver is not assigned to the order');
+            throw new Exception(__('the selected driver is not assigned to the order'));
           }
 
           Delivery::where('order_id', $request->order_id)

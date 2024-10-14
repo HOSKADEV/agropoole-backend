@@ -59,13 +59,11 @@
                             <div class="mb-3">
                                 <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
                             </div>
-                            <div class="mb-3">
-
+                            {{-- <div class="mb-3">
                               <a class="btn btn-outline-primary w-100" href="{{url('/auth/redirect')}}">
                                 <span class="tf-icons bx bxl-google bx-18px me-2"></span> Sign in with Google
                               </a>
-
-                            </div>
+                            </div> --}}
                         </form>
 
                         {{-- <p class="text-center">
