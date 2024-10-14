@@ -145,4 +145,15 @@ class User extends Authenticatable
 
     return $role ? $roles[$this->role] == $role : $roles[$this->role];
   }
+
+  public function image(){
+    $image = 'assets/img/avatars/avatar.png';
+    if ($this->role_is('admin')){
+      $image = 'logo.png';
+    }else if($this->image){
+      $image = $this->image;
+    }
+
+    return url($image);
+  }
 }

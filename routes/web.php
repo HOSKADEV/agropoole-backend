@@ -154,8 +154,8 @@ Route::get('/auth/redirect', function () {
 });
 
 Route::get('/auth/callback', function () {
-  $google_user = Socialite::driver('google')->user();
-
+  $google_user = Socialite::driver('google')->stateless()->user();
+//dd($google_user);
   $user = User::where('email',$google_user->email)->first();
 
   if($user){
