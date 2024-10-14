@@ -1,5 +1,11 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-
+@php
+   $user = auth()->user();
+    $role = $user->role_is();
+    $verticalMenuJson = file_get_contents(base_path('resources/menu/'.$role.'Menu.json'));
+    $verticalMenuData = json_decode($verticalMenuJson);
+    $menuData = [$verticalMenuData];
+@endphp
   <!-- ! Hide app brand if navbar-full -->
   <div class="app-brand demo">
     <a href="{{url('/')}}" class="app-brand-link">

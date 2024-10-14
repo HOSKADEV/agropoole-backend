@@ -1,0 +1,18 @@
+{
+  "menu": [
+    {
+      "url": "/",
+      "name": "Dashboard",
+      "icon": "menu-icon tf-icons bx bxs-home-circle",
+      "slug": "dashboard-analytics"
+    },
+
+    {
+      "url": "/order/browse",
+      "name": "Orders",
+      "icon": "menu-icon tf-icons bx bxs-spreadsheet",
+      "slug": "order-browse"
+    }
+
+  ]
+}
