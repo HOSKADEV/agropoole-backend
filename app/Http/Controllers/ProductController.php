@@ -18,9 +18,13 @@ class ProductController extends Controller
 {
 
   public function index(){
-    $categories = Category::all();
-    return view('content.products.list')
-    ->with('categories',$categories);
+    if (auth()->user()->role_is('provider')) {
+      $categories = Category::all();
+      return view('content.products.list')
+      ->with('categories',$categories);
+    } else {
+      return redirect()->route('pages-misc-error');
+    }
   }
   public function create(Request $request){
     //dd($request->all());

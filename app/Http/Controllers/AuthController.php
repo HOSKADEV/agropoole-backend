@@ -145,6 +145,7 @@ class AuthController extends Controller
         $user->save();
       }
 
+      $user->refresh();
       $token = $user->createToken($this->random())->plainTextToken;
 
         return response()->json([

@@ -16,6 +16,17 @@ use App\Http\Resources\PaginatedStockCollection;
 
 class StockController extends Controller
 {
+
+  public function index(){
+    if (in_array(auth()->user()->role_is(), ['provider','broker','store']) ) {
+      $categories = Category::all();
+      return view('content.stocks.list')
+      ->with('categories',$categories);
+    } else {
+      return redirect()->route('pages-misc-error');
+    }
+  }
+
   public function create(Request $request){
     //dd($request->all());
 
@@ -175,10 +186,15 @@ class StockController extends Controller
 
     $request->mergeIfMissing(['user_id' => $this->get_user_from_token($request->bearerToken())->id]);
 
+    if($request->user()->id != $request->user_id){
+     $request->mergeIfMissing(['status' =>'available']);
+    }
+
     $validator = Validator::make($request->all(), [
       'user_id' => 'required|exists:users,id',
       'category_id' => 'sometimes|missing_with:subcategory_id|exists:categories,id',
       'subcategory_id' => 'sometimes|exists:subcategories,id',
+      'status' => 'sometimes|in:available,unavailable,all',
       'search' => 'sometimes|string',
     ]);
 
@@ -192,18 +208,12 @@ class StockController extends Controller
 
     try{
 
-
-
     $stocks = Stock::join('products', function($join){
       $join->on('stocks.product_id', '=', 'products.id')
       ->where('products.deleted_at', null);
     })
     ->select('stocks.*','products.subcategory_id','products.unit_name')
     ->where('stocks.user_id',$request->user_id)->orderBy('stocks.created_at','DESC');
-
-    if($request->user()->id != $request->user_id){
-      $stocks = $stocks->where('stocks.status','available');
-    }
 
     if($request->has('category_id')){
 
@@ -223,7 +233,11 @@ class StockController extends Controller
                             //->orWhere('pack_name', 'like', '%' . $request->search . '%');
     }
 
-
+    if($request->has('status')){
+      $stocks = $request->status != 'all'
+      ? $stocks->where('stocks.status', $request->status)
+      : $stocks;
+    }
 
     if($request->has('all')){
       $stocks = $stocks->get();

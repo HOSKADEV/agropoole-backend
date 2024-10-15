@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Askedio\SoftCascade\Traits\SoftCascadeTrait;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Session;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
-use Session;
+use Askedio\SoftCascade\Traits\SoftCascadeTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
@@ -42,6 +43,10 @@ class Product extends Model
 
     public function items(){
       return $this->hasMany(Item::class);
+    }
+
+    public function stocks(){
+      return $this->hasMany(Stock::class);
     }
 
     public function category(){
@@ -83,6 +88,17 @@ class Product extends Model
       }
 
       return $item->quantity;
+    }
+
+    public function image(){
+      $image = 'assets/img/icons/file-not-found.jpg';
+      if($this->image){
+        $image =  File::exists($this->image)
+        ? url($this->image)
+        : $image;
+      }
+
+      return url($image);
     }
 
 

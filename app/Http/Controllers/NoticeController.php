@@ -12,133 +12,141 @@ use Illuminate\Support\Facades\Validator;
 
 class NoticeController extends Controller
 {
-    public function index(){
+  public function index()
+  {
+    if (auth()->user()->role_is('admin')) {
       return view('content.notices.list');
+    } else {
+      return redirect()->route('pages-misc-error');
+    }
+  }
+
+  public function create(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'title_ar' => 'required|string',
+      'title_en' => 'required|string',
+      'content_ar' => 'required|string',
+      'content_en' => 'required|string',
+      'type' => 'required|in:0,1,2'
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json([
+        'status' => 0,
+        'message' => $validator->errors()->first()
+      ]);
     }
 
-    public function create(Request $request){
-      $validator = Validator::make($request->all(), [
-        'title_ar' => 'required|string',
-        'title_en' => 'required|string',
-        'content_ar' => 'required|string',
-        'content_en' => 'required|string',
-        'type' => 'required|in:0,1,2'
+    try {
+
+      $notice = Notice::create($request->all());
+
+      $users = User::where('status', 'active')->get();
+
+      $fcm_tokens = [];
+
+      foreach ($users as $user) {
+        Notification::create([
+          'user_id' => $user->id,
+          'notice_id' => $notice->id
+        ]);
+
+        array_push($fcm_tokens, $user->fcm_token);
+      }
+
+      $this->send_fcm_multi(
+        $notice->title_ar,
+        $notice->content_ar,
+        $fcm_tokens
+      );
+
+      //fcm
+
+      return response()->json([
+        'status' => 1,
+        'message' => 'success',
+
       ]);
 
-      if ($validator->fails()) {
-        return response()->json([
-          'status'=> 0,
-          'message' => $validator->errors()->first()
-        ]);
-      }
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json([
+        'status' => 0,
+        'message' => $e->getMessage()
+      ]);
+    }
+  }
 
-      try{
+  public function update(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'notice_id' => 'required|exists:notices,id',
+      'title_ar' => 'sometimes|string',
+      'title_en' => 'sometimes|string',
+      'content_ar' => 'sometimes|string',
+      'content_en' => 'sometimes|string',
+      'type' => 'sometimes|in:0,1,2'
+    ]);
 
-        $notice = Notice::create($request->all());
-
-        $users = User::where('status','active')->get();
-
-        $fcm_tokens = [];
-
-        foreach($users as $user){
-          Notification::create([
-            'user_id' => $user->id,
-            'notice_id' => $notice->id
-          ]);
-
-          array_push($fcm_tokens,$user->fcm_token);
-        }
-
-        $this->send_fcm_multi(
-          $notice->title_ar,
-          $notice->content_ar,
-          $fcm_tokens
-        );
-
-        //fcm
-
-        return response()->json([
-          'status' => 1,
-          'message' => 'success',
-
-        ]);
-
-      }catch(Exception $e){
-        DB::rollBack();
-        return response()->json([
-          'status' => 0,
-          'message' => $e->getMessage()
-        ]);
-      }
+    if ($validator->fails()) {
+      return response()->json([
+        'status' => 0,
+        'message' => $validator->errors()->first()
+      ]);
     }
 
-    public function update(Request $request){
-      $validator = Validator::make($request->all(), [
-        'notice_id' => 'required|exists:notices,id',
-        'title_ar' => 'sometimes|string',
-        'title_en' => 'sometimes|string',
-        'content_ar' => 'sometimes|string',
-        'content_en' => 'sometimes|string',
-        'type' => 'sometimes|in:0,1,2'
+    try {
+
+      $notice = Notice::find($request->notice_id);
+
+      $notice->update($request->except('notice_id'));
+
+      return response()->json([
+        'status' => 1,
+        'message' => 'success',
+        'data' => $notice
       ]);
 
-      if ($validator->fails()) {
-        return response()->json([
-          'status'=> 0,
-          'message' => $validator->errors()->first()
-        ]);
-      }
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json([
+        'status' => 0,
+        'message' => $e->getMessage()
+      ]);
+    }
+  }
 
-      try{
+  public function delete(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'notice_id' => 'required|exists:notices,id',
+    ]);
 
-        $notice = Notice::find($request->notice_id);
-
-        $notice->update($request->except('notice_id'));
-
-        return response()->json([
-          'status' => 1,
-          'message' => 'success',
-          'data' => $notice
-        ]);
-
-      }catch(Exception $e){
-        DB::rollBack();
-        return response()->json([
-          'status' => 0,
-          'message' => $e->getMessage()
-        ]);
-      }
+    if ($validator->fails()) {
+      return response()->json([
+        'status' => 0,
+        'message' => $validator->errors()->first()
+      ]);
     }
 
-    public function delete(Request $request){
-      $validator = Validator::make($request->all(), [
-        'notice_id' => 'required|exists:notices,id',
+    try {
+
+      $notice = Notice::find($request->notice_id);
+
+      $notice->delete();
+
+      return response()->json([
+        'status' => 1,
+        'message' => 'success',
       ]);
 
-      if ($validator->fails()) {
-        return response()->json([
-          'status'=> 0,
-          'message' => $validator->errors()->first()
-        ]);
-      }
-
-      try{
-
-        $notice = Notice::find($request->notice_id);
-
-        $notice->delete();
-
-        return response()->json([
-          'status' => 1,
-          'message' => 'success',
-        ]);
-
-      }catch(Exception $e){
-        DB::rollBack();
-        return response()->json([
-          'status' => 0,
-          'message' => $e->getMessage()
-        ]);
-      }
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json([
+        'status' => 0,
+        'message' => $e->getMessage()
+      ]);
     }
+  }
 }

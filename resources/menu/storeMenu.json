@@ -8,6 +8,13 @@
     },
 
     {
+      "url": "/stock/browse",
+      "name": "Stocks",
+      "icon": "menu-icon tf-icons bx bxs-package",
+      "slug": "stock-browse"
+    },
+
+    {
       "url": "/order/browse",
       "name": "Orders",
       "icon": "menu-icon tf-icons bx bxs-spreadsheet",

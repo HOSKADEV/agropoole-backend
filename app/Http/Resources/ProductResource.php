@@ -18,8 +18,8 @@ class ProductResource extends JsonResource
 
         return [
           'id' => $this->id,
-          //'subcategory_id' => $this->subcategory_id,
-          //'category_id' => $this->subcategory->category_id,
+          'subcategory_id' => $this->subcategory_id,
+          'category_id' => $this->subcategory->category_id,
           'subcategory' => new SubcategoryResource($this->subcategory),
           'category' => new CategoryResource($this->category()),
           'unit_name' => $this->unit_name,

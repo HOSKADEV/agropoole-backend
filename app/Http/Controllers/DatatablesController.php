@@ -3,22 +3,23 @@
 namespace App\Http\Controllers;
 
 
+use Session;
 use App\Models\Ad;
 use App\Models\Cart;
-use App\Models\Category;
-use App\Models\Discount;
+use App\Models\User;
+use App\Models\Offer;
+use App\Models\Order;
+use App\Models\Stock;
 use App\Models\Driver;
 use App\Models\Family;
 use App\Models\Notice;
-use App\Models\Offer;
-use App\Models\Order;
 use App\Models\Product;
 use App\Models\Section;
+use App\Models\Category;
+use App\Models\Discount;
 use App\Models\Subcategory;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Session;
 
 
 class DatatablesController extends Controller
@@ -212,20 +213,26 @@ class DatatablesController extends Controller
 
   public function products(Request $request){
 
-    $products = Product::orderBy('created_at','DESC');
+    $user = $request->user();
 
-    if(!empty($request->category)){
-      $category = Category::findOrFail($request->category);
+    $products = Product::where('user_id', $user->id);
+
+    if($request->category){
+      /* $category = Category::findOrFail($request->category);
       $category_subs = $category->subcategories()->pluck('id')->toArray();
-      $products = $products->whereIn('subcategory_id',$category_subs);
+      $products = $products->whereIn('subcategory_id',$category_subs); */
+
+      $products = $products->whereHas('subcategory', function($query) use ($request){
+        $query->where('category_id', $request->category);
+      });
     }
 
 
-    if(!empty($request->subcategory)){
+    if($request->subcategory){
       $products = $products->where('subcategory_id',$request->subcategory);
     }
 
-    if(!empty($request->discount)){
+    /* if(!empty($request->discount)){
       if($request->discount == "1"){
         $discounts = Discount::WhereRaw('? between start_date and end_date', Carbon::now()->toDateString())
         ->pluck('product_id')->toArray();
@@ -238,16 +245,24 @@ class DatatablesController extends Controller
         $products = $products->whereNotIn('id',$discounts);
       }
 
-    }
+    } */
 
-    if(!empty($request->availability)){
+    if($request->availability){
 
       $products = $products->where('status',$request->availability == 1?'available':'unavailable');
 
 
     }
 
-    $products = $products->get();
+    if($request->stock){
+
+      $products = $request->stock == 1
+      ? $products->has('stocks', '>', '0')
+      : $products->has('stocks', '=', '0');
+
+    }
+
+    $products = $products->orderBy('created_at','DESC')->get();
 
     return datatables()
       ->of($products)
@@ -260,7 +275,7 @@ class DatatablesController extends Controller
 
           $btn .= '<a class="dropdown-item-inline delete" title="'.__('Delete').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bxs-trash me-2"></i></a>';
 
-          if(is_null($row->discount())){
+          /* if(is_null($row->discount())){
 
             $btn .= '<a class="dropdown-item-inline add_discount" title="'.__('Add discount').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bxs-message-alt-add me-2"></i></a>';
 
@@ -270,29 +285,47 @@ class DatatablesController extends Controller
 
             $btn .= '<a class="dropdown-item-inline delete_discount" title="'.__('Delete discount').'" table_id="'.$row->discount()->id.'" href="javascript:void(0);"><i class="bx bxs-message-alt-x me-2"></i></a>';
 
-          }
+          } */
 
           return $btn;
       })
 
-      ->addColumn('name', function ($row) {
+      /* ->addColumn('name', function ($row) {
 
           return $row->unit_name;
 
-      })
+      }) */
 
-      ->addColumn('price', function ($row) {
+      ->addColumn('name_image', function ($row) {
 
-        return number_format($row->unit_price,2,'.',',');
+        return [
+          0 => $row->image(),
+          1 => $row->unit_name
+        ];
 
     })
 
-      ->addColumn('is_discounted', function ($row) {
+      /* ->addColumn('price', function ($row) {
+
+        return number_format($row->unit_price,2,'.',',');
+
+    }) */
+
+      /* ->addColumn('is_discounted', function ($row) {
 
         if(is_null($row->discount())){
          return false ;
         }
         return true;
+
+      }) */
+
+      ->addColumn('in_stock', function ($row) {
+
+        if($row->stocks()->count()){
+         return true ;
+        }
+        return false;
 
       })
 
@@ -305,13 +338,112 @@ class DatatablesController extends Controller
 
       })
 
-      ->addColumn('discount', function ($row) {
+      /* ->addColumn('discount', function ($row) {
 
         if(is_null($row->discount())){
           return '' ;
          }
 
         return number_format($row->discount()->amount,2) . '%';
+
+      }) */
+
+      ->addColumn('created_at', function ($row) {
+
+        return date('Y-m-d',strtotime($row->created_at));
+
+      })
+
+
+      ->make(true);
+  }
+
+  public function stocks(Request $request){
+
+    $user = $request->user();
+
+    $stocks = Stock::where('user_id', $user->id);
+
+    if($request->category){
+
+      $stocks = $stocks->whereHas('product', function($query) use ($request){
+        $query->whereHas('subcategory', function($query) use ($request){
+          $query->where('category_id', $request->category);
+        });
+      });
+    }
+
+
+    if($request->subcategory){
+      $stocks = $stocks->whereHas('product', function($query) use ($request){
+        $query->where('subcategory_id',$request->subcategory);
+      });
+    }
+
+    if($request->availability){
+
+      $stocks = $stocks->where('status',$request->availability == 1?'available':'unavailable');
+
+    }
+
+    if($request->quantity){
+
+      $stocks = $stocks->whereColumn('quantity', $request->quantity == 1 ?'>' : '<=', 'min_quantity');
+
+    }
+
+    $stocks = $stocks->orderBy('created_at','DESC')->with('product')->get();
+
+    return datatables()
+      ->of($stocks)
+      ->addIndexColumn()
+
+      ->addColumn('action', function ($row) {
+          $btn = '';
+
+          $btn .= '<a class="dropdown-item-inline update" title="'.__('Edit').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bxs-edit me-2"></i></a>';
+
+          $btn .= '<a class="dropdown-item-inline delete" title="'.__('Delete').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bxs-trash me-2"></i></a>';
+
+          return $btn;
+      })
+
+      /* ->addColumn('name', function ($row) {
+
+          return $row->unit_name;
+
+      }) */
+
+      ->addColumn('name_image', function ($row) {
+
+        return [
+          0 => $row->product->image(),
+          1 => $row->product->unit_name
+        ];
+
+    })
+
+      ->addColumn('price', function ($row) {
+
+        return number_format($row->price,2,'.',',');
+
+    })
+
+      ->addColumn('quantity', function ($row) {
+
+        return [
+          0 => $row->quantity,
+          1 => $row->min_quantity
+        ];
+
+      })
+
+      ->addColumn('availability', function ($row) {
+
+        if($row->status == 'unavailable'){
+         return false ;
+        }
+        return true;
 
       })
 

@@ -20,7 +20,12 @@ class UserController extends Controller
 
   public function index()
   {
-    return view('content.users.list');
+    if(auth()->user()->role_is('admin')){
+      return view('content.users.list');
+    }else{
+      return redirect()->route('pages-misc-error');
+    }
+
   }
   //
   public function update(Request $request)

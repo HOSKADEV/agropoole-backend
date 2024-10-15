@@ -48,6 +48,8 @@ Route::group(['middleware' => ['auth']], function () {
   Route::post('/user/list', 'App\Http\Controllers\DatatablesController@users')->name('user-list');
   Route::get('/notice/list', 'App\Http\Controllers\DatatablesController@notices')->name('notice-list');
   Route::get('/ad/list', 'App\Http\Controllers\DatatablesController@ads')->name('ad-list');
+  Route::get('/stock/browse', 'App\Http\Controllers\StockController@index')->name('stock-browse');
+  Route::post('/stock/list', 'App\Http\Controllers\DatatablesController@stocks')->name('stock-list');
 });
 
 Route::group(['middleware' => ['auth']], function () {
@@ -80,6 +82,13 @@ Route::group(['middleware' => ['auth']], function () {
   Route::post('/product/delete', 'App\Http\Controllers\ProductController@delete');
   Route::post('/product/restore', 'App\Http\Controllers\ProductController@restore');
   Route::post('/product/get', 'App\Http\Controllers\ProductController@get');
+
+
+  Route::post('/stock/create', 'App\Http\Controllers\StockController@create');
+  Route::post('/stock/update', 'App\Http\Controllers\StockController@update');
+  Route::post('/stock/delete', 'App\Http\Controllers\StockController@delete');
+  Route::post('/stock/restore', 'App\Http\Controllers\StockController@restore');
+  Route::post('/stock/get', 'App\Http\Controllers\StockController@get');
 
 
   Route::post('/discount/create', 'App\Http\Controllers\DiscountController@create');

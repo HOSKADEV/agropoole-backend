@@ -15,7 +15,11 @@ use Illuminate\Support\Facades\Validator;
 class CategoryController extends Controller
 {
     public function index(){
-      return view('content.categories.list');
+      if(auth()->user()->role_is('admin')){
+        return view('content.categories.list');
+      }else{
+        return redirect()->route('pages-misc-error');
+      }
     }
     public function create(Request $request){
       $validator = Validator::make($request->all(), [

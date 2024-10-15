@@ -1,12 +1,12 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', __('Products'))
+@section('title', __('Stocks'))
 
 @section('content')
 
     <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Products') }} /</span> {{ __('Browse products') }}
-        <button type="button" class="btn btn-primary" id="create" style="float:right">{{ __('Add Product') }}</button>
+        <span class="text-muted fw-light">{{ __('Stocks') }} /</span> {{ __('Browse stocks') }}
+        <button type="button" class="btn btn-primary" id="create" style="float:right">{{ __('Add Stock') }}</button>
     </h4>
 
     <!-- Basic Bootstrap Table -->
@@ -29,11 +29,11 @@
             </div>
 
             <div class="form-group col-md-3 p-3">
-                <label for="type" class="form-label">{{ __('Stock filter') }}</label>
-                <select class="form-select" id="stock" name="stock">
+                <label for="type" class="form-label">{{ __('Quantity status filter') }}</label>
+                <select class="form-select" id="quantity" name="quantity">
                     <option value=""> {{ __('Not selected') }}</option>
-                    <option value="1"> {{ __('Stocked') }}</option>
-                    <option value="2"> {{ __('Not stocked') }}</option>
+                    <option value="1"> {{ __('Sufficient') }}</option>
+                    <option value="2"> {{ __('Insufficient') }}</option>
                 </select>
             </div>
 
@@ -52,12 +52,10 @@
                     <tr>
                         <th>#</th>
                         <th>{{ __('Name') }}</th>
-                        {{-- <th>{{ __('Price') }}</th> --}}
-                        <th>{{ __('Created at') }}</th>
+                        <th>{{ __('Price') }}</th>
+                        <th>{{ __('Quantity') }}</th>
                         <th>{{ __('is_available') }}</th>
-                        <th>{{ __('in_stock') }}</th>
-                        {{--           <th>{{__('in_discount')}}</th>
-                             <th>{{__('discount')}}</th> --}}
+                        <th>{{ __('Created at') }}</th>
                         <th>{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -65,12 +63,12 @@
         </div>
     </div>
 
-    {{-- product modal --}}
+    {{-- stock modal --}}
     <div class="modal fade" id="modal" aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="fw-bold py-1 mb-1">{{ __('Add product') }}</h4>
+                    <h4 class="fw-bold py-1 mb-1">{{ __('Add stock') }}</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -193,7 +191,7 @@
                     <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
                         enctype="multipart/form-data" id="discount_form">
 
-                        <input type="text" class="form-control" id="product_id" name="product_id" hidden />
+                        <input type="text" class="form-control" id="stock_id" name="stock_id" hidden />
 
                         <div class="mb-3">
                             <label class="form-label" for="type">{{ __('Type') }}</label>
@@ -236,7 +234,7 @@
         $(document).ready(function() {
             load_data();
 
-            function load_data(category = null, subcategory = null, stock = null, availability = null) {
+            function load_data(category = null, subcategory = null, quantity = null, availability = null) {
                 //$.fn.dataTable.moment( 'YYYY-M-D' );
                 var table = $('#laravel_datatable').DataTable({
 
@@ -246,11 +244,11 @@
                     pageLength: 100,
 
                     ajax: {
-                        url: "{{ url('product/list') }}",
+                        url: "{{ url('stock/list') }}",
                         data: {
                             category: category,
                             subcategory: subcategory,
-                            stock: stock,
+                            quantity: quantity,
                             availability: availability
                         },
                         type: 'POST',
@@ -270,7 +268,7 @@
                             name: 'name_image',
                             render: function(data) {
 
-                                return '<div class="d-flex justify-content-start align-items-center product-name"><div class="avatar-wrapper"><div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
+                                return '<div class="d-flex justify-content-start align-items-center stock-name"><div class="avatar-wrapper"><div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
                                     data[0] +
                                     '" class="rounded"></div></div><div class="d-flex flex-column"><h6 class="text-nowrap mb-0">' +
                                     data[1] + '</h6></div></div>';
@@ -282,14 +280,23 @@
                             name: 'name'
                         }, */
 
-                        /* {
+                        {
                             data: 'price',
                             name: 'price'
-                        }, */
+                        },
 
                         {
-                            data: 'created_at',
-                            name: 'created_at'
+                            data: 'quantity',
+                            name: 'quantity',
+                            render: function(data) {
+
+                              if (data[0] <= data[1]) {
+                                    return '<span class="badge bg-label-danger">'+data[0]+'</span>';
+                                } else {
+                                    return '<span class="badge bg-label-success">'+data[0]+'</span>';
+                                }
+
+                            }
                         },
 
                         {
@@ -305,23 +312,14 @@
                         },
 
                         {
-                            data: 'in_stock',
-                            name: 'in_stock',
-                            render: function(data) {
-                                if (data == false) {
-                                    return '<span class="badge bg-label-danger">{{ __('No') }}</span>';
-                                } else {
-                                    return '<span class="badge bg-label-success">{{ __('Yes') }}</span>';
-                                }
-                            }
+                            data: 'created_at',
+                            name: 'created_at'
                         },
-
 
                         /* {
                             data: 'discount',
                             name: 'discount'
                         }, */
-
 
                         {
                             data: 'action',
@@ -340,12 +338,12 @@
             function refresh_table() {
                 var category = document.getElementById('category').value;
                 var subcategory = document.getElementById('subcategory').value;
-                var stock = document.getElementById('stock').value;
+                var quantity = document.getElementById('quantity').value;
                 var availability = document.getElementById('availability').value;
 
                 var table = $('#laravel_datatable').DataTable();
                 table.destroy();
-                load_data(category, subcategory, stock, availability);
+                load_data(category, subcategory, quantity, availability);
             }
 
             $('#category').on('change', function() {
@@ -390,7 +388,7 @@
 
             });
 
-            $('#stock').on('change', function() {
+            $('#quantity').on('change', function() {
 
                 refresh_table();
 
@@ -426,17 +424,17 @@
             $(document.body).on('click', '.update', function() {
                 document.getElementById('form').reset();
                 document.getElementById('form_type').value = "update";
-                var product_id = $(this).attr('table_id');
-                $("#id").val(product_id);
+                var stock_id = $(this).attr('table_id');
+                $("#id").val(stock_id);
 
                 $.ajax({
-                    url: '{{ url('product/update') }}',
+                    url: '{{ url('stock/update') }}',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     type: 'POST',
                     data: {
-                        product_id: product_id
+                        stock_id: stock_id
                     },
                     dataType: 'JSON',
                     success: function(response) {
@@ -534,12 +532,12 @@
                 var formtype = document.getElementById('form_type').value;
                 //console.log(formtype);
                 if (formtype == "create") {
-                    url = "{{ url('product/create') }}";
+                    url = "{{ url('stock/create') }}";
                 }
 
                 if (formtype == "update") {
-                    url = "{{ url('product/update') }}";
-                    queryString.append("product_id", document.getElementById('id').value)
+                    url = "{{ url('stock/update') }}";
+                    queryString.append("stock_id", document.getElementById('id').value)
                 }
 
                 $("#modal").modal("hide");
@@ -589,7 +587,7 @@
 
             $(document.body).on('click', '.delete', function() {
 
-                var product_id = $(this).attr('table_id');
+                var stock_id = $(this).attr('table_id');
 
                 Swal.fire({
                     title: "{{ __('Warning') }}",
@@ -604,13 +602,13 @@
                     if (result.isConfirmed) {
 
                         $.ajax({
-                            url: "{{ url('product/delete') }}",
+                            url: "{{ url('stock/delete') }}",
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
                             type: 'POST',
                             data: {
-                                product_id: product_id
+                                stock_id: stock_id
                             },
                             dataType: 'JSON',
                             success: function(response) {
@@ -633,10 +631,10 @@
             });
 
             $(document.body).on('click', '.add_discount', function() {
-                var product_id = $(this).attr('table_id');
+                var stock_id = $(this).attr('table_id');
                 document.getElementById('discount_form').reset();
                 document.getElementById('discount_form_type').value = "create";
-                document.getElementById('product_id').value = product_id;
+                document.getElementById('stock_id').value = stock_id;
                 $("#discount_modal").modal('show');
             });
 
@@ -660,8 +658,8 @@
                     success: function(response) {
                         if (response.status == 1) {
 
-                            document.getElementById('product_id').value = response.data
-                                .product_id;
+                            document.getElementById('stock_id').value = response.data
+                                .stock_id;
                             document.getElementById('amount').value = response.data.amount;
                             document.getElementById('start_date').value = response.data
                                 .start_date;

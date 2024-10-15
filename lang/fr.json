@@ -110,7 +110,7 @@
   "Location" : "Emplacement",
   "Created at" : "Créé à",
   "Actions" : "Actions",
-  "Upload new image" : "Télécharger une nouvelle image",
+  "Upload new image" : "Nouvelle image",
   "Reset" : "Réinitialiser",
   "Send" : "Envoyer",
   "Success" : "Succès",
@@ -288,5 +288,10 @@
   "inactive account": "Compte inactif",
   "delivery already exists": "La livraison existe déjà",
   "empty cart": "Panier vide",
-  "the selected driver is not assigned to the order": "Le chauffeur sélectionné n'est pas assigné à la commande"
+  "the selected driver is not assigned to the order": "Le chauffeur sélectionné n'est pas assigné à la commande",
+
+  "in_stock" : "Stocké",
+  "Stock filter" : "Filtre de stock",
+  "Stocked" : "Stocké",
+  "Not stocked" : "Non stocké"
 }
