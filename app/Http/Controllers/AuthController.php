@@ -59,9 +59,10 @@ class AuthController extends Controller
 
         //return ($user);
 
-        $token = $user->createToken($this->random())->plainTextToken;
-
         DB::commit();
+
+        $user->refresh();
+        $token = $user->createToken($this->random())->plainTextToken;
 
         return response()->json([
           'status'=> 1,
@@ -145,7 +146,6 @@ class AuthController extends Controller
         $user->save();
       }
 
-      $user->refresh();
       $token = $user->createToken($this->random())->plainTextToken;
 
         return response()->json([
