@@ -96,6 +96,12 @@ class User extends Authenticatable
     return $this->name;
   }
 
+  public function enterprise()
+  {
+    //return $this->firstname . ' ' . $this->lastname;
+    return empty($this->enterprise_name) ? $this->name : $this->enterprise_name;
+  }
+
   public function phone()
   {
     /* return is_null($this->phone) ? null : '0'.$this->phone; */

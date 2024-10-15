@@ -6,7 +6,9 @@
 
     <h4 class="fw-bold py-3 mb-3">
         <span class="text-muted fw-light">{{ __('Products') }} /</span> {{ __('Browse products') }}
-        <button type="button" class="btn btn-primary" id="create" style="float:right">{{ __('Add Product') }}</button>
+        @if (auth()->user()->role_is('provider'))
+            <button type="button" class="btn btn-primary" id="create" style="float:right">{{ __('Add Product') }}</button>
+        @endif
     </h4>
 
     <!-- Basic Bootstrap Table -->
@@ -28,6 +30,28 @@
                 </select>
             </div>
 
+            @if (auth()->user()->role_is('provider'))
+                <div class="form-group col-md-3 p-3">
+                    <label for="type" class="form-label">{{ __('Availability filter') }}</label>
+                    <select class="form-select" id="availability" name="availability">
+                        <option value=""> {{ __('Not selected') }}</option>
+                        <option value="1"> {{ __('Available') }}</option>
+                        <option value="2"> {{ __('Unavailable') }}</option>
+                    </select>
+                </div>
+            @else
+                <div class="form-group col-md-3 p-3">
+                    <label for="category" class="form-label">{{ __('Provider filter') }}</label>
+                    <select class="form-select" id="provider" name="provider">
+                        <option value=""> {{ __('Not selected') }}</option>
+                        @foreach ($providers as $provider)
+                            <option value="{{ $provider->id }}"> {{ $provider->enterprise() }} </option>
+                        @endforeach
+                    </select>
+                </div>
+
+            @endif
+
             <div class="form-group col-md-3 p-3">
                 <label for="type" class="form-label">{{ __('Stock filter') }}</label>
                 <select class="form-select" id="stock" name="stock">
@@ -37,14 +61,6 @@
                 </select>
             </div>
 
-            <div class="form-group col-md-3 p-3">
-                <label for="type" class="form-label">{{ __('Availability filter') }}</label>
-                <select class="form-select" id="availability" name="availability">
-                    <option value=""> {{ __('Not selected') }}</option>
-                    <option value="1"> {{ __('Available') }}</option>
-                    <option value="2"> {{ __('Unavailable') }}</option>
-                </select>
-            </div>
         </div>
         <div class="table-responsive text-nowrap">
             <table class="table" id="laravel_datatable">
@@ -52,12 +68,9 @@
                     <tr>
                         <th>#</th>
                         <th>{{ __('Name') }}</th>
-                        {{-- <th>{{ __('Price') }}</th> --}}
                         <th>{{ __('Created at') }}</th>
                         <th>{{ __('is_available') }}</th>
                         <th>{{ __('in_stock') }}</th>
-                        {{--           <th>{{__('in_discount')}}</th>
-                             <th>{{__('discount')}}</th> --}}
                         <th>{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -108,40 +121,10 @@
                             <input type="text" class="form-control" id="unit_name" name="unit_name"
                                 placeholder="{{ __('Unit name') }}" />
 
-                            <input type="hidden" class="form-control" id="unit_price" name="unit_price" value="0" />
-                            {{-- <div class="input-group input-group-merge">
-                                <input type="text" class="form-control" id="unit_name" name="unit_name"
-                                    placeholder="{{ __('Unit name') }}" />
-                                <input type="text" class="form-control" id="pack_name" name="pack_name"
-                                    placeholder="{{ __('Pack name') }}" />
-                            </div> --}}
+                            <input type="hidden" class="form-control" id="unit_price" name="unit_price"
+                                value="0" />
+
                         </div>
-
-                        {{-- <div class="mb-3">
-                            <label class="form-label" for="name">{{ __('Price') }}</label>
-                            <div class="input-group input-group-merge">
-                                <input type="text" class="form-control" id="unit_price" name="unit_price"
-                                    placeholder="{{ __('Unit price') }}" />
-                                <input type="text" class="form-control" id="pack_price" name="pack_price"
-                                    placeholder="{{ __('Pack price') }}" />
-                            </div>
-                        </div> --}}
-
-
-                        {{-- <div class="mb-3">
-                            <label class="form-label" for="name">{{ __('Pack units') }}</label>
-                            <input type="number" class="form-control" id="pack_units" name="pack_units" />
-                        </div> --}}
-
-                        {{-- <div class="mb-3">
-                            <label class="form-label" for="unit_type">{{ __('Unit type') }}</label>
-                            <select class="form-select" id="unit_type" name="unit_type">
-                                <option value="1"> {{ __('Piece') }}</option>
-                                <option value="2"> {{ __('100 gram') }}</option>
-                                <option value="3"> {{ __('1 kilogram') }}</option>
-                            </select>
-                        </div> --}}
-
                         <div class="mb-3">
                             <label class="form-label" for="name">{{ __('Subcategory') }}</label>
                             <div class="input-group input-group-merge">
@@ -157,16 +140,6 @@
                             </div>
                         </div>
 
-
-                        <div class="mb-3">
-                            <label class="form-label" for="name">{{ __('Status') }}</label>
-                            <select class="form-select" id="status" name="status">
-                                <option value="available"> {{ __('Available') }}</option>
-                                <option value="unavailable"> {{ __('Unavailable') }}</option>
-                            </select>
-                        </div>
-
-
                         <div class="mb-3" style="text-align: center">
                             <button type="submit" id="submit" name="submit"
                                 class="btn btn-primary">{{ __('Send') }}</button>
@@ -179,48 +152,58 @@
     </div>
 
 
-    {{-- discount modal --}}
-    <div class="modal fade" id="discount_modal" aria-hidden="true">
+    {{-- stock modal --}}
+    <div class="modal fade" id="stock_modal" aria-hidden="true">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="fw-bold py-1 mb-1">{{ __('Add discount') }}</h4>
+                    <h4 class="fw-bold py-1 mb-1">{{ __('Add stock') }}</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" id="discount_form_type" hidden />
-                    <input type="text" class="form-control" id="discount_id" name="discount_id" hidden />
                     <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
-                        enctype="multipart/form-data" id="discount_form">
+                        enctype="multipart/form-data" id="stock_form">
 
                         <input type="text" class="form-control" id="product_id" name="product_id" hidden />
 
                         <div class="mb-3">
-                            <label class="form-label" for="type">{{ __('Type') }}</label>
-                            <select class="form-select" id="type" name="type">
-                                <option value="1"> {{ __('Fixed') }}</option>
-                                <option value="2"> {{ __('Percentage') }}</option>
+                            <label class="form-label" for="name">{{ __('Price') }}</label>
+                            <input type="number" class="form-control" name="price" />
+                        </div>
+
+                        <div class="row  justify-content-between">
+
+                            <div class="form-group col-md-6 p-3">
+                                <label class="form-label" for="quantity">{{ __('Quantity') }}</label>
+                                <input type="number" class="form-control" name="quantity" />
+                            </div>
+
+                            <div class="form-group col-md-6 p-3">
+                                <label class="form-label" for="min_quantity">{{ __('Min quantity') }}</label>
+                                <input type="number" class="form-control" name="min_quantity" />
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="show_price">{{ __('Show price') }}</label>
+                            <select class="form-select" name="show_price">
+                                <option value="1"> {{ __('Yes') }}</option>
+                                <option value="0"> {{ __('No') }}</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="name">{{ __('Discount amount') }}</label>
-                            <input type="text" class="form-control" id="amount" name="amount" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="name">{{ __('Start date') }}</label>
-                            <input type="date" class="form-control" id="start_date" name="start_date" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="name">{{ __('End date') }}</label>
-                            <input type="date" class="form-control" id="end_date" name="end_date" />
+                            <label class="form-label" for="name">{{ __('Status') }}</label>
+                            <select class="form-select" name="status">
+                                <option value="available"> {{ __('Available') }}</option>
+                                <option value="unavailable"> {{ __('Unavailable') }}</option>
+                            </select>
                         </div>
 
 
                         <div class="mb-3" style="text-align: center">
-                            <button type="submit" id="submit_discount" name="submit_discount"
+                            <button type="submit" id="submit_stock" name="submit_stock"
                                 class="btn btn-primary">{{ __('Send') }}</button>
                         </div>
 
@@ -236,7 +219,8 @@
         $(document).ready(function() {
             load_data();
 
-            function load_data(category = null, subcategory = null, stock = null, availability = null) {
+            function load_data(category = null, subcategory = null, stock = null, availability = null, provider =
+                null) {
                 //$.fn.dataTable.moment( 'YYYY-M-D' );
                 var table = $('#laravel_datatable').DataTable({
 
@@ -251,7 +235,8 @@
                             category: category,
                             subcategory: subcategory,
                             stock: stock,
-                            availability: availability
+                            availability: availability,
+                            provider: provider
                         },
                         type: 'POST',
                         headers: {
@@ -318,8 +303,8 @@
 
 
                         /* {
-                            data: 'discount',
-                            name: 'discount'
+                            data: 'stock',
+                            name: 'stock'
                         }, */
 
 
@@ -338,14 +323,15 @@
             }
 
             function refresh_table() {
-                var category = document.getElementById('category').value;
-                var subcategory = document.getElementById('subcategory').value;
-                var stock = document.getElementById('stock').value;
-                var availability = document.getElementById('availability').value;
+                var category = $('#category').val();
+                var subcategory = $('#subcategory').val();
+                var stock = $('#stock').val();
+                var availability = $('#availability').val();
+                var provider = $('#provider').val();
 
                 var table = $('#laravel_datatable').DataTable();
                 table.destroy();
-                load_data(category, subcategory, stock, availability);
+                load_data(category, subcategory, stock, availability, provider);
             }
 
             $('#category').on('change', function() {
@@ -368,7 +354,7 @@
                             var subcategories = document.getElementById('subcategory');
                             subcategories.innerHTML =
                                 '<option value="">{{ __('Not selected') }}</option>';
-                            console.log(response.data);
+
                             for (var i = 0; i < response.data.length; i++) {
                                 var option = document.createElement('option');
                                 option.value = response.data[i].id;
@@ -397,6 +383,12 @@
             });
 
             $('#availability').on('change', function() {
+
+                refresh_table();
+
+            });
+
+            $('#provider').on('change', function() {
 
                 refresh_table();
 
@@ -522,14 +514,6 @@
 
                 /* var formdata = new FormData($("#form")[0]); */
                 var queryString = new FormData($("#form")[0]);
-                /* console.log(formdata.entries());
-                for (var pair of formdata.entries()) {
-                  //console.log(pair[1]);
-                  if(pair[1] == '' ){
-                    queryString.delete(pair[0]);
-                    //console.log(pair[0])
-                  }
-                } */
 
                 var formtype = document.getElementById('form_type').value;
                 //console.log(formtype);
@@ -632,68 +616,21 @@
                 })
             });
 
-            $(document.body).on('click', '.add_discount', function() {
+            $(document.body).on('click', '.add_stock', function() {
                 var product_id = $(this).attr('table_id');
-                document.getElementById('discount_form').reset();
-                document.getElementById('discount_form_type').value = "create";
+                document.getElementById('stock_form').reset();
                 document.getElementById('product_id').value = product_id;
-                $("#discount_modal").modal('show');
+                $("#stock_modal").modal('show');
             });
 
+            $('#submit_stock').on('click', function() {
 
-            $(document.body).on('click', '.edit_discount', function() {
-                document.getElementById('discount_form').reset();
-                document.getElementById('discount_form_type').value = "update";
-                var discount_id = $(this).attr('table_id');
-                $("#discount_id").val(discount_id);
+                var formdata = new FormData($("#stock_form")[0]);
 
-                $.ajax({
-                    url: '{{ url('discount/update') }}',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    type: 'POST',
-                    data: {
-                        discount_id: discount_id
-                    },
-                    dataType: 'JSON',
-                    success: function(response) {
-                        if (response.status == 1) {
-
-                            document.getElementById('product_id').value = response.data
-                                .product_id;
-                            document.getElementById('amount').value = response.data.amount;
-                            document.getElementById('start_date').value = response.data
-                                .start_date;
-                            document.getElementById('end_date').value = response.data.end_date;
-                            document.getElementById('start_date').readOnly = true;
-                            document.getElementById('type').value = 2;
-
-                            $("#discount_modal").modal("show");
-                        }
-                    }
-                });
-            });
-
-            $('#submit_discount').on('click', function() {
-
-                var formdata = new FormData($("#discount_form")[0]);
-                var formtype = document.getElementById('discount_form_type').value;
-                console.log(formtype);
-                if (formtype == "create") {
-                    url = "{{ url('discount/create') }}";
-                }
-
-                if (formtype == "update") {
-                    url = "{{ url('discount/update') }}";
-                    formdata.append("discount_id", document.getElementById('discount_id').value)
-                }
-
-                $("#discount_modal").modal("hide");
-
+                $("#stock_modal").modal("hide");
 
                 $.ajax({
-                    url: url,
+                    url: "{{ url('stock/create') }}",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
@@ -732,51 +669,6 @@
                         // Render the errors with js ...
                     }
                 });
-            });
-
-            $(document.body).on('click', '.delete_discount', function() {
-
-                var discount_id = $(this).attr('table_id');
-
-                Swal.fire({
-                    title: "{{ __('Warning') }}",
-                    text: "{{ __('Are you sure?') }}",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: "{{ __('Delete') }}",
-                    cancelButtonText: "{{ __('Cancel') }}"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-
-                        $.ajax({
-                            url: "{{ url('discount/delete') }}",
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            type: 'POST',
-                            data: {
-                                discount_id: discount_id
-                            },
-                            dataType: 'JSON',
-                            success: function(response) {
-                                if (response.status == 1) {
-
-                                    Swal.fire(
-                                        "{{ __('Success') }}",
-                                        "{{ __('success') }}",
-                                        'success'
-                                    ).then((result) => {
-                                        location.reload();
-                                    });
-                                }
-                            }
-                        });
-
-
-                    }
-                })
             });
 
             $(document.body).on('change', '.image-input', function() {

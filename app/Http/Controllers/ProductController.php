@@ -2,27 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PaginatedProductCollection;
-use App\Http\Resources\ProductCollection;
-use App\Http\Resources\ProductResource;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\Subcategory;
-use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Session;
+use Exception;
+use App\Models\User;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Subcategory;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductCollection;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\PaginatedProductCollection;
 
 class ProductController extends Controller
 {
 
   public function index(){
     if (auth()->user()->role_is('provider')) {
-      $categories = Category::all();
       return view('content.products.list')
-      ->with('categories',$categories);
-    } else {
+      ->with('categories',Category::all());
+    } else if(in_array(auth()->user()->role_is(), ['broker','store']) ) {
+      $providers = User::where('role',1)->where('status','active')->has('products', '>', '0')->get();
+      return view('content.products.list')
+      ->with('categories',Category::all())
+      ->with('providers', $providers);
+    }else{
       return redirect()->route('pages-misc-error');
     }
   }

@@ -215,12 +215,18 @@ class DatatablesController extends Controller
 
     $user = $request->user();
 
-    $products = Product::where('user_id', $user->id);
+    if($user->role_is('provider')){
+      $request->merge(['provider' => $user->id]);
+    }
+
+
+    $products = Product::orderBy('created_at','DESC');
+
+    if($request->provider){
+      $products = $products->where('user_id', $request->provider);
+    }
 
     if($request->category){
-      /* $category = Category::findOrFail($request->category);
-      $category_subs = $category->subcategories()->pluck('id')->toArray();
-      $products = $products->whereIn('subcategory_id',$category_subs); */
 
       $products = $products->whereHas('subcategory', function($query) use ($request){
         $query->where('category_id', $request->category);
@@ -231,21 +237,6 @@ class DatatablesController extends Controller
     if($request->subcategory){
       $products = $products->where('subcategory_id',$request->subcategory);
     }
-
-    /* if(!empty($request->discount)){
-      if($request->discount == "1"){
-        $discounts = Discount::WhereRaw('? between start_date and end_date', Carbon::now()->toDateString())
-        ->pluck('product_id')->toArray();
-        $products = $products->whereIn('id',$discounts);
-      }
-
-      if($request->discount == "2"){
-        $discounts = Discount::WhereRaw('? between start_date and end_date', Carbon::now()->toDateString())
-        ->pluck('product_id')->toArray();
-        $products = $products->whereNotIn('id',$discounts);
-      }
-
-    } */
 
     if($request->availability){
 
@@ -262,30 +253,23 @@ class DatatablesController extends Controller
 
     }
 
-    $products = $products->orderBy('created_at','DESC')->get();
+    $products = $products->get();
 
     return datatables()
       ->of($products)
       ->addIndexColumn()
 
-      ->addColumn('action', function ($row) {
+      ->addColumn('action', function ($row) use ($user) {
           $btn = '';
 
-          $btn .= '<a class="dropdown-item-inline update" title="'.__('Edit').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bxs-edit me-2"></i></a>';
+          if($user->role_is('provider')){
+            $btn .= '<a class="dropdown-item-inline update" title="'.__('Edit').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bxs-edit me-2"></i></a>';
 
-          $btn .= '<a class="dropdown-item-inline delete" title="'.__('Delete').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bxs-trash me-2"></i></a>';
+            $btn .= '<a class="dropdown-item-inline delete" title="'.__('Delete').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bxs-trash me-2"></i></a>';
+          }
 
-          /* if(is_null($row->discount())){
+          $btn .= '<a class="dropdown-item-inline add_stock" title="'.__('Add stock').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bxs-package me-2"></i></a>';
 
-            $btn .= '<a class="dropdown-item-inline add_discount" title="'.__('Add discount').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bxs-message-alt-add me-2"></i></a>';
-
-          }else{
-
-            $btn .= '<a class="dropdown-item-inline edit_discount" title="'.__('Edit discount').'" table_id="'.$row->discount()->id.'" href="javascript:void(0);"><i class="bx bxs-message-alt-edit me-2"></i></a>';
-
-            $btn .= '<a class="dropdown-item-inline delete_discount" title="'.__('Delete discount').'" table_id="'.$row->discount()->id.'" href="javascript:void(0);"><i class="bx bxs-message-alt-x me-2"></i></a>';
-
-          } */
 
           return $btn;
       })
@@ -305,20 +289,6 @@ class DatatablesController extends Controller
 
     })
 
-      /* ->addColumn('price', function ($row) {
-
-        return number_format($row->unit_price,2,'.',',');
-
-    }) */
-
-      /* ->addColumn('is_discounted', function ($row) {
-
-        if(is_null($row->discount())){
-         return false ;
-        }
-        return true;
-
-      }) */
 
       ->addColumn('in_stock', function ($row) {
 
@@ -338,15 +308,6 @@ class DatatablesController extends Controller
 
       })
 
-      /* ->addColumn('discount', function ($row) {
-
-        if(is_null($row->discount())){
-          return '' ;
-         }
-
-        return number_format($row->discount()->amount,2) . '%';
-
-      }) */
 
       ->addColumn('created_at', function ($row) {
 
@@ -386,9 +347,9 @@ class DatatablesController extends Controller
 
     }
 
-    if($request->quantity){
+    if($request->sufficiency){
 
-      $stocks = $stocks->whereColumn('quantity', $request->quantity == 1 ?'>' : '<=', 'min_quantity');
+      $stocks = $stocks->whereColumn('quantity', $request->sufficiency == 1 ?'>' : '<=', 'min_quantity');
 
     }
 
