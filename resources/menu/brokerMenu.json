@@ -8,24 +8,35 @@
     },
 
     {
-      "url": "/product/browse",
+      "url": "/product/index",
       "name": "Products",
       "icon": "menu-icon tf-icons bx bxs-shopping-bag",
-      "slug": "product-browse"
+      "slug": "product-index"
     },
 
     {
-      "url": "/stock/browse",
       "name": "Stocks",
       "icon": "menu-icon tf-icons bx bxs-package",
-      "slug": "stock-browse"
+      "slug": "stock",
+      "submenu": [
+        {
+          "url": "/stock/index",
+          "name": "My stock",
+          "slug": "stock-index"
+        },
+        {
+          "url": "/stock/browse",
+          "name": "Browse stocks",
+          "slug": "stock-browse"
+        }
+      ]
     },
 
     {
-      "url": "/order/browse",
+      "url": "/order/index",
       "name": "Orders",
       "icon": "menu-icon tf-icons bx bxs-spreadsheet",
-      "slug": "order-browse"
+      "slug": "order-index"
     }
 
   ]

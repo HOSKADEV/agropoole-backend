@@ -8,38 +8,38 @@
     },
 
     {
-      "url": "/user/browse",
+      "url": "/user/index",
       "name": "Users",
       "icon": "menu-icon tf-icons bx bxs-user",
-      "slug": "user-browse"
+      "slug": "user-index"
     },
 
     {
-      "url": "/ad/browse",
+      "url": "/ad/index",
       "name": "Ads",
       "icon": "menu-icon tf-icons bx bxs-badge-dollar",
-      "slug": "ad-browse"
+      "slug": "ad-index"
     },
 
     {
-      "url": "/category/browse",
+      "url": "/category/index",
       "name": "Categories",
       "icon": "menu-icon tf-icons bx bxs-category",
-      "slug": "category-browse"
+      "slug": "category-index"
     },
 
     {
-      "url": "/subcategory/browse",
+      "url": "/subcategory/index",
       "name": "Subcategories",
       "icon": "menu-icon tf-icons bx bxs-shapes",
-      "slug": "subcategory-browse"
+      "slug": "subcategory-index"
     },
 
     {
-      "url": "/notice/browse",
+      "url": "/notice/index",
       "name": "Notices",
       "icon": "menu-icon tf-icons bx bxs-bell",
-      "slug": "notice-browse"
+      "slug": "notice-index"
     }
 
   ]

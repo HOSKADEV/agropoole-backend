@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\User;
 use App\Models\Stock;
 use App\Models\Product;
 use App\Models\Category;
@@ -25,6 +26,43 @@ class StockController extends Controller
     } else {
       return redirect()->route('pages-misc-error');
     }
+  }
+
+  public function browse(){
+$user = auth()->user();
+    if (in_array($user->role_is(), ['broker','store'] )) {
+      $users = User::where('role', $user->role - 1)->has('stocks', '>', 0)->get();
+      $stocks = Stock::whereHas('owner', function($query) use ($user){
+        $query->where('role', $user->role - 1);
+      })->latest()->with(['owner','product'])->paginate(8);
+      $categories = Category::all();
+    return view('content.stocks.browse')
+      ->with('categories',$categories)
+      ->with('stocks',$stocks)
+      ->with('users',$users);
+
+    }else{
+      return redirect()->route('pages-misc-error');
+    }
+
+
+    /* if($request->provider){
+      $products = $products->where('user_id', $request->provider);
+    }
+
+    if($request->category){
+
+      $products = $products->whereHas('subcategory', function($query) use ($request){
+        $query->where('category_id', $request->category);
+      });
+    }
+
+
+    if($request->subcategory){
+      $products = $products->where('subcategory_id',$request->subcategory);
+    } */
+
+
   }
 
   public function create(Request $request){

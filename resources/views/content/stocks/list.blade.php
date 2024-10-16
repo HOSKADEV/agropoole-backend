@@ -1,18 +1,18 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', __('Stocks'))
+@section('title', __('My stock'))
 
 @section('content')
 
     <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Stocks') }} /</span> {{ __('Browse stocks') }}
+        <span class="text-muted fw-light">{{ __('Stocks') }} /</span> {{ __('My stock') }}
         {{-- <button type="button" class="btn btn-primary" id="create" style="float:right">{{ __('Add Stock') }}</button> --}}
     </h4>
 
     <!-- Basic Bootstrap Table -->
     <div class="card">
         <div class="row  justify-content-between">
-            <div class="form-group col-md-3 p-3">
+            <div class="form-group col mx-3 my-3">
                 <label for="category" class="form-label">{{ __('Category filter') }}</label>
                 <select class="form-select" id="category" name="category">
                     <option value=""> {{ __('Not selected') }}</option>
@@ -21,14 +21,14 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group col-md-3 p-3">
+            <div class="form-group col mx-3 my-3">
                 <label for="subcategory" class="form-label">{{ __('Subcategory filter') }}</label>
                 <select class="form-select" id="subcategory" name="subcategory">
                     <option value=""> {{ __('Not selected') }}</option>
                 </select>
             </div>
 
-            <div class="form-group col-md-3 p-3">
+            <div class="form-group col mx-3 my-3">
                 <label for="type" class="form-label">{{ __('Quantity status filter') }}</label>
                 <select class="form-select" id="sufficiency" name="sufficiency">
                     <option value=""> {{ __('Not selected') }}</option>
@@ -37,7 +37,7 @@
                 </select>
             </div>
 
-            <div class="form-group col-md-3 p-3">
+            <div class="form-group col mx-3 my-3">
                 <label for="type" class="form-label">{{ __('Availability filter') }}</label>
                 <select class="form-select" id="availability" name="availability">
                     <option value=""> {{ __('Not selected') }}</option>
@@ -51,6 +51,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>{{ __('Image') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Price') }}</th>
                         <th>{{ __('Quantity') }}</th>
@@ -138,6 +139,7 @@
                     processing: true,
                     serverSide: true,
                     pageLength: 100,
+                    columnDefs: [{ searchable: false, targets: 1 }],
 
                     ajax: {
                         url: "{{ url('stock/list') }}",
@@ -159,7 +161,7 @@
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex'
                         },
-                        {
+                        /* {
                             data: 'name_image',
                             name: 'name_image',
                             render: function(data) {
@@ -170,11 +172,22 @@
                                     data[1] + '</h6></div></div>';
 
                             }
+                        }, */
+                        {
+                            data: 'image',
+                            name: 'image',
+                            render: function(data) {
+
+                                return '<div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
+                                    data + '" class="rounded">';
+
+                            }
                         },
-                        /* {
+
+                        {
                             data: 'name',
                             name: 'name'
-                        }, */
+                        },
 
                         {
                             data: 'price',

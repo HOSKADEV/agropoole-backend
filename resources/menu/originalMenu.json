@@ -8,80 +8,80 @@
     },
 
     {
-      "url": "/user/browse",
+      "url": "/user/index",
       "name": "Users",
       "icon": "menu-icon tf-icons bx bxs-user",
-      "slug": "user-browse"
+      "slug": "user-index"
     },
 
     {
-      "url": "/ad/browse",
+      "url": "/ad/index",
       "name": "Ads",
       "icon": "menu-icon tf-icons bx bxs-badge-dollar",
-      "slug": "ad-browse"
+      "slug": "ad-index"
     },
 
     {
-      "url": "/category/browse",
+      "url": "/category/index",
       "name": "Categories",
       "icon": "menu-icon tf-icons bx bxs-category",
-      "slug": "category-browse"
+      "slug": "category-index"
     },
 
     {
-      "url": "/subcategory/browse",
+      "url": "/subcategory/index",
       "name": "Subcategories",
       "icon": "menu-icon tf-icons bx bxs-shapes",
-      "slug": "subcategory-browse"
+      "slug": "subcategory-index"
     },
 
     {
-      "url": "/family/browse",
+      "url": "/family/index",
       "name": "Families",
       "icon": "menu-icon tf-icons bx bxs-collection",
-      "slug": "family-browse"
+      "slug": "family-index"
     },
 
     {
-      "url": "/offer/browse",
+      "url": "/offer/index",
       "name": "Offers",
       "icon": "menu-icon tf-icons bx bxs-offer",
-      "slug": "offer-browse"
+      "slug": "offer-index"
     },
 
     {
-      "url": "/product/browse",
+      "url": "/product/index",
       "name": "Products",
       "icon": "menu-icon tf-icons bx bxs-package",
-      "slug": "product-browse"
+      "slug": "product-index"
     },
 
     {
-      "url": "/driver/browse",
+      "url": "/driver/index",
       "name": "Drivers",
       "icon": "menu-icon tf-icons bx bxs-truck",
-      "slug": "driver-browse"
+      "slug": "driver-index"
     },
 
     {
-      "url": "/order/browse",
+      "url": "/order/index",
       "name": "Orders",
       "icon": "menu-icon tf-icons bx bxs-spreadsheet",
-      "slug": "order-browse"
+      "slug": "order-index"
     },
 
     {
-      "url": "/section/browse",
+      "url": "/section/index",
       "name": "Sections",
       "icon": "menu-icon tf-icons bx bxs-layout",
-      "slug": "section-browse"
+      "slug": "section-index"
     },
 
     {
-      "url": "/notice/browse",
+      "url": "/notice/index",
       "name": "Notices",
       "icon": "menu-icon tf-icons bx bxs-bell",
-      "slug": "notice-browse"
+      "slug": "notice-index"
     },
 
     {

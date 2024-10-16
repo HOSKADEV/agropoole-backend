@@ -14,7 +14,7 @@
     <!-- Basic Bootstrap Table -->
     <div class="card">
         <div class="row  justify-content-between">
-            <div class="form-group col-md-3 p-3">
+            <div class="form-group col mx-3 my-3">
                 <label for="category" class="form-label">{{ __('Category filter') }}</label>
                 <select class="form-select" id="category" name="category">
                     <option value=""> {{ __('Not selected') }}</option>
@@ -23,7 +23,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group col-md-3 p-3">
+            <div class="form-group col mx-3 my-3">
                 <label for="subcategory" class="form-label">{{ __('Subcategory filter') }}</label>
                 <select class="form-select" id="subcategory" name="subcategory">
                     <option value=""> {{ __('Not selected') }}</option>
@@ -31,7 +31,7 @@
             </div>
 
             @if (auth()->user()->role_is('provider'))
-                <div class="form-group col-md-3 p-3">
+                <div class="form-group col mx-3 my-3">
                     <label for="type" class="form-label">{{ __('Availability filter') }}</label>
                     <select class="form-select" id="availability" name="availability">
                         <option value=""> {{ __('Not selected') }}</option>
@@ -40,7 +40,7 @@
                     </select>
                 </div>
             @else
-                <div class="form-group col-md-3 p-3">
+                <div class="form-group col mx-3 my-3">
                     <label for="category" class="form-label">{{ __('Provider filter') }}</label>
                     <select class="form-select" id="provider" name="provider">
                         <option value=""> {{ __('Not selected') }}</option>
@@ -52,7 +52,7 @@
 
             @endif
 
-            <div class="form-group col-md-3 p-3">
+            <div class="form-group col mx-3 my-3">
                 <label for="type" class="form-label">{{ __('Stock filter') }}</label>
                 <select class="form-select" id="stock" name="stock">
                     <option value=""> {{ __('Not selected') }}</option>
@@ -67,6 +67,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>{{ __('Image') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Created at') }}</th>
                         <th>{{ __('is_available') }}</th>
@@ -228,6 +229,7 @@
                     processing: true,
                     serverSide: true,
                     pageLength: 100,
+                    columnDefs: [{ searchable: false, targets: 1 }],
 
                     ajax: {
                         url: "{{ url('product/list') }}",
@@ -250,27 +252,33 @@
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex'
                         },
+                        /* {
+                             data: 'name_image',
+                             name: 'name_image',
+                             render: function(data) {
+
+                                 return '<div class="d-flex justify-content-start align-items-center product-name"><div class="avatar-wrapper"><div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
+                                     data[0] +
+                                     '" class="rounded"></div></div><div class="d-flex flex-column"><h6 class="text-nowrap mb-0">' +
+                                     data[1] + '</h6></div></div>';
+
+                             }
+                         },*/
                         {
-                            data: 'name_image',
-                            name: 'name_image',
+                            data: 'image',
+                            name: 'image',
                             render: function(data) {
 
-                                return '<div class="d-flex justify-content-start align-items-center product-name"><div class="avatar-wrapper"><div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
-                                    data[0] +
-                                    '" class="rounded"></div></div><div class="d-flex flex-column"><h6 class="text-nowrap mb-0">' +
-                                    data[1] + '</h6></div></div>';
+                                return '<div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
+                                    data + '" class="rounded">';
 
                             }
                         },
-                        /* {
+
+                        {
                             data: 'name',
                             name: 'name'
-                        }, */
-
-                        /* {
-                            data: 'price',
-                            name: 'price'
-                        }, */
+                        },
 
                         {
                             data: 'created_at',

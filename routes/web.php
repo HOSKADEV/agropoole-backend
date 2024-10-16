@@ -24,18 +24,18 @@ Route::get('/privacy_policy', 'App\Http\Controllers\DocumentationController@publ
 Route::group(['middleware' => ['auth']], function () {
   Route::get('/version', 'App\Http\Controllers\VersionController@index')->name('version');
   Route::get('/stats', 'App\Http\Controllers\dashboard\Analytics@stats')->name('stats');
-  Route::get('/category/browse', 'App\Http\Controllers\CategoryController@index')->name('category-browse');
-  Route::get('/subcategory/browse', 'App\Http\Controllers\SubcategoryController@index')->name('subcategory-browse');
-  Route::get('/family/browse', 'App\Http\Controllers\FamilyController@index')->name('family-browse');
-  Route::get('/offer/browse', 'App\Http\Controllers\OfferController@index')->name('offer-browse');
-  Route::get('/product/browse', 'App\Http\Controllers\ProductController@index')->name('product-browse');
-  Route::get('/section/browse', 'App\Http\Controllers\SectionController@index')->name('section-browse');
-  Route::get('/order/browse', 'App\Http\Controllers\OrderController@index')->name('order-browse');
+  Route::get('/category/index', 'App\Http\Controllers\CategoryController@index')->name('category-index');
+  Route::get('/subcategory/index', 'App\Http\Controllers\SubcategoryController@index')->name('subcategory-index');
+  Route::get('/family/index', 'App\Http\Controllers\FamilyController@index')->name('family-index');
+  Route::get('/offer/index', 'App\Http\Controllers\OfferController@index')->name('offer-index');
+  Route::get('/product/index', 'App\Http\Controllers\ProductController@index')->name('product-index');
+  Route::get('/section/index', 'App\Http\Controllers\SectionController@index')->name('section-index');
+  Route::get('/order/index', 'App\Http\Controllers\OrderController@index')->name('order-index');
   Route::get('/order/{id}/items', 'App\Http\Controllers\ItemController@index')->name('order-items');
-  Route::get('/driver/browse', 'App\Http\Controllers\DriverController@index')->name('driver-browse');
-  Route::get('/user/browse', 'App\Http\Controllers\UserController@index')->name('user-browse');
-  Route::get('/notice/browse', 'App\Http\Controllers\NoticeController@index')->name('notice-browse');
-  Route::get('/ad/browse', 'App\Http\Controllers\AdController@index')->name('ad-browse');
+  Route::get('/driver/index', 'App\Http\Controllers\DriverController@index')->name('driver-index');
+  Route::get('/user/index', 'App\Http\Controllers\UserController@index')->name('user-index');
+  Route::get('/notice/index', 'App\Http\Controllers\NoticeController@index')->name('notice-index');
+  Route::get('/ad/index', 'App\Http\Controllers\AdController@index')->name('ad-index');
   Route::get('/category/list', 'App\Http\Controllers\DatatablesController@categories')->name('category-list');
   Route::post('/subcategory/list', 'App\Http\Controllers\DatatablesController@subcategories')->name('subcategory-list');
   Route::get('/family/list', 'App\Http\Controllers\DatatablesController@families')->name('family-list');
@@ -48,7 +48,8 @@ Route::group(['middleware' => ['auth']], function () {
   Route::post('/user/list', 'App\Http\Controllers\DatatablesController@users')->name('user-list');
   Route::get('/notice/list', 'App\Http\Controllers\DatatablesController@notices')->name('notice-list');
   Route::get('/ad/list', 'App\Http\Controllers\DatatablesController@ads')->name('ad-list');
-  Route::get('/stock/browse', 'App\Http\Controllers\StockController@index')->name('stock-browse');
+  Route::get('/stock/index', 'App\Http\Controllers\StockController@index')->name('stock-index');
+  Route::get('/stock/browse', 'App\Http\Controllers\StockController@browse')->name('stock-browse');
   Route::post('/stock/list', 'App\Http\Controllers\DatatablesController@stocks')->name('stock-list');
 });
 

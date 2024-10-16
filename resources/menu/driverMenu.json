@@ -8,10 +8,10 @@
     },
 
     {
-      "url": "/order/browse",
+      "url": "/order/index",
       "name": "Orders",
       "icon": "menu-icon tf-icons bx bxs-spreadsheet",
-      "slug": "order-browse"
+      "slug": "order-index"
     }
 
   ]

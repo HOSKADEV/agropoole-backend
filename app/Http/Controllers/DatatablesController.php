@@ -247,10 +247,13 @@ class DatatablesController extends Controller
 
     if($request->stock){
 
-      $products = $request->stock == 1
+      /* $products = $request->stock == 1
       ? $products->has('stocks', '>', '0')
-      : $products->has('stocks', '=', '0');
+      : $products->has('stocks', '=', '0'); */
 
+      $products = $request->stock == 1
+      ? $products->whereIn('id', $user->stocks()->pluck('product_id')->toArray())
+      : $products->whereNotIn('id', $user->stocks()->pluck('product_id')->toArray());
     }
 
     $products = $products->get();
@@ -274,25 +277,31 @@ class DatatablesController extends Controller
           return $btn;
       })
 
-      /* ->addColumn('name', function ($row) {
+      ->addColumn('name', function ($row) {
 
           return $row->unit_name;
 
-      }) */
+      })
 
-      ->addColumn('name_image', function ($row) {
+      ->addColumn('image', function ($row) {
+
+        return $row->image();
+
+    })
+
+    /*   ->addColumn('name_image', function ($row) {
 
         return [
           0 => $row->image(),
           1 => $row->unit_name
         ];
 
-    })
+    }) */
 
 
-      ->addColumn('in_stock', function ($row) {
+      ->addColumn('in_stock', function ($row) use ($user) {
 
-        if($row->stocks()->count()){
+        if($row->stocks()->where('user_id', $user->id)->count()){
          return true ;
         }
         return false;
@@ -369,20 +378,26 @@ class DatatablesController extends Controller
           return $btn;
       })
 
-      /* ->addColumn('name', function ($row) {
+      ->addColumn('name', function ($row) {
 
-          return $row->unit_name;
+          return $row->product->unit_name;
 
-      }) */
+      })
 
-      ->addColumn('name_image', function ($row) {
+      ->addColumn('image', function ($row) {
+
+        return $row->product->image();
+
+    })
+
+      /* ->addColumn('name_image', function ($row) {
 
         return [
           0 => $row->product->image(),
           1 => $row->product->unit_name
         ];
 
-    })
+    }) */
 
       ->addColumn('price', function ($row) {
 
