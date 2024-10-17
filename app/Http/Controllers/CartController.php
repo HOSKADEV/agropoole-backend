@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
-  public function update(Request $request){
+  public function update(Request $request)
+  {
     $validator = Validator::make($request->all(), [
       'product_id' => 'sometimes|exists:products,id',
       'quantity' => 'sometimes|integer'
@@ -20,31 +21,31 @@ class CartController extends Controller
 
     if ($validator->fails()) {
       return response()->json([
-        'status'=> 0,
+        'status' => 0,
         'message' => $validator->errors()->first()
       ]);
     }
 
-    try{
+    try {
 
       DB::beginTransaction();
 
       $user = auth()->user();
       $cart = $user->cart();
 
-      if($request->has('product_id')){
-        if($request->quantity == 0 ){
-          $item = Item::where('cart_id',$cart->id)
-          ->where('product_id',$request->product_id)
-          ->first();
+      if ($request->has('product_id')) {
+        if ($request->quantity == 0) {
+          $item = Item::where('cart_id', $cart->id)
+            ->where('product_id', $request->product_id)
+            ->first();
 
-          if(!is_null($item)){
+          if (!is_null($item)) {
             $item->delete();
           }
-        }else{
+        } else {
           Item::updateOrInsert(
-            ['cart_id' => $cart->id , 'product_id' => $request->product_id],
-            ['quantity' => $request->quantity , 'deleted_at' => null]
+            ['cart_id' => $cart->id, 'product_id' => $request->product_id],
+            ['quantity' => $request->quantity, 'deleted_at' => null]
           );
         }
 
@@ -73,19 +74,21 @@ class CartController extends Controller
         'data' => ['total' => $cart->total()],
       ]);
 
-    }catch(Exception $e){
+    } catch (Exception $e) {
       DB::rollBack();
-      return response()->json([
-        'status' => 0,
-        'message' => $e->getMessage()
-      ]
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
       );
     }
   }
 
-  public function delete(Request $request){
+  public function delete(Request $request)
+  {
 
-    try{
+    try {
 
       $user = auth()->user();
       $cart = $user->cart();
@@ -100,19 +103,21 @@ class CartController extends Controller
         'message' => 'success',
       ]);
 
-    }catch(Exception $e){
+    } catch (Exception $e) {
 
-      return response()->json([
-        'status' => 0,
-        'message' => $e->getMessage()
-      ]
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
       );
     }
   }
 
-  public function get(Request $request){
+  public function get(Request $request)
+  {
 
-    try{
+    try {
 
       $user = auth()->user();
       $cart = $user->cart();
@@ -123,24 +128,26 @@ class CartController extends Controller
         'data' => new CartResource($cart)
       ]);
 
-    }catch(Exception $e){
+    } catch (Exception $e) {
 
-      return response()->json([
-        'status' => 0,
-        'message' => $e->getMessage()
-      ]
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
       );
     }
   }
 
-  public function products(Request $request){
+  public function products(Request $request)
+  {
 
-    try{
+    try {
 
       $user = auth()->user();
       $cart = $user->cart();
 
-      $products = Item::where('cart_id',$cart->id)->sum('quantity');
+      $products = Item::where('cart_id', $cart->id)->sum('quantity');
 
       //dd($products);
 
@@ -150,14 +157,34 @@ class CartController extends Controller
         'data' => ['products' => intval($products)],
       ]);
 
-    }catch(Exception $e){
+    } catch (Exception $e) {
 
-      return response()->json([
-        'status' => 0,
-        'message' => $e->getMessage()
-      ]
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
       );
     }
+  }
+
+  public function refresh(Request $request)
+  {
+    //dd($request->all());
+
+    $cart = session()->get('cart') ?? [];
+    $items = $request->items;
+
+    $new_cart = array_filter(array_merge($cart, $items), function ($item) {
+      return $item['quantity'] != 0;
+    });
+
+    session()->put(['cart' => $new_cart]);
+
+    return response()->json([
+      'status' => 1,
+      'message' => 'success'
+    ]);
   }
 
 

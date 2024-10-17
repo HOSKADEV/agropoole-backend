@@ -53,6 +53,23 @@
             <a class="github-button" href="https://github.com/themeselection/sneat-html-laravel-admin-template-free" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star themeselection/sneat-html-laravel-admin-template-free on GitHub">Star</a>
           </li> --}}
 
+          <li class="nav-item">
+
+          {{-- <button type="button" class="btn text-nowrap d-inline-block">
+            <span class="tf-icons bx bx-sm bx-cart"></span>
+            <span class="badge rounded-pill bg-danger text-white badge-notifications">{{count(session()->get('cart') ?? [])}}</span>
+          </button> --}}
+
+          <button type="button" class="btn text-nowrap d-inline-block" data-bs-toggle="modal" data-bs-target="#stockModal">
+            <span class="tf-icons bx bx-sm bx-cart"></span>
+            <span class="badge rounded-pill bg-danger text-white badge-notifications">{{ count(session()->get('cart') ?? []) }}</span>
+          </button>
+
+
+        </li>
+
+
+
         <!-- User -->
         <li class="nav-item navbar-dropdown dropdown-user dropdown">
             <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -178,4 +195,59 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="stockModal" tabindex="-1" aria-labelledby="stockModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="stockModalLabel">Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Owner</th>
+              <th>Quantity</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if(session()->has('cart'))
+              @foreach(session('cart') as $item)
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img src="{{ $item['product_image'] }}" alt="{{ $item['product_name'] }}" width="50" height="50" class="me-2">
+                    <span>{{ $item['product_name'] }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img src="{{ $item['owner_image'] }}" alt="{{ $item['owner_name'] }}" width="50" height="50" class="me-2">
+                    <span>{{ $item['owner_name'] }}</span>
+                  </div>
+                </td>
+                <td>{{ $item['quantity'] }}</td>
+                <td>{{ $item['stock_price'] ? $item['stock_price'] : 'N/A' }}</td>
+              </tr>
+              @endforeach
+            @else
+              <tr>
+                <td colspan="4" class="text-center">No items in the cart</td>
+              </tr>
+            @endif
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" onclick="emptyCart()">Empty Cart</button>
+        <button type="button" class="btn btn-primary" onclick="finishOrder()">Finish Order</button>
+      </div>
+    </div>
+  </div>
 </div>

@@ -46,6 +46,32 @@ class Stock extends Model
 
   }
 
+  public function in_cart()
+  {
+    $cart = session()->get('cart') ?? [];
+    $stock_id = $this->id;
+    //dd($cart);
+    foreach($cart as $key => $item){
+
+      if($item['stock_id'] == $stock_id){
+        return intval($item['quantity']);
+      }
+    }
+    return 0;
+
+    /* $filtered_array = array_filter($cart, function ($item) use ($stock_id) {
+      return $item['stock_id'] == $stock_id;
+    });
+
+    if (!empty($filtered_array)) {
+      $found_item = current($filtered_array);
+      return $found_item['quantity'];
+    }
+
+    return 0; */
+
+  }
+
   public function notify()
   {
     if ($this->owner?->fcm_token && $this->quantity <= $this->min_quantity) {

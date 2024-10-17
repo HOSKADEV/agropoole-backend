@@ -132,6 +132,8 @@ Route::group(['middleware' => ['auth']], function () {
 
   Route::post('/invoice/update', 'App\Http\Controllers\InvoiceController@update');
 
+  Route::post('/cart/refresh', 'App\Http\Controllers\CartController@refresh');
+
   Route::post('/notice/create', 'App\Http\Controllers\NoticeController@create');
   Route::post('/notice/update', 'App\Http\Controllers\NoticeController@update');
   Route::post('/notice/delete', 'App\Http\Controllers\NoticeController@delete');

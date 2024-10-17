@@ -50,5 +50,4 @@ class Cart extends Model
       return $total;
 
     }
-
 }
