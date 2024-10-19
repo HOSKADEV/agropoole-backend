@@ -228,7 +228,7 @@
                     responsive: true,
                     processing: true,
                     serverSide: true,
-                    pageLength: 100,
+                    pageLength: 10,
                     columnDefs: [{ searchable: false, targets: 1 }],
 
                     ajax: {

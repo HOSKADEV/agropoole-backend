@@ -88,7 +88,7 @@
             responsive: true,
             processing: true,
             serverSide: true,
-            pageLength: 100,
+            pageLength: 10,
 
             ajax: {
                 url: "{{ url('category/list') }}",

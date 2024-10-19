@@ -149,12 +149,12 @@
             responsive: true,
             processing: true,
             serverSide: true,
-            pageLength: 100,
+            pageLength: 10,
 
             ajax: {
                 url: "{{ url('item/list') }}",
                 type: 'POST',
-                data: {cart_id : "{{$order->cart_id}}"},
+                data: {cart_id : "{{$order->cart->id}}"},
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             },
 

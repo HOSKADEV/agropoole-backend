@@ -34,8 +34,8 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>{{__('User')}}</th>
-          <th>{{__('Phone')}}</th>
+          <th>{{__('Seller')}}</th>
+          <th>{{__('Buyer')}}</th>
           <th>{{__('Created at')}}</th>
           <th>{{__('Status')}}</th>
 {{--           <th>{{__('Driver')}}</th>
@@ -205,7 +205,7 @@
             responsive: true,
             processing: true,
             serverSide: true,
-            pageLength: 100,
+            pageLength: 10,
 
             ajax: {
                 url: "{{ url('order/list') }}",
@@ -224,13 +224,13 @@
                 },
 
                 {
-                    data: 'user',
-                    name: 'user'
+                    data: 'seller',
+                    name: 'seller'
                 },
 
                 {
-                    data: 'phone',
-                    name: 'phone'
+                    data: 'buyer',
+                    name: 'buyer'
                 },
 
                 {

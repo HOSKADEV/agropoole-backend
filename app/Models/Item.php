@@ -50,11 +50,13 @@ class Item extends Model
     }
 
     public function name(){
-      return $this->type == 'unit' ? $this->unit_name : $this->pack_name;
+      //return $this->type == 'unit' ? $this->unit_name : $this->pack_name;
+      return $this->unit_name;
     }
 
     public function price(){
-      return $this->type == 'unit' ? $this->unit_price : $this->pack_price;
+      //return $this->type == 'unit' ? $this->unit_price : $this->pack_price;
+      return $this->unit_price;
     }
 
     /* public function amount(){

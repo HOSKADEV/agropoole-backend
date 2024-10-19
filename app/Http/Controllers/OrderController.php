@@ -38,6 +38,24 @@ class OrderController extends Controller
       ->with('shipping', $shipping);
   }
 
+  public function inbox()
+  {
+    $drivers = Driver::all();
+    $shipping = Set::where('name', 'shipping')->first();
+    return view('content.orders.inbox')
+      ->with('drivers', $drivers)
+      ->with('shipping', $shipping);
+  }
+
+  public function outbox()
+  {
+    $drivers = Driver::all();
+    $shipping = Set::where('name', 'shipping')->first();
+    return view('content.orders.outbox')
+      ->with('drivers', $drivers)
+      ->with('shipping', $shipping);
+  }
+
   public function distance(Request $request)
   {
     $validator = Validator::make($request->all(), [
