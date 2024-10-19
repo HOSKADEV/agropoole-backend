@@ -15,28 +15,28 @@
     },
 
     {
-      "name": "Stocks",
+      "url": "/stock/index",
       "icon": "menu-icon tf-icons bx bxs-package",
-      "slug": "stock",
-      "submenu": [
-        {
-          "url": "/stock/index",
-          "name": "My stock",
-          "slug": "stock-index"
-        },
-        {
-          "url": "/stock/browse",
-          "name": "Browse stocks",
-          "slug": "stock-browse"
-        }
-      ]
+      "name": "My stock",
+      "slug": "stock-index"
     },
-
     {
-      "url": "/order/index",
-      "name": "Orders",
-      "icon": "menu-icon tf-icons bx bxs-spreadsheet",
-      "slug": "order-index"
+      "url": "/stock/browse",
+      "icon": "menu-icon tf-icons bx bxs-cart",
+      "name": "Browse stocks",
+      "slug": "stock-browse"
+    },
+    {
+      "url": "/order/inbox",
+      "name": "Orders inbox",
+      "icon": "menu-icon tf-icons bx bxs-archive-in",
+      "slug": "order-inbox"
+    },
+    {
+      "url": "/order/outbox",
+      "name": "Orders outbox",
+      "icon": "menu-icon tf-icons bx bxs-archive-out",
+      "slug": "order-outbox"
     }
 
   ]

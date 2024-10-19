@@ -15,8 +15,12 @@
 <script src="https://cdn.datatables.net/plug-ins/1.13.1/sorting/datetime-moment.js"></script>
 
 {{-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> --}}
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
 
@@ -29,62 +33,150 @@
 <!-- END: Page JS-->
 
 <script>
-  $('#change_password').on('click', function() {
-    $("#change_password_modal").modal("show");
-  });
+    $('#change_password').on('click', function() {
+        $("#change_password_modal").modal("show");
+    });
 
-  $('#submit_password').on('click', function() {
+    $('#submit_password').on('click', function() {
 
-    var old_password = $('#old_password').val();
-    var new_password = $('#new_password').val();
-    var new_password_confirmation = $('#new_password_confirmation').val();
+        var old_password = $('#old_password').val();
+        var new_password = $('#new_password').val();
+        var new_password_confirmation = $('#new_password_confirmation').val();
 
-    $.ajax({
-        url: '{{ url('user/change_password') }}',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        type:'POST',
-        data:{
-          old_password :old_password,
-          new_password :new_password,
-          new_password_confirmation :new_password_confirmation,
-        },
-        dataType : 'JSON',
-        //contentType: false,
-        //processData: false,
-        success:function(response){
-            if(response.status==1){
-              $("#change_password_modal").modal("hide");
-              Swal.fire(
-                "{{ __('Success') }}",
-                "{{ __('success') }}",
-                  'success'
-              );
+        $.ajax({
+            url: '{{ url('user/change_password') }}',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'POST',
+            data: {
+                old_password: old_password,
+                new_password: new_password,
+                new_password_confirmation: new_password_confirmation,
+            },
+            dataType: 'JSON',
+            //contentType: false,
+            //processData: false,
+            success: function(response) {
+                if (response.status == 1) {
+                    $("#change_password_modal").modal("hide");
+                    Swal.fire(
+                        "{{ __('Success') }}",
+                        "{{ __('success') }}",
+                        'success'
+                    );
 
-            } else {
-              console.log(response.message);
-              Swal.fire(
-                  "{{ __('Error') }}",
-                  response.message,
-                  'error'
-              );
+                } else {
+                    console.log(response.message);
+                    Swal.fire(
+                        "{{ __('Error') }}",
+                        response.message,
+                        'error'
+                    );
+                }
+            },
+            error: function(data) {
+                var errors = data.responseJSON;
+                console.log(errors);
+                Swal.fire(
+                    "{{ __('Error') }}",
+                    errors.message,
+                    'error'
+                );
+                // Render the errors with js ...
             }
-        },
-        error: function(data){
-          var errors = data.responseJSON;
-          console.log(errors);
-          Swal.fire(
-              "{{ __('Error') }}",
-              errors.message,
-              'error'
-          );
-          // Render the errors with js ...
-        }
 
 
-      });
+        });
 
-  });
+    });
 
+    $('#empty_cart').on('click', function() {
+        Swal.fire({
+            title: "{{ __('Warning') }}",
+            text: "{{ __('Are you sure?') }}",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: "{{ __('Yes') }}",
+            cancelButtonText: "{{ __('No') }}"
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                $.ajax({
+                    url: "{{ url('cart/empty') }}",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.status == 1) {
+
+                            Swal.fire(
+                                "{{ __('Success') }}",
+                                "{{ __('success') }}",
+                                'success'
+                            ).then((result) => {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+
+
+            }
+        })
+    });
+
+    $('#finish_order').on('click', function() {
+
+        var queryString = new FormData($("#finish_order_form")[0]);
+
+
+
+        $("#cartModal").modal("hide");
+
+
+        $.ajax({
+            url: "{{ url('order/create') }}",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'POST',
+            data: queryString,
+            dataType: 'JSON',
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.status == 1) {
+                    Swal.fire({
+                        title: "{{ __('Success') }}",
+                        text: "{{ __('success') }}",
+                        icon: 'success',
+                        confirmButtonText: 'Ok'
+                    }).then((result) => {
+                        location.reload();
+                    });
+                } else {
+                    console.log(response.message);
+                    Swal.fire(
+                        "{{ __('Error') }}",
+                        response.message,
+                        'error'
+                    );
+                }
+            },
+            error: function(data) {
+                var errors = data.responseJSON;
+                console.log(errors);
+                Swal.fire(
+                    "{{ __('Error') }}",
+                    errors.message,
+                    'error'
+                );
+                // Render the errors with js ...
+            }
+        });
+    });
 </script>

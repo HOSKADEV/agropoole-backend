@@ -22,10 +22,10 @@
     },
 
     {
-      "url": "/order/index",
+      "url": "/order/inbox",
       "name": "Orders",
-      "icon": "menu-icon tf-icons bx bxs-spreadsheet",
-      "slug": "order-index"
+      "icon": "menu-icon tf-icons bx bxs-archive-in",
+      "slug": "order-inbox"
     }
 
   ]

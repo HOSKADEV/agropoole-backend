@@ -187,6 +187,16 @@ class CartController extends Controller
     ]);
   }
 
+  public function empty()
+  {
+    //dd($request->all());
 
+    session()->put(['cart' => []]);
+
+    return response()->json([
+      'status' => 1,
+      'message' => 'success'
+    ]);
+  }
 
 }

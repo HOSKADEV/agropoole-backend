@@ -38,9 +38,9 @@
           <th>{{__('Phone')}}</th>
           <th>{{__('Created at')}}</th>
           <th>{{__('Status')}}</th>
-          <th>{{__('Driver')}}</th>
+{{--           <th>{{__('Driver')}}</th>
           <th>{{__('Purchase amount')}}</th>
-          <th>{{__('Tax amount')}}</th>
+          <th>{{__('Tax amount')}}</th> --}}
           <th>{{__('Total amount')}}</th>
           <th>{{__('Actions')}}</th>
         </tr>
@@ -243,25 +243,37 @@
                     name: 'status',
                     render: function(data){
                           if(data == 'pending'){
-                              return '<span class="badge bg-secondary">{{__("pending")}}</span>';
+                              return '<span class="badge bg-label-secondary">{{__("pending")}}</span>';
                             }
                             if(data == 'accepted'){
-                              return '<span class="badge bg-primary">{{__("accepted")}}</span>';
+                              return '<span class="badge bg-label-blue">{{__("accepted")}}</span>';
                             }
                             if(data == 'canceled'){
-                              return '<span class="badge bg-danger">{{__("canceled")}}</span>';
+                              return '<span class="badge bg-label-red">{{__("canceled")}}</span>';
+                            }
+                            if(data == 'confirmed'){
+                              return '<span class="badge bg-label-orange">{{__("confirmed")}}</span>';
+                            }
+                            if(data == 'shipped'){
+                              return '<span class="badge bg-label-yellow">{{__("shipped")}}</span>';
                             }
                             if(data == 'ongoing'){
-                              return '<span class="badge bg-info">{{__("ongoing")}}</span>';
+                              return '<span class="badge bg-label-cyan">{{__("ongoing")}}</span>';
                             }
                             if(data == 'delivered'){
-                              return '<span class="badge bg-success">{{__("delivered")}}</span>';
+                              return '<span class="badge bg-label-teal">{{__("delivered")}}</span>';
                             }
+                            if(data == 'received'){
+                              return '<span class="badge bg-label-green">{{__("received")}}</span>';
+                            }
+
                           }
+
+
                 },
 
 
-                {
+               /*  {
                     data: 'driver',
                     name: 'driver'
                 },
@@ -274,7 +286,7 @@
                 {
                     data: 'tax_amount',
                     name: 'tax_amount'
-                },
+                }, */
 
                 {
                     data: 'total_amount',

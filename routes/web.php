@@ -31,6 +31,8 @@ Route::group(['middleware' => ['auth']], function () {
   Route::get('/product/index', 'App\Http\Controllers\ProductController@index')->name('product-index');
   Route::get('/section/index', 'App\Http\Controllers\SectionController@index')->name('section-index');
   Route::get('/order/index', 'App\Http\Controllers\OrderController@index')->name('order-index');
+  Route::get('/order/inbox', 'App\Http\Controllers\OrderController@index')->name('order-index');
+  Route::get('/order/outbox', 'App\Http\Controllers\OrderController@index')->name('order-index');
   Route::get('/order/{id}/items', 'App\Http\Controllers\ItemController@index')->name('order-items');
   Route::get('/driver/index', 'App\Http\Controllers\DriverController@index')->name('driver-index');
   Route::get('/user/index', 'App\Http\Controllers\UserController@index')->name('user-index');
@@ -127,12 +129,14 @@ Route::group(['middleware' => ['auth']], function () {
   Route::post('/item/delete', 'App\Http\Controllers\ItemController@delete');
   Route::post('/item/restore', 'App\Http\Controllers\ItemController@restore');
 
+  Route::post('/order/create', 'App\Http\Controllers\OrderController@create');
   Route::post('/order/update', 'App\Http\Controllers\OrderController@update');
   Route::post('/order/delete', 'App\Http\Controllers\OrderController@delete');
 
   Route::post('/invoice/update', 'App\Http\Controllers\InvoiceController@update');
 
   Route::post('/cart/refresh', 'App\Http\Controllers\CartController@refresh');
+  Route::get('/cart/empty', 'App\Http\Controllers\CartController@empty');
 
   Route::post('/notice/create', 'App\Http\Controllers\NoticeController@create');
   Route::post('/notice/update', 'App\Http\Controllers\NoticeController@update');

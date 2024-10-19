@@ -546,7 +546,7 @@ class DatatablesController extends Controller
 
       ->addColumn('user', function ($row) {
 
-          return $row->user->fullname();
+          return /* $row->user->fullname()  */ '';
 
       })
 
