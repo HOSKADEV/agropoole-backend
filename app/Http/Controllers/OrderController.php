@@ -196,7 +196,7 @@ class OrderController extends Controller
 
   public function create(Request $request)
   {
-    if (count(session('cart'))) {
+    if (count(session('cart',[]))) {
       $request->mergeIfMissing(['stocks' => session('cart')]);
       session()->put(['cart' => []]);
     }
