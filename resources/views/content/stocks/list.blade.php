@@ -6,7 +6,8 @@
 
     <h4 class="fw-bold py-3 mb-3">
         <span class="text-muted fw-light">{{ __('Stocks') }} /</span> {{ __('My stock') }}
-        {{-- <button type="button" class="btn btn-primary" id="create" style="float:right">{{ __('Add Stock') }}</button> --}}
+        <button type="button" class="btn btn-primary" id="multi_create" style="float:right"><span
+                class="tf-icons bx bx-infinite bx-18px me-2"></span>{{ __('Global add') }}</button>
     </h4>
 
     <!-- Basic Bootstrap Table -->
@@ -64,40 +65,40 @@
         </div>
     </div>
 
-        {{-- stock modal --}}
-        <div class="modal fade" id="modal" aria-hidden="true">
-          <div class="modal-dialog modal-sm" role="document">
-              <div class="modal-content">
-                  <div class="modal-header">
-                      <h4 class="fw-bold py-1 mb-1">{{ __('Edit stock') }}</h4>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                      <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
-                          enctype="multipart/form-data" id="form">
+    {{-- stock modal --}}
+    <div class="modal fade" id="modal" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="fw-bold py-1 mb-1">{{ __('Edit stock') }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
+                        enctype="multipart/form-data" id="form">
 
-                          <input type="text" class="form-control" id="stock_id" name="stock_id" hidden />
+                        <input type="text" class="form-control" id="stock_id" name="stock_id" hidden />
 
-                          <div class="mb-3">
-                              <label class="form-label" for="name">{{ __('Price') }}</label>
-                              <input type="number" class="form-control" id="price" name="price" />
-                          </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="name">{{ __('Price') }}</label>
+                            <input type="number" class="form-control" id="price" name="price" />
+                        </div>
 
-                          <div class="row  justify-content-between">
+                        <div class="row  justify-content-between">
 
                             <div class="form-group col-md-6 p-3">
-                              <label class="form-label" for="quantity">{{ __('Quantity') }}</label>
-                                  <input type="number" class="form-control" id="quantity" name="quantity" />
+                                <label class="form-label" for="quantity">{{ __('Quantity') }}</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" />
                             </div>
 
                             <div class="form-group col-md-6 p-3">
-                              <label class="form-label" for="min_quantity">{{ __('Min quantity') }}</label>
-                                  <input type="number" class="form-control" id="min_quantity" name="min_quantity" />
+                                <label class="form-label" for="min_quantity">{{ __('Min quantity') }}</label>
+                                <input type="number" class="form-control" id="min_quantity" name="min_quantity" />
                             </div>
 
-                          </div>
+                        </div>
 
-                          <div class="mb-3">
+                        <div class="mb-3">
                             <label class="form-label" for="show_price">{{ __('Show price') }}</label>
                             <select class="form-select" name="show_price" id="show_price">
                                 <option value="1"> {{ __('Yes') }}</option>
@@ -106,24 +107,24 @@
                         </div>
 
                         <div class="mb-3">
-                          <label class="form-label" for="name">{{ __('Status') }}</label>
-                              <select class="form-select" name="status" id="status">
-                                  <option value="available"> {{ __('Available') }}</option>
-                                  <option value="unavailable"> {{ __('Unavailable') }}</option>
-                              </select>
-                      </div>
+                            <label class="form-label" for="name">{{ __('Status') }}</label>
+                            <select class="form-select" name="status" id="status">
+                                <option value="available"> {{ __('Available') }}</option>
+                                <option value="unavailable"> {{ __('Unavailable') }}</option>
+                            </select>
+                        </div>
 
 
-                          <div class="mb-3" style="text-align: center">
-                              <button type="submit" id="submit" name="submit"
-                                  class="btn btn-primary">{{ __('Send') }}</button>
-                          </div>
+                        <div class="mb-3" style="text-align: center">
+                            <button type="submit" id="submit" name="submit"
+                                class="btn btn-primary">{{ __('Send') }}</button>
+                        </div>
 
-                      </form>
-                  </div>
-              </div>
-          </div>
-      </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('page-script')
@@ -139,7 +140,10 @@
                     processing: true,
                     serverSide: true,
                     pageLength: 10,
-                    columnDefs: [{ searchable: false, targets: 1 }],
+                    columnDefs: [{
+                        searchable: false,
+                        targets: 1
+                    }],
 
                     ajax: {
                         url: "{{ url('stock/list') }}",
@@ -199,10 +203,12 @@
                             name: 'quantity',
                             render: function(data) {
 
-                              if (data[0] <= data[1]) {
-                                    return '<span class="badge bg-label-danger">'+data[0]+'</span>';
+                                if (data[0] <= data[1]) {
+                                    return '<span class="badge bg-label-danger">' + data[0] +
+                                        '</span>';
                                 } else {
-                                    return '<span class="badge bg-label-success">'+data[0]+'</span>';
+                                    return '<span class="badge bg-label-success">' + data[0] +
+                                        '</span>';
                                 }
 
                             }
@@ -340,8 +346,10 @@
 
                             document.getElementById('price').value = response.data.price;
                             document.getElementById('quantity').value = response.data.quantity;
-                            document.getElementById('min_quantity').value = response.data.min_quantity;
-                            document.getElementById('show_price').value = response.data.show_price;
+                            document.getElementById('min_quantity').value = response.data
+                                .min_quantity;
+                            document.getElementById('show_price').value = response.data
+                                .show_price;
                             document.getElementById('status').value = response.data.status;
 
                             $("#modal").modal("show");
@@ -426,6 +434,47 @@
                             data: {
                                 stock_id: stock_id
                             },
+                            dataType: 'JSON',
+                            success: function(response) {
+                                if (response.status == 1) {
+
+                                    Swal.fire(
+                                        "{{ __('Success') }}",
+                                        "{{ __('success') }}",
+                                        'success'
+                                    ).then((result) => {
+                                        location.reload();
+                                    });
+                                }
+                            }
+                        });
+
+
+                    }
+                })
+            });
+
+            $('#multi_create').on('click', function() {
+
+
+                Swal.fire({
+                    title: "{{ __('Warning') }}",
+                    text: "{{ __('Are you sure?') }}",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: "{{ __('Yes') }}",
+                    cancelButtonText: "{{ __('No') }}"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            url: "{{ url('stock/create/multi') }}",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            type: 'POST',
                             dataType: 'JSON',
                             success: function(response) {
                                 if (response.status == 1) {

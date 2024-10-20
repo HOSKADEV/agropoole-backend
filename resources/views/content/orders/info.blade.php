@@ -23,7 +23,7 @@
                 <div class="col-12 col-lg-8">
                     <div class="card mb-3">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title m-0">Order details</h5>
+                            <h5 class="card-title m-0">{{__('Order details')}}</h5>
                             {{-- <h6 class="m-0"><a href=" javascript:void(0)">Edit</a></h6> --}}
                         </div>
                         <div class="card-datatable table-responsive">
@@ -32,10 +32,10 @@
                                     <tr>
                                         {{-- <th></th> --}}
                                         <th>#</th>
-                                        <th class="w-50">products</th>
-                                        <th class="w-25">price</th>
-                                        <th class="w-25">qty</th>
-                                        <th>total</th>
+                                        <th class="w-50">{{__('Product')}}</th>
+                                        <th class="w-25">{{__('Price')}}</th>
+                                        <th class="w-25">{{__('Quantity')}}</th>
+                                        <th>{{__('Amount')}}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -65,7 +65,7 @@
                                     <th></th>
                                     <th></th>
                                     <th></th>
-                                    <th>Total:</th>
+                                    <th>{{__('Total')}}</th>
                                     <th>{{ $order->cart->total() }}</th>
                                 </tfoot>
                             </table>
@@ -73,7 +73,7 @@
                     </div>
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h5 class="card-title m-0">Shipping activity</h5>
+                            <h5 class="card-title m-0">{{__('Shipping activity')}}</h5>
                         </div>
                         <div class="card-body pt-1">
                             <ul class="timeline pb-0 mb-0">
@@ -87,10 +87,10 @@
                                         <div class="timeline-event pb-0">
                                             <div
                                                 class="timeline-header">
-                                                <h6 class="mb-0">{{ $history->status }}</h6>
-                                                <small class="text-muted">{{ $history->created_at }}</small>
+                                                <h6 class="mb-0">{{ __($history->status) }}</h6>
+                                                <small class="text-muted">{{ $history->created_at() }}</small>
                                             </div>
-                                            <p class="mt-3">{{ $history->user->enterprise() }}</p>
+                                            <p class="mt-3">{{ $history->message() }}</p>
                                         </div>
                                     </li>
                                 @endforeach
@@ -102,7 +102,7 @@
                 <div class="col-12 col-lg-4">
                     <div class="card mb-3">
                         <div class="card-header row justify-content-center">
-                            <h5 class="card-title  col m-0">Seller details</h5>
+                            <h5 class="card-title  col m-0">{{__('Seller details')}}</h5>
                             <i class="col-md-2 my-auto bx bxs-user"></i>
                         </div>
                         <div class="card-body">
@@ -124,18 +124,18 @@
                                 <h6 class="text-nowrap mb-0">12 Orders</h6>
                             </div> --}}
                             <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">Contact info</h6>
+                                <h6 class="mb-1">{{__('Contact info')}}</h6>
                                 <h6 class="mb-1"><a href="{{ $order->seller->location() }}"><i class="bx bx-map"></i></a>
                                 </h6>
                             </div>
-                            <p class=" mb-1">Email: {{ $order->seller->email }}</p>
-                            <p class=" mb-0">Mobile: {{ $order->seller->phone }}</p>
+                            <p class=" mb-1">{{__('Email')}}: {{ $order->seller->email }}</p>
+                            <p class=" mb-0">{{__('Mobile')}}: {{ $order->seller->phone }}</p>
                         </div>
                     </div>
 
                     <div class="card mb-3">
                         <div class="card-header row justify-content-center">
-                            <h5 class="card-title  col m-0">Buyer details</h5>
+                            <h5 class="card-title  col m-0">{{__('Buyer details')}}</h5>
                             <i class="col-md-2 my-auto bx bxs-user"></i>
                         </div>
                         <div class="card-body">
@@ -157,18 +157,18 @@
                               <h6 class="text-nowrap mb-0">12 Orders</h6>
                           </div> --}}
                             <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">Contact info</h6>
+                                <h6 class="mb-1">{{__('Contact info')}}</h6>
                                 <h6 class="mb-1"><a href="{{ $order->buyer->location() }}"><i class="bx bx-map"></i></a>
                                 </h6>
                             </div>
-                            <p class=" mb-1">Email: {{ $order->buyer->email }}</p>
-                            <p class=" mb-0">Mobile: {{ $order->buyer->phone }}</p>
+                            <p class=" mb-1">{{__('Email')}}: {{ $order->buyer->email }}</p>
+                            <p class=" mb-0">{{__('Mobile')}}: {{ $order->buyer->phone }}</p>
                         </div>
                     </div>
                     @if ($order->delivery)
                         <div class="card mb-3">
                             <div class="card-header row justify-content-center">
-                                <h5 class="card-title  col m-0">Driver details</h5>
+                                <h5 class="card-title  col m-0">{{__('Driver details')}}</h5>
                                 <i class="col-md-2 my-auto bx bxs-truck"></i>
                             </div>
                             <div class="card-body">
@@ -190,11 +190,11 @@
                             <h6 class="text-nowrap mb-0">12 Orders</h6>
                         </div> --}}
                                 <div class="d-flex justify-content-between">
-                                    <h6 class="mb-1">Contact info</h6>
+                                    <h6 class="mb-1">{{__('Contact info')}}</h6>
                                     {{-- <h6 class="mb-1"><a href="{{$order->driver->location()}}"><i class="bx bx-map"></i></a></h6> --}}
                                 </div>
-                                <p class=" mb-1">Email: {{ $order->driver->email }}</p>
-                                <p class=" mb-0">Mobile: {{ $order->driver->phone }}</p>
+                                <p class=" mb-1">{{__('Email')}}: {{ $order->driver->email }}</p>
+                                <p class=" mb-0">{{__('Mobile')}}: {{ $order->driver->phone }}</p>
                             </div>
                         </div>
                     @else

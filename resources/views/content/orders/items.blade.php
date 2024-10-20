@@ -6,9 +6,9 @@
 
 <h4 class="fw-bold py-3 mb-3">
   <span class="text-muted fw-light">{{__('Order')}} /</span> {{__('Items')}}
-  @if ($order->status == 'pending' || $order->status == 'accepted')
+  {{-- @if ($order->status == 'pending' || $order->status == 'accepted')
     <button type="button" class="btn btn-primary" id="create" style="float:right">{{__('Add item')}}</button>
-  @endif
+  @endif --}}
 
 </h4>
 
@@ -21,18 +21,18 @@
         <tr>
           <th>#</th>
           <th>{{__('Product')}}</th>
-          <th>{{__('Type')}}</th>
+          {{-- <th>{{__('Type')}}</th> --}}
           <th>{{__('Price')}}</th>
           <th>{{__('Quantity')}}</th>
-          <th>{{__('Discount')}}</th>
+          {{-- <th>{{__('Discount')}}</th> --}}
           <th class="sum">{{__('Amount')}}</th>
           <th>{{__('Actions')}}</th>
         </tr>
       </thead>
       <tfoot>
         <tr>
-          <th></th>
-          <th></th>
+          {{-- <th></th>
+          <th></th> --}}
           <th></th>
           <th></th>
           <th></th>
@@ -119,6 +119,12 @@
 
           <input type="text" class="form-control" id="item_id" name="item_id" hidden/>
 
+          <div class="mb-3">
+            <label class="form-label" for="unit_price">{{__('Price')}}</label>
+            <input type="number" class="form-control" id="unit_price" name="unit_price">
+            </select>
+          </div>
+
             <div class="mb-3">
               <label class="form-label" for="quantity">{{__('Quantity')}}</label>
               <input type="number" class="form-control" id="quantity" name="quantity">
@@ -170,10 +176,10 @@
                     name: 'product'
                 },
 
-                {
+                /* {
                     data: 'type',
                     name: 'type'
-                },
+                }, */
 
                 {
                     data: 'price',
@@ -185,10 +191,10 @@
                     name: 'quantity'
                 },
 
-                {
+                /* {
                     data: 'discount',
                     name: 'discount'
-                },
+                }, */
 
 
                 {
@@ -244,11 +250,14 @@
 
     $(document.body).on('click', '.edit', function() {
       document.getElementById('edit_form').reset();
-      var item_id = $(this).attr('table_id');
-      document.getElementById('item_id').value = item_id;
 
+      var item_id = $(this).attr('table_id');
+      var price = $(this).attr('price');
       var quantity = $(this).attr('quantity');
+
+      document.getElementById('item_id').value = item_id;
       document.getElementById('quantity').value = quantity;
+      document.getElementById('unit_price').value = price;
 
       $("#edit_modal").modal('show');
     });
@@ -308,7 +317,7 @@
 
 
       $.ajax({
-        url: "{{ url('item/edit') }}",
+        url: "{{ url('item/update') }}",
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         type:'POST',
         data:formdata,

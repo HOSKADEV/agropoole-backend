@@ -31,11 +31,11 @@ class OrderController extends Controller
 
   public function index()
   {
-    $drivers = Driver::all();
-    $shipping = Set::where('name', 'shipping')->first();
-    return view('content.orders.list')
-      ->with('drivers', $drivers)
-      ->with('shipping', $shipping);
+    //$drivers = Driver::all();
+    //$shipping = Set::where('name', 'shipping')->first();
+    return view('content.orders.list');
+      //->with('drivers', $drivers)
+      //->with('shipping', $shipping);
   }
 
   public function inbox()

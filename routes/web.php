@@ -52,7 +52,7 @@ Route::group(['middleware' => ['auth']], function () {
   Route::get('/notice/list', 'App\Http\Controllers\DatatablesController@notices')->name('notice-list');
   Route::get('/ad/list', 'App\Http\Controllers\DatatablesController@ads')->name('ad-list');
   Route::get('/stock/index', 'App\Http\Controllers\StockController@index')->name('stock-index');
-  Route::get('/stock/browse', 'App\Http\Controllers\StockController@browse')->name('stock-browse');
+  Route::get('/cart/index', 'App\Http\Controllers\CartController@index')->name('cart-index');
   Route::post('/stock/list', 'App\Http\Controllers\DatatablesController@stocks')->name('stock-list');
 });
 
@@ -89,6 +89,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
   Route::post('/stock/create', 'App\Http\Controllers\StockController@create');
+  Route::post('/stock/create/multi', 'App\Http\Controllers\StockController@multi_create');
   Route::post('/stock/update', 'App\Http\Controllers\StockController@update');
   Route::post('/stock/delete', 'App\Http\Controllers\StockController@delete');
   Route::post('/stock/restore', 'App\Http\Controllers\StockController@restore');
@@ -127,6 +128,7 @@ Route::group(['middleware' => ['auth']], function () {
 
   Route::post('/item/add', 'App\Http\Controllers\ItemController@add');
   Route::post('/item/edit', 'App\Http\Controllers\ItemController@edit');
+  Route::post('/item/update', 'App\Http\Controllers\ItemController@update');
   Route::post('/item/delete', 'App\Http\Controllers\ItemController@delete');
   Route::post('/item/restore', 'App\Http\Controllers\ItemController@restore');
 

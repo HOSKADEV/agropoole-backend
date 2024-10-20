@@ -19,10 +19,10 @@
       "slug": "stock-index"
     },
     {
-      "url": "/stock/browse",
+      "url": "/cart/index",
       "icon": "menu-icon tf-icons bx bxs-cart",
-      "name": "Browse stocks",
-      "slug": "stock-browse"
+      "name": "Cart",
+      "slug": "cart-index"
     },
     {
       "url": "/order/inbox",

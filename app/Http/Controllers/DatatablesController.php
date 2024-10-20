@@ -497,6 +497,32 @@ $user = auth()->user();
         $orders = $orders->where('status',$request->status);
     }
 
+    if($request->search){
+      $orders = match (intval($request->type)) {
+        1 => $orders->whereHas('seller', function ($q) use ($request) {
+          $q->where('name', 'like', '%'.$request->search.'%');
+          $q->orWhere('enterprise_name', 'like', '%'.$request->search.'%');
+        }),
+        2 => $orders->whereHas('buyer', function ($q) use ($request) {
+          $q->where('name', 'like', '%'.$request->search.'%');
+          $q->orWhere('enterprise_name', 'like', '%'.$request->search.'%');
+        }),
+        3 => $orders->where(function ($query) use ($request) {
+          $query->whereHas('seller', function ($q) use ($request) {
+            $q->where('name', 'like', '%'.$request->search.'%');
+            $q->orWhere('enterprise_name', 'like', '%'.$request->search.'%');
+          })
+          ->OrWhereHas('buyer', function ($q) use ($request) {
+            $q->where('name', 'like', '%'.$request->search.'%');
+            $q->orWhere('enterprise_name', 'like', '%'.$request->search.'%');
+          });
+        }),
+
+
+      };
+
+  }
+
     $orders = $orders->orderBy('updated_at','DESC')->get();
 
     return datatables()
@@ -512,9 +538,9 @@ $user = auth()->user();
 
           $btn .= '<a class="dropdown-item" title="'.__('Info').'" href="'.url('order/'.$row->id.'/info').'"><i class="bx bx-info-circle me-2"></i>'.__('Info').'</a>';
 
-          $btn .= '<a class="dropdown-item" title="'.__('Cart').'" href="'.url('order/'.$row->id.'/items').'"><i class="bx bx-cart me-2"></i>'.__('Cart').'</a>';
-
           if($row->status == 'pending' && $request->type == 2){
+
+            $btn .= '<a class="dropdown-item" title="'.__('Cart').'" href="'.url('order/'.$row->id.'/items').'"><i class="bx bx-cart me-2"></i>'.__('Cart').'</a>';
 
             $btn .= '<a class="dropdown-item accept" title="'.__('Approve').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-check me-2"></i>'.__('Accept').'</a>';
 
@@ -669,7 +695,7 @@ $user = auth()->user();
 
             $btn .= '<a class="dropdown-item-inline delete" title="'.__('Delete').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-trash me-2"></i></a>';
 
-            $btn .= '<a class="dropdown-item-inline edit" title="'.__('Edit').'" table_id="'.$row->id.'" quantity="'.$row->quantity.'"href="javascript:void(0);"><i class="bx bx-edit me-2"></i></a>';
+            $btn .= '<a class="dropdown-item-inline edit" title="'.__('Edit').'" table_id="'.$row->id.'" quantity="'.$row->quantity.'" price="'.$row->price().'" href="javascript:void(0);"><i class="bx bx-edit me-2"></i></a>';
 
           return $btn;
       })

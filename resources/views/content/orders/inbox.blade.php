@@ -5,7 +5,7 @@
 @section('content')
 
     <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Orders') }} /</span> {{ __('Browse orders') }}
+        <span class="text-muted fw-light">{{ __('Inbox') }} /</span> {{ __('Browse inbox') }}
     </h4>
 
     <!-- Basic Bootstrap Table -->
@@ -210,7 +210,7 @@
         $(document).ready(function() {
             load_data();
 
-            function load_data(status = null) {
+            function load_data(status = null, search = null) {
                 //$.fn.dataTable.moment( 'YYYY-M-D' );
                 var table = $('#laravel_datatable').DataTable({
 
@@ -225,6 +225,7 @@
                         url: "{{ url('order/list') }}",
                         data: {
                             status: status,
+                            search: search,
                             type: 2
                         },
                         type: 'POST',
@@ -336,10 +337,20 @@
             $('#status').on('change', function() {
 
                 var status = document.getElementById('status').value;
-
+                var search = document.getElementById('search').value;
                 var table = $('#laravel_datatable').DataTable();
                 table.destroy();
-                load_data(status);
+                load_data(status, search);
+
+            });
+
+            $('#search').on('change keyup blur', function() {
+
+                var status = document.getElementById('status').value;
+                var search = document.getElementById('search').value;
+                var table = $('#laravel_datatable').DataTable();
+                table.destroy();
+                load_data(status, search);
 
             });
         });
@@ -387,8 +398,6 @@
                 }
             })
         }
-
-
 
         $(document.body).on('click', '.refuse', function() {
 

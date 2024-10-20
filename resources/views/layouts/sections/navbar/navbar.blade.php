@@ -210,10 +210,10 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Owner</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
+                                <th>{{__('Product')}}</th>
+                                <th>{{__('Seller')}}</th>
+                                <th>{{__('Quantity')}}</th>
+                                <th>{{__('Price')}}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -247,10 +247,10 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-danger" id="empty_cart">Empty Cart</button>
-                <button type="button" class="btn btn-label-primary" id="finish_order">Finish Order</button>
+                <button type="button" class="btn btn-label-danger" id="empty_cart">{{__('Empty Cart')}}</button>
+                <button type="button" class="btn btn-label-primary" id="finish_order">{{__('Place Order')}}</button>
 
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">{{__('Close')}}</button>
 
             </div>
         </div>

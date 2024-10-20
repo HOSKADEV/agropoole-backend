@@ -2,16 +2,79 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CartResource;
-use App\Models\Cart;
-use App\Models\Item;
 use DB;
 use Exception;
+use App\Models\Cart;
+use App\Models\Item;
+use App\Models\User;
+use App\Models\Stock;
+use App\Models\Category;
+use App\Models\Subcategory;
 use Illuminate\Http\Request;
+use App\Http\Resources\CartResource;
 use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
+
+  public function index(Request $request){
+
+    $user = auth()->user();
+
+    if (in_array($user->role_is(), ['broker','store'] )) {
+
+      $categories = Category::all();
+      $subcategories = Subcategory::where('category_id', $request->category)->get();
+      $users = User::where('role', $user->role - 1)->has('stocks', '>', 0)->get();
+
+      $stocks = Stock::whereHas('owner', function($query) use ($user){
+        $query->where('role', $user->role - 1);
+      });
+
+
+      if($request->owner){
+      $stocks = $stocks->where('user_id', $request->owner);
+    }
+
+    if($request->category){
+
+      $stocks = $stocks->whereHas('product', function($query) use ($request){
+        $query->whereHas('subcategory', function($query) use ($request){
+          $query->where('category_id', $request->category);
+        });
+      });
+    }
+
+
+    if($request->subcategory){
+      $stocks = $stocks->whereHas('product', function($query) use ($request){
+        $query->where('subcategory_id',$request->subcategory);
+      });
+    }
+
+    if($request->search){
+      $stocks = $stocks->whereHas('product', function($query) use ($request){
+        $query->where('unit_name','like', '%'.$request->search.'%');
+      });
+    }
+
+    $stocks = $stocks->latest()->with(['owner','product'])->paginate(8)->appends($request->all());
+
+    return view('content.stocks.browse')
+      ->with('categories',$categories)
+      ->with('subcategories',$subcategories)
+      ->with('stocks',$stocks)
+      ->with('users',$users);
+
+    }else{
+      return redirect()->route('pages-misc-error');
+    }
+
+
+
+
+
+  }
   public function update(Request $request)
   {
     $validator = Validator::make($request->all(), [

@@ -107,7 +107,7 @@
 
     <!-- Basic Bootstrap Table -->
     <div class="card mb-3 pb-3">
-        <form id="form" method="GET" action="{{ route('stock-browse') }}">
+        <form id="form" method="GET" action="{{ route('cart-index') }}">
             <div class="row  justify-content-between">
                 <div class="form-group col mx-3 my-3">
                     <label for="category" class="form-label">{{ __('Category filter') }}</label>

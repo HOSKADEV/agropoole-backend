@@ -5,7 +5,7 @@
 @section('content')
 
     <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Orders') }} /</span> {{ __('Browse orders') }}
+        <span class="text-muted fw-light">{{ __('Outbox') }} /</span> {{ __('Browse outbox') }}
     </h4>
 
     <!-- Basic Bootstrap Table -->
@@ -63,7 +63,7 @@
         $(document).ready(function() {
             load_data();
 
-            function load_data(status = null) {
+            function load_data(status = null, search = null) {
                 //$.fn.dataTable.moment( 'YYYY-M-D' );
                 var table = $('#laravel_datatable').DataTable({
 
@@ -78,6 +78,7 @@
                         url: "{{ url('order/list') }}",
                         data: {
                             status: status,
+                            search: search,
                             type: 1
                         },
                         type: 'POST',
@@ -99,7 +100,7 @@
                             render: function(data) {
 
                                 return '<div class="d-flex align-items-center"><img src="' + data[
-                                    0] +
+                                        0] +
                                     '"width="40" height="40"class="rounded-circle me-2"><span>' +
                                     data[1] +
                                     '</span></div>';
@@ -171,9 +172,9 @@
                             data: 'action',
                             name: 'action',
                             render: function(data) {
-                                 return '<div class="dropdown"><button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button><div class="dropdown-menu">'
-                                  +data+'</div></div>'
-                               // return '<span>' + data + '</span>';
+                                return '<div class="dropdown"><button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button><div class="dropdown-menu">' +
+                                    data + '</div></div>'
+                                // return '<span>' + data + '</span>';
                             }
                         }
 
@@ -184,10 +185,20 @@
             $('#status').on('change', function() {
 
                 var status = document.getElementById('status').value;
-
+                var search = document.getElementById('search').value;
                 var table = $('#laravel_datatable').DataTable();
                 table.destroy();
-                load_data(status);
+                load_data(status, search);
+
+            });
+
+            $('#search').on('change keyup blur', function() {
+
+                var status = document.getElementById('status').value;
+                var search = document.getElementById('search').value;
+                var table = $('#laravel_datatable').DataTable();
+                table.destroy();
+                load_data(status, search);
 
             });
         });
@@ -282,6 +293,5 @@
 
             update_order(order_id, 'received')
         });
-
     </script>
 @endsection
