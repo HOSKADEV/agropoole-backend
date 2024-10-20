@@ -150,12 +150,14 @@
 
                         <input type="text" id="driver_order_id" name="order_id" hidden />
 
+                        <input type="text" name="status" value="shipped" hidden />
+
                         <div class="mb-3">
                             <label class="form-label" for="driver_id">{{ __('Driver') }}</label>
                             <select class="form-select" id="driver_id" name="driver_id">
-                                <option value=""> {{ __('Select driver') }}</option>
+                                <option value="{{ auth()->user()->id }}"> {{ auth()->user()->enterprise() }}</option>
                                 @foreach ($drivers as $driver)
-                                    <option value="{{ $driver->id }}"> {{ $driver->fullname() }} </option>
+                                    <option value="{{ $driver->id }}"> {{ $driver->enterprise() }} </option>
                                 @endforeach
                             </select>
                         </div>
@@ -446,151 +448,10 @@
             $("#driver_modal").modal('show');
         });
 
-        $(document.body).on('click', '.note', function() {
-            document.getElementById('note_form').reset();
-            var order_id = $(this).attr('table_id');
-            document.getElementById('note_order_id').value = order_id;
+        $(document.body).on('click', '#submit_driver', function() {
 
-            $.ajax({
-                url: "{{ url('order/update') }}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type: 'POST',
-                data: {
-                    order_id: order_id
-                },
-                dataType: 'JSON',
-                success: function(response) {
-                    if (response.status == 1) {
-
-
-                        document.getElementById('note').innerHTML = response.data.note;
-                        $("#note_modal").modal('show');
-                    }
-                }
-            });
-
-
-        });
-
-        $(document.body).on('click', '#submit_note', function() {
-
-            var formdata = new FormData($("#note_form")[0]);
-
-            $.ajax({
-                url: "{{ url('order/update') }}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type: 'POST',
-                data: formdata,
-                dataType: 'JSON',
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.status == 1) {
-
-                        Swal.fire(
-                            "{{ __('Success') }}",
-                            "{{ __('success') }}",
-                            'success'
-                        )
-                    }
-                }
-            });
-
-            $("#note_modal").modal('hide');
-        });
-
-        $(document.body).on('click', '.payment', function() {
-            document.getElementById('payment_form').reset();
-            var order_id = $(this).attr('table_id');
-            document.getElementById('payment_order_id').value = order_id;
-            $("#payment_modal").modal('show');
-        });
-
-        /*  $('#submit_invoice').on('click', function() {
-           var formdata = new FormData($("#invoice_form")[0]);
-           formdata.append('status','accepted');
-           $("#driver_modal").modal('hide');
-
-           $.ajax({
-                   url: "{{ url('order/update') }}",
-                   headers: {
-                       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                   },
-                   type:'POST',
-                   data:formdata,
-                   dataType : 'JSON',
-                   contentType: false,
-                   processData: false,
-                   success:function(response){
-                       if(response.status==1){
-
-                         Swal.fire(
-                           "{{ __('Success') }}",
-                           "{{ __('success') }}",
-                           'success'
-                         ).then((result)=>{
-                           location.reload();
-                         });
-                       }
-                     }
-                 });
-
-         }); */
-
-        $(document.body).on('click', '.delete', function() {
-
-            var order_id = $(this).attr('table_id');
-
-            Swal.fire({
-                title: "{{ __('Warning') }}",
-                text: "{{ __('Are you sure?') }}",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: "{{ __('Delete') }}",
-                cancelButtonText: "{{ __('Cancel') }}"
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    $.ajax({
-                        url: "{{ url('order/delete') }}",
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        type: 'POST',
-                        data: {
-                            order_id: order_id
-                        },
-                        dataType: 'JSON',
-                        success: function(response) {
-                            if (response.status == 1) {
-
-                                Swal.fire(
-                                    "{{ __('Success') }}",
-                                    "{{ __('success') }}",
-                                    'success'
-                                ).then((result) => {
-                                    location.reload();
-                                });
-                            }
-                        }
-                    });
-
-
-                }
-            })
-        });
-
-        $('#submit_driver').on('click', function() {
             var formdata = new FormData($("#driver_form")[0]);
-            formdata.append('status', 'ongoing');
-            $("#driver_modal").modal('show');
-
+            $("#driver_modal").modal('hide');
             $.ajax({
                 url: "{{ url('order/update') }}",
                 headers: {
@@ -615,96 +476,7 @@
                 }
             });
 
-        });
 
-        $('#submit_payment').on('click', function() {
-            var formdata = new FormData($("#payment_form")[0]);
-            formdata.append('status', 'delivered');
-            $("#payment_modal").modal('hide');
-
-            $.ajax({
-                url: "{{ url('order/update') }}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type: 'POST',
-                data: formdata,
-                dataType: 'JSON',
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.status == 1) {
-
-                        Swal.fire(
-                            "{{ __('Success') }}",
-                            "{{ __('success') }}",
-                            'success'
-                        ).then((result) => {
-                            location.reload();
-                        });
-                    }
-                }
-            });
-        });
-
-        $('#shipping_switch').on('change', function() {
-            var checkbox = document.getElementById('shipping_switch');
-            var status = checkbox.checked ? 1 : 0;
-            $.ajax({
-                url: "{{ url('shipping/switch') }}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type: 'POST',
-                dataType: 'JSON',
-                data: {
-                    status: status,
-                },
-                //contentType: false,
-                //processData: false,
-                success: function(response) {
-                    if (response.status == 1) {
-                        location.reload();
-                    }
-                }
-            });
-
-        });
-
-        $(document).on('click', '.invoice', function() {
-
-            Swal.fire({
-                title: "{{ __('Wait a moment') }}",
-                icon: 'info',
-                html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
-                showCloseButton: false,
-                showCancelButton: false,
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                allowEnterKey: false,
-            });
-
-            var invoice_id = $(this).attr('table_id');
-
-
-            $.ajax({
-                url: '{{ url('invoice/update') }}',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type: 'POST',
-                data: {
-                    invoice_id: invoice_id
-                },
-                dataType: 'JSON',
-                success: function(response) {
-                    if (response.status == 1) {
-                        Swal.close();
-                        window.open(response.data)
-                    }
-                }
-            });
         });
     </script>
 @endsection

@@ -71,7 +71,7 @@
                 <div class="avatar avatar-online">
                     {{-- <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle">
                     @include('_partials.macros', ['width' => 25, 'withbg' => '#696cff']) --}}
-                    <img class="w-px-40 h-auto rounded-circle" src="{{ $user->image() }}">
+                    <img class="w-px-40 h-px-40 rounded-circle" src="{{ $user->image() }}">
                 </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -82,11 +82,11 @@
                                 <div class="avatar avatar-online">
                                     {{-- <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle">
                                 @include('_partials.macros', ['width' => 25, 'withbg' => '#696cff']) --}}
-                                    <img class="w-px-40 h-auto rounded-circle" src="{{ $user->image() }}">
+                                    <img class="w-px-40 h-px-40 rounded-circle" src="{{ $user->image() }}">
                                 </div>
                             </div>
                             <div class="flex-grow-1">
-                                <span class="fw-semibold d-block">{{ $user->name }}</span>
+                                <span class="fw-semibold d-block">{{ $user->enterprise() }}</span>
                                 <small class="text-muted">{{ __($user->role_is()) }}</small>
                             </div>
                         </div>

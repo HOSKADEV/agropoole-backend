@@ -497,7 +497,7 @@ $user = auth()->user();
         $orders = $orders->where('status',$request->status);
     }
 
-    $orders = $orders->orderBy('created_at','DESC')->get();
+    $orders = $orders->orderBy('updated_at','DESC')->get();
 
     return datatables()
       ->of($orders)
@@ -533,7 +533,7 @@ $user = auth()->user();
           if($row->status == 'confirmed' && $request->type == 2){
 
 
-            $btn .= '<a class="dropdown-item ship" title="'.__('Ship').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-user-plus me-2"></i>'.__('Ship').'</a>';
+            $btn .= '<a class="dropdown-item ship" title="'.__('Ship').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-export me-2"></i>'.__('Ship').'</a>';
 
           }
 
