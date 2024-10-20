@@ -346,7 +346,7 @@ class StockController extends Controller
         ->whereNotIn('id',$stocked_products)
         ->get(); */
 
-        $categories = Product::whereIN('products.id',$stocked_products)
+        /* $categories = Product::whereIN('products.id',$stocked_products)
         ->leftJoin('subcategories', 'products.subcategory_id', 'subcategories.id')
         ->leftJoin('categories', 'subcategories.category_id', 'categories.id')
         ->pluck('categories.id')->toArray();
@@ -356,6 +356,10 @@ class StockController extends Controller
 
         $products = Product::where('status','available')
         ->whereIn('subcategory_id',$subcategories)
+        ->whereNotIn('id',$stocked_products)
+        ->get(); */
+
+        $products = Product::where('status','available')
         ->whereNotIn('id',$stocked_products)
         ->get();
 
