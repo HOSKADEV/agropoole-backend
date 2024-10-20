@@ -125,9 +125,13 @@ class User extends Authenticatable
     return $cart;
   }
 
-  public function address()
+  public function location()
   {
     return 'https://maps.google.com/?q=' . $this->latitude . ',' . $this->longitude;
+  }
+
+  public function address(){
+    return $this->city?->state?->name . '/' . $this->city?->name;
   }
 
   public function notify($title, $content)

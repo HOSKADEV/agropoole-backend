@@ -83,7 +83,7 @@ class Order extends Model
       return $this->phone;
     }
 
-    public function address(){
+    public function location(){
       return 'https://maps.google.com/?q='.$this->longitude.','.$this->latitude;
     }
 

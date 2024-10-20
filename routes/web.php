@@ -33,6 +33,7 @@ Route::group(['middleware' => ['auth']], function () {
   Route::get('/order/index', 'App\Http\Controllers\OrderController@index')->name('order-index');
   Route::get('/order/inbox', 'App\Http\Controllers\OrderController@inbox')->name('order-inbox');
   Route::get('/order/outbox', 'App\Http\Controllers\OrderController@outbox')->name('order-outbox');
+  Route::get('/order/{id}/info', 'App\Http\Controllers\OrderController@info')->name('order-info');
   Route::get('/order/{id}/items', 'App\Http\Controllers\ItemController@index')->name('order-items');
   Route::get('/driver/index', 'App\Http\Controllers\DriverController@index')->name('driver-index');
   Route::get('/user/index', 'App\Http\Controllers\UserController@index')->name('user-index');

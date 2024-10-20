@@ -510,9 +510,7 @@ $user = auth()->user();
 
           //$btn .= '<a class="dropdown-item-inline delete" title="'.__('Delete').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-trash me-2"></i></a>';
 
-          $btn .= '<a class="dropdown-item info" title="'.__('Info').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-group me-2"></i>'.__('Info').'</a>';
-
-          $btn .= '<a class="dropdown-item history" title="'.__('History').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-info-circle me-2"></i>'.__('History').'</a>';
+          $btn .= '<a class="dropdown-item" title="'.__('Info').'" href="'.url('order/'.$row->id.'/info').'"><i class="bx bx-info-circle me-2"></i>'.__('Info').'</a>';
 
           $btn .= '<a class="dropdown-item" title="'.__('Cart').'" href="'.url('order/'.$row->id.'/items').'"><i class="bx bx-cart me-2"></i>'.__('Cart').'</a>';
 
@@ -579,7 +577,7 @@ $user = auth()->user();
             }
           } */
 
-          //$btn .= '<a class="dropdown-item-inline" title="'.__('Location').'" href="'.$row->address().'" target="_blank" ><i class="bx bx-map me-2"></i></a>';
+          //$btn .= '<a class="dropdown-item-inline" title="'.__('Location').'" href="'.$row->location().'" target="_blank" ><i class="bx bx-map me-2"></i></a>';
 
 
           return $btn;
@@ -794,7 +792,7 @@ $user = auth()->user();
           $btn .= '<a class="dropdown-item-inline reset_password" title="'.__('Reset password').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-reset me-2"></i></a>';
 
           if($row->longitude && $row->latitude){
-            $btn .= '<a class="dropdown-item-inline" title="'.__('Location').'" href="'.$row->address().'" target="_blank" ><i class="bx bx-map me-2"></i></a>';
+            $btn .= '<a class="dropdown-item-inline" title="'.__('Location').'" href="'.$row->location().'" target="_blank" ><i class="bx bx-map me-2"></i></a>';
           }
 
           return $btn;

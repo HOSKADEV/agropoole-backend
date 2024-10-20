@@ -59,6 +59,11 @@ class Item extends Model
       return $this->unit_price;
     }
 
+    public function image(){
+      //return $this->type == 'unit' ? $this->unit_price : $this->pack_price;
+      return $this->stock?->product?->image();
+    }
+
     /* public function amount(){
 
       $product = $this->product;

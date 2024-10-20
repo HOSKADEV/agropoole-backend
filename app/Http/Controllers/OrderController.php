@@ -56,6 +56,13 @@ class OrderController extends Controller
       ->with('shipping', $shipping);
   }
 
+  public function info($id){
+    $order = Order::findOrFail($id);
+
+    return view('content.orders.info')
+    ->with('order',$order);
+  }
+
   public function distance(Request $request)
   {
     $validator = Validator::make($request->all(), [
