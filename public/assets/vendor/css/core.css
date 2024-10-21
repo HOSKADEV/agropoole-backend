@@ -11694,6 +11694,7 @@ button.list-group-item-gray.active {
 
 .rounded-circle {
   border-radius: 50% !important;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .rounded-pill {
@@ -19031,4 +19032,9 @@ html:not([dir=rtl]) .timeline-item {
 
 .pb-0 {
   padding-bottom: 0 !important
+}
+
+.text-fit{
+  font-size: 1vw;
+  width: 100%;
 }

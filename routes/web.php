@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth']], function () {
   Route::get('/order/{id}/items', 'App\Http\Controllers\ItemController@index')->name('order-items');
   Route::get('/driver/index', 'App\Http\Controllers\DriverController@index')->name('driver-index');
   Route::get('/user/index', 'App\Http\Controllers\UserController@index')->name('user-index');
+  Route::get('/user/browse', 'App\Http\Controllers\UserController@browse')->name('user-browse');
   Route::get('/notice/index', 'App\Http\Controllers\NoticeController@index')->name('notice-index');
   Route::get('/ad/index', 'App\Http\Controllers\AdController@index')->name('ad-index');
   Route::get('/category/list', 'App\Http\Controllers\DatatablesController@categories')->name('category-list');

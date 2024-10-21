@@ -25,6 +25,12 @@
       "slug": "cart-index"
     },
     {
+      "url": "/user/browse",
+      "name": "Users",
+      "icon": "menu-icon tf-icons bx bxs-group",
+      "slug": "user-browse"
+    },
+    {
       "url": "/order/inbox",
       "name": "Orders inbox",
       "icon": "menu-icon tf-icons bx bxs-archive-in",

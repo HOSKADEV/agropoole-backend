@@ -114,7 +114,7 @@
                                     <a href="app-user-view-account.html" class="text-body text-nowrap">
                                         <h6 class="mb-0">{{ $order->seller->enterprise() }}</h6>
                                     </a>
-                                    <span>{{ $order->seller->address() }}</span>
+                                    <span>{{ __($order->seller->role_is()) }}</span>
                                 </div>
                             </div>
                             {{-- <div class="d-flex justify-content-start align-items-center mb-6">
@@ -124,12 +124,14 @@
                                 <h6 class="text-nowrap mb-0">12 Orders</h6>
                             </div> --}}
                             <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">{{__('Contact info')}}</h6>
-                                <h6 class="mb-1"><a href="{{ $order->seller->location() }}"><i class="bx bx-map"></i></a>
-                                </h6>
-                            </div>
-                            <p class=" mb-1">{{__('Email')}}: {{ $order->seller->email }}</p>
-                            <p class=" mb-0">{{__('Mobile')}}: {{ $order->seller->phone }}</p>
+                              <h6 class="mb-1">{{__('Contact info')}}</h6>
+                              {{-- <h6 class="mb-1"><a href="{{ $user->location() }}"><i class="bx bx-map"></i></a>
+                              </h6> --}}
+                          </div>
+
+                          <h6 class=" mb-1 text-fit"><i class="bx bxs-envelope"></i> {{ $order->seller->email }}</h6>
+                          <h6 class=" mb-1 text-fit"><i class="bx bxs-phone"></i> {{ $order->seller->phone }}</h6>
+                          <h6 class=" mb-0 text-fit"><i class="bx bxs-map"></i> <a href="{{ $order->seller->location() }}">{{ $order->seller->address() }}</a></h6>
                         </div>
                     </div>
 
@@ -147,7 +149,7 @@
                                     <a href="app-user-view-account.html" class="text-body text-nowrap">
                                         <h6 class="mb-0">{{ $order->buyer->enterprise() }}</h6>
                                     </a>
-                                    <span>{{ $order->buyer->address() }}</span>
+                                    <span>{{ __($order->buyer->role_is()) }}</span>
                                 </div>
                             </div>
                             {{-- <div class="d-flex justify-content-start align-items-center mb-6">
@@ -156,13 +158,15 @@
                                       class='bx bx-cart bx-lg'></i></span>
                               <h6 class="text-nowrap mb-0">12 Orders</h6>
                           </div> --}}
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-1">{{__('Contact info')}}</h6>
-                                <h6 class="mb-1"><a href="{{ $order->buyer->location() }}"><i class="bx bx-map"></i></a>
-                                </h6>
-                            </div>
-                            <p class=" mb-1">{{__('Email')}}: {{ $order->buyer->email }}</p>
-                            <p class=" mb-0">{{__('Mobile')}}: {{ $order->buyer->phone }}</p>
+                          <div class="d-flex justify-content-between">
+                            <h6 class="mb-1">{{__('Contact info')}}</h6>
+                            {{-- <h6 class="mb-1"><a href="{{ $user->location() }}"><i class="bx bx-map"></i></a>
+                            </h6> --}}
+                        </div>
+
+                        <h6 class=" mb-1 text-fit"><i class="bx bxs-envelope"></i> {{ $order->buyer->email }}</h6>
+                        <h6 class=" mb-1 text-fit"><i class="bx bxs-phone"></i> {{ $order->buyer->phone }}</h6>
+                        <h6 class=" mb-0 text-fit"><i class="bx bxs-map"></i> <a href="{{ $order->buyer->location() }}">{{ $order->buyer->address() }}</a></h6>
                         </div>
                     </div>
                     @if ($order->delivery)
@@ -180,7 +184,7 @@
                                         <a href="app-user-view-account.html" class="text-body text-nowrap">
                                             <h6 class="mb-0">{{ $order->driver->enterprise() }}</h6>
                                         </a>
-                                        <span>{{ $order->driver->address() }}</span>
+                                        <span>{{ __($order->driver->role_is()) }}</span>
                                     </div>
                                 </div>
                                 {{-- <div class="d-flex justify-content-start align-items-center mb-6">
@@ -189,12 +193,15 @@
                                     class='bx bx-cart bx-lg'></i></span>
                             <h6 class="text-nowrap mb-0">12 Orders</h6>
                         </div> --}}
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="mb-1">{{__('Contact info')}}</h6>
-                                    {{-- <h6 class="mb-1"><a href="{{$order->driver->location()}}"><i class="bx bx-map"></i></a></h6> --}}
-                                </div>
-                                <p class=" mb-1">{{__('Email')}}: {{ $order->driver->email }}</p>
-                                <p class=" mb-0">{{__('Mobile')}}: {{ $order->driver->phone }}</p>
+                        <div class="d-flex justify-content-between">
+                          <h6 class="mb-1">{{__('Contact info')}}</h6>
+                          {{-- <h6 class="mb-1"><a href="{{ $user->location() }}"><i class="bx bx-map"></i></a>
+                          </h6> --}}
+                      </div>
+
+                      <h6 class=" mb-1 text-fit"><i class="bx bxs-envelope"></i> {{ $order->driver->email }}</h6>
+                      <h6 class=" mb-1 text-fit"><i class="bx bxs-phone"></i> {{ $order->driver->phone }}</h6>
+                      <h6 class=" mb-0 text-fit"><i class="bx bxs-map"></i> {{ $order->driver->address() }}</h6>
                             </div>
                         </div>
                     @else

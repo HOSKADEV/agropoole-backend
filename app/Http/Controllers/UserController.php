@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\User;
+use App\Models\State;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -20,11 +21,76 @@ class UserController extends Controller
 
   public function index()
   {
-    if(auth()->user()->role_is('admin')){
+    if (auth()->user()->role_is('admin')) {
       return view('content.users.list');
-    }else{
+    } else {
       return redirect()->route('pages-misc-error');
     }
+
+  }
+
+  public function browse(Request $request)
+  {
+
+    $user = auth()->user();
+    $states = State::all();
+      $users = User::where('status' , 'active')->whereNotNull('email');
+
+      $users = $user->role_is('broker')
+      ? $users->whereIn('role', [1,3])
+      : $users->where('role', 2);
+
+
+
+
+      if ($request->state) {
+        $users = $users->whereHas('city', function($query) use ($request){
+          $query->where('state_id', $request->state);
+        });
+      }
+
+      if ($request->role) {
+        $users->where('role', $request->role);
+      }
+
+      if ($request->client) {
+
+        $query = function($query) use ($user){
+          $query->whereHas('boughtOrders', function($q) use ($user){
+            $q->where('seller_id', $user->id);
+          });
+          $query->orWhereHas('soldOrders', function($q) use ($user){
+            $q->where('buyer_id', $user->id);
+          });
+        };
+
+
+
+        $users = $request->client == 1
+        ? $users->where($query)
+        : $users->whereNot($query);
+      }
+
+
+
+
+
+      if ($request->search) {
+        $users = $users->where(function ($query) use ($request) {
+          $query->where('name', 'like', '%' . $request->search . '%');
+          $query->orWhere('enterprise_name', 'like', '%' . $request->search . '%');
+        });
+      }
+
+      $users = $users->latest()->paginate(12)->appends($request->all());
+
+      return view('content.users.browse')
+        ->with('states', $states)
+        ->with('users', $users);
+
+
+
+
 
   }
   //
@@ -80,12 +146,12 @@ class UserController extends Controller
         $user->save();
       }
 
-      if($request->has('status')){
+      if ($request->has('status')) {
 
         $user->refresh();
 
-        if($user->fcm_token){
-          $this->send_fcm_device(__('user.account.title'), __('user.account.'.$user->status), $user->fcm_token);
+        if ($user->fcm_token) {
+          $this->send_fcm_device(__('user.account.title'), __('user.account.' . $user->status), $user->fcm_token);
         }
 
         if ($request->status == 3) {
@@ -307,7 +373,7 @@ class UserController extends Controller
 
     try {
 
-      $users = User::where('users.status','active')->where('users.role', $request->role);
+      $users = User::where('users.status', 'active')->where('users.role', $request->role);
 
 
       if ($request->role != '5') {
@@ -317,12 +383,12 @@ class UserController extends Controller
       }
 
       $users = $request->has('all')
-    ? ($request->has('with_stocks')
-        ? new UserWithStockCollection($users->get())
-        : new UserCollection($users->get()))
-    : ($request->has('with_stocks')
-        ? new PaginatedUserWithStockCollection($users->paginate(10))
-        : new PaginatedUserCollection($users->paginate(10)));
+        ? ($request->has('with_stocks')
+          ? new UserWithStockCollection($users->get())
+          : new UserCollection($users->get()))
+        : ($request->has('with_stocks')
+          ? new PaginatedUserWithStockCollection($users->paginate(10))
+          : new PaginatedUserCollection($users->paginate(10)));
 
       return response()->json([
         'status' => 1,
@@ -340,7 +406,8 @@ class UserController extends Controller
     }
   }
 
-  public function info(Request $request){
+  public function info(Request $request)
+  {
     $validator = Validator::make($request->all(), [
       'user_id' => 'required|exists:users,id',
     ]);
@@ -354,21 +421,21 @@ class UserController extends Controller
       );
     }
 
-    try{
+    try {
 
       $user = User::find($request->user_id);
 
       return response()->json([
-        'status'=> 1,
+        'status' => 1,
         'message' => 'success',
         'data' => new UserResource($user),
       ]);
 
     } catch (Exception $e) {
-        //dd($e->getMessage());
+      //dd($e->getMessage());
 
-        return response()->json([
-        'status'=> 0,
+      return response()->json([
+        'status' => 0,
         'message' => $e->getMessage(),
       ]);
     }

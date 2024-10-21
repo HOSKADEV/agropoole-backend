@@ -80,9 +80,22 @@ class User extends Authenticatable
     return $this->hasMany(Cart::class);
   }
 
+  // Orders where user is the seller
+  public function soldOrders()
+  {
+      return $this->hasMany(Order::class, 'seller_id');
+  }
+
+  // Orders where user is the buyer
+  public function boughtOrders()
+  {
+      return $this->hasMany(Order::class, 'buyer_id');
+  }
+
   public function orders()
   {
-    return $this->hasMany(Order::class);
+
+      return $this->soldOrders()->union($this->boughtOrders());
   }
 
   public function notifications()
