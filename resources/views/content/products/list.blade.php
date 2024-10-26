@@ -141,6 +141,14 @@
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                          <label class="form-label" for="name">{{ __('Status') }}</label>
+                          <select class="form-select" name="status" id="status">
+                              <option value="available"> {{ __('Available') }}</option>
+                              <option value="unavailable"> {{ __('Unavailable') }}</option>
+                          </select>
+                      </div>
+
                         <div class="mb-3" style="text-align: center">
                             <button type="submit" id="submit" name="submit"
                                 class="btn btn-primary">{{ __('Send') }}</button>
