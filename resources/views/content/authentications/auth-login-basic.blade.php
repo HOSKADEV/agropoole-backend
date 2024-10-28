@@ -32,7 +32,7 @@
                             <div class="mb-3">
                                 <label for="email" class="form-label">{{ __('Email') }}</label>
                                 <input type="text" class="form-control" id="email" name="email"
-                                    placeholder="Enter your email" autofocus>
+                                    placeholder="{{__('Enter your email')}}" autofocus>
                             </div>
                             <div class="mb-3 form-password-toggle">
                                 <div class="d-flex justify-content-between">
@@ -57,11 +57,11 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
+                                <button class="btn btn-primary d-grid w-100" type="submit">{{__('Sign in')}}</button>
                             </div>
                             <div class="mb-3">
                               <a class="btn btn-outline-primary w-100" href="{{url('/auth/redirect')}}">
-                                <span class="tf-icons bx bxl-google bx-18px me-2"></span> Sign in with Google
+                                <span class="tf-icons bx bxl-google bx-18px me-2"></span> {{__('Sign in with Google')}}
                               </a>
                             </div>
                         </form>

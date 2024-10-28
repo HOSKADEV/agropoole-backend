@@ -4,8 +4,8 @@
 
 @section('content')
 
-<h4 class="fw-bold py-3 mb-3">
-  <span class="text-muted fw-light">{{__('Categories')}} /</span> {{__('Browse categories')}}
+<h4 class="fw-bold py-3 mb-3"> {{ __('Categories') }}
+  {{-- <span class="text-muted fw-light">{{__('Categories')}} /</span> {{__('Browse categories')}} --}}
   <button type="button" class="btn btn-primary" id="create" style="float:right">{{__('Add category')}}</button>
 </h4>
 
@@ -32,7 +32,7 @@
   <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="fw-bold py-1 mb-1">{{__('Add category')}}</h4>
+        {{-- <h4 class="fw-bold py-1 mb-1">{{__('Add category')}}</h4> --}}
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">

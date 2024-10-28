@@ -4,8 +4,8 @@
 
 @section('content')
 
-    <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Users') }} /</span> {{ __('Browse users') }}
+    <h4 class="fw-bold py-3 mb-3">{{ __('Users') }}
+        {{-- <span class="text-muted fw-light">{{ __('Users') }} /</span> {{ __('Browse users') }} --}}
     </h4>
 
     <!-- Basic Bootstrap Table -->
@@ -20,7 +20,7 @@
             </select>
 
             <select class="filter-select" id="type" name="type">
-                <option value=""> {{ __('Type filter') }} </option>
+                <option value=""> {{ __('Role filter') }} </option>
                 <option value="1"> {{ __('Provider') }} </option>
                 <option value="2"> {{ __('Broker') }} </option>
                 <option value="3"> {{ __('Store') }} </option>

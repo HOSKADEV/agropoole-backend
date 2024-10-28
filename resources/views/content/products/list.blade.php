@@ -4,8 +4,8 @@
 
 @section('content')
 
-    <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Products') }} /</span> {{ __('Browse products') }}
+    <h4 class="fw-bold py-3 mb-3">{{ __('Products') }}
+        {{-- <span class="text-muted fw-light">{{ __('Products') }} /</span> {{ __('Browse products') }} --}}
         @if (auth()->user()->role_is('provider'))
             <button type="button" class="btn btn-primary" id="create" style="float:right">{{ __('Add Product') }}</button>
         @endif
@@ -29,8 +29,8 @@
                     <option value=""> {{ __('Not selected') }}</option>
                 </select>
             </div>
-
-            @if (auth()->user()->role_is('provider'))
+            @if (!auth()->user()->role_is('provider'))
+            {{-- @if (auth()->user()->role_is('provider'))
                 <div class="form-group col mx-3 my-3">
                     <label for="type" class="form-label">{{ __('Availability filter') }}</label>
                     <select class="form-select" id="availability" name="availability">
@@ -39,7 +39,7 @@
                         <option value="2"> {{ __('Unavailable') }}</option>
                     </select>
                 </div>
-            @else
+            @else --}}
                 <div class="form-group col mx-3 my-3">
                     <label for="category" class="form-label">{{ __('Provider filter') }}</label>
                     <select class="form-select" id="provider" name="provider">
@@ -70,7 +70,7 @@
                         <th>{{ __('Image') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Created at') }}</th>
-                        <th>{{ __('is_available') }}</th>
+                        {{-- <th>{{ __('is_available') }}</th> --}}
                         <th>{{ __('in_stock') }}</th>
                         <th>{{ __('Actions') }}</th>
                     </tr>
@@ -84,7 +84,7 @@
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="fw-bold py-1 mb-1">{{ __('Add product') }}</h4>
+                    {{-- <h4 class="fw-bold py-1 mb-1">{{ __('Add product') }}</h4> --}}
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -141,13 +141,13 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                           <label class="form-label" for="name">{{ __('Status') }}</label>
                           <select class="form-select" name="status" id="status">
                               <option value="available"> {{ __('Available') }}</option>
                               <option value="unavailable"> {{ __('Unavailable') }}</option>
                           </select>
-                      </div>
+                      </div> --}}
 
                         <div class="mb-3" style="text-align: center">
                             <button type="submit" id="submit" name="submit"
@@ -163,10 +163,10 @@
 
     {{-- stock modal --}}
     <div class="modal fade" id="stock_modal" aria-hidden="true">
-        <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="fw-bold py-1 mb-1">{{ __('Add stock') }}</h4>
+                    {{-- <h4 class="fw-bold py-1 mb-1">{{ __('Add stock') }}</h4> --}}
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -293,7 +293,7 @@
                             name: 'created_at'
                         },
 
-                        {
+                        /* {
                             data: 'availability',
                             name: 'availability',
                             render: function(data) {
@@ -303,7 +303,7 @@
                                     return '<span class="badge bg-label-success">{{ __('Yes') }}</span>';
                                 }
                             }
-                        },
+                        }, */
 
                         {
                             data: 'in_stock',
@@ -462,7 +462,7 @@
                                 .pack_units;
                             document.getElementById('unit_type').value = response.data
                                 .unit_type; */
-                            document.getElementById('status').value = response.data.status;
+                            //document.getElementById('status').value = response.data.status;
 
                             var image = response.data.image == null ?
                                 "{{ asset('assets/img/icons/file-not-found.jpg') }}" : response
@@ -527,6 +527,17 @@
             });
 
             $('#submit').on('click', function() {
+              Swal.fire({
+                title: "{{__('Wait a moment')}}",
+                icon: 'info',
+                html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
+                showCloseButton: false,
+                showCancelButton: false,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+            });
 
                 /* var formdata = new FormData($("#form")[0]); */
                 var queryString = new FormData($("#form")[0]);
@@ -556,6 +567,7 @@
                     contentType: false,
                     processData: false,
                     success: function(response) {
+                        Swal.close();
                         if (response.status == 1) {
                             Swal.fire({
                                 title: "{{ __('Success') }}",
@@ -566,7 +578,7 @@
                                 location.reload();
                             });
                         } else {
-                            console.log(response.message);
+                            //console.log(response.message);
                             Swal.fire(
                                 "{{ __('Error') }}",
                                 response.message,
@@ -575,8 +587,9 @@
                         }
                     },
                     error: function(data) {
-                        var errors = data.responseJSON;
-                        console.log(errors);
+                      Swal.close();
+                        //var errors = data.responseJSON;
+                        //console.log(errors);
                         Swal.fire(
                             "{{ __('Error') }}",
                             errors.message,

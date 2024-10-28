@@ -1,6 +1,10 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', __('Users'))
+@php
+  $title = auth()->user()->role_is('provider') ? __('Brokers') : __('Operators');
+@endphp
+
+@section('title', $title )
 
 @section('vendor-style')
     <style>
@@ -100,8 +104,8 @@
 
 @section('content')
 
-    <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Users') }} /</span> {{ __('Browse users') }}
+    <h4 class="fw-bold py-3 mb-3"> {{$title}}
+        {{-- <span class="text-muted fw-light">{{ __('Users') }} /</span> {{ __('Browse users') }} --}}
         {{-- <button type="button" class="btn btn-primary" id="create" style="float:right">{{ __('Add Stock') }}</button> --}}
     </h4>
 
@@ -152,9 +156,9 @@
             @foreach ($users->items() as $user)
 
 
-                  <div class="card col-md-auto m-2 p-0" >
+                  <div class="card col-md-x ms-3 mb-3 p-0" >
 
-                    <div class="card-body" style="width:19.8rem !important">
+                    <div class="card-body-mini m-0">
                         <div class="d-flex justify-content-start align-items-center mb-6">
                             <div class="avatar me-3">
                                 <img src="{{ $user->image() }}" alt="Avatar" class="rounded-circle">

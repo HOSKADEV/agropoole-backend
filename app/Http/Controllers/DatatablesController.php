@@ -563,14 +563,14 @@ $user = auth()->user();
 
           }
 
-          if($row->status == 'shipped' && $request->type == 3){
+          if($row->status == 'shipped' && $row->driver?->id == auth()->id()){
 
 
             $btn .= '<a class="dropdown-item ongoing" title="'.__('Ongoing').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-transfer me-2"></i>'.__('Ongoing').'</a>';
 
           }
 
-          if($row->status == 'ongoing' && $request->type == 3){
+          if($row->status == 'ongoing' && $row->driver?->id == auth()->id()){
 
 
             $btn .= '<a class="dropdown-item deliver" title="'.__('Deliver').'" table_id="'.$row->id.'" href="javascript:void(0);"><i class="bx bx-import me-2"></i>'.__('Deliver').'</a>';

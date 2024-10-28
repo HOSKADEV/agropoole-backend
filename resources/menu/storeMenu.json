@@ -28,7 +28,7 @@
     },
     {
       "url": "/user/browse",
-      "name": "Users",
+      "name": "Operators",
       "icon": "menu-icon tf-icons bx bxs-group",
       "slug": "user-browse"
     },

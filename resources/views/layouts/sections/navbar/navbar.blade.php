@@ -39,113 +39,49 @@
 <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
     <!-- Search -->
     <div class="navbar-nav align-items-center">
-        <div class="nav-item d-flex align-items-center">
-            <i class="bx bx-search fs-4 lh-0"></i>
-            <input type="text" class="form-control border-0 shadow-none" placeholder="Search..."
-                aria-label="Search...">
-        </div>
-    </div>
-    <!-- /Search -->
-    <ul class="navbar-nav flex-row align-items-center ms-auto">
-
-        {{--  <!-- Place this tag where you want the button to render. -->
-          <li class="nav-item lh-1 me-3">
-            <a class="github-button" href="https://github.com/themeselection/sneat-html-laravel-admin-template-free" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star themeselection/sneat-html-laravel-admin-template-free on GitHub">Star</a>
-          </li> --}}
-        @if (count(session()->get('cart') ?? []))
-            <li class="nav-item">
-
-                <button type="button" class="btn text-nowrap d-inline-block" data-bs-toggle="modal"
-                    data-bs-target="#cartModal">
-                    <span class="tf-icons bx bx-sm bx-cart"></span>
-                    <span
-                        class="badge rounded-pill bg-danger text-white badge-notifications">{{ count(session()->get('cart')) }}</span>
-                </button>
-
-            </li>
-        @endif
-
-        <!-- User -->
-        <li class="nav-item navbar-dropdown dropdown-user dropdown">
-            <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+        <div class="d-flex">
+            <div class="flex-shrink-0 me-3">
                 <div class="avatar avatar-online">
                     {{-- <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle">
-                    @include('_partials.macros', ['width' => 25, 'withbg' => '#696cff']) --}}
+            @include('_partials.macros', ['width' => 25, 'withbg' => '#696cff']) --}}
                     <img class="w-px-40 h-px-40 rounded-circle" src="{{ $user->image() }}">
                 </div>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                    <a class="dropdown-item" href="javascript:void(0);">
-                        <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                                <div class="avatar avatar-online">
-                                    {{-- <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle">
-                                @include('_partials.macros', ['width' => 25, 'withbg' => '#696cff']) --}}
-                                    <img class="w-px-40 h-px-40 rounded-circle" src="{{ $user->image() }}">
-                                </div>
-                            </div>
-                            <div class="flex-grow-1">
-                                <span class="fw-semibold d-block">{{ $user->enterprise() }}</span>
-                                <small class="text-muted">{{ __($user->role_is()) }}</small>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <div class="dropdown-divider"></div>
-                </li>
-                {{-- <li>
-                <a class="dropdown-item" href="javascript:void(0);">
-                  <i class="bx bx-user me-2"></i>
-                  <span class="align-middle">My Profile</span>
-                </a>
-              </li> --}}
+            </div>
+            <div class="flex-grow-1">
+                <span class="fw-semibold d-block">{{ $user->enterprise() }}</span>
+                <small class="text-muted">{{ __($user->role_is()) }}</small>
+            </div>
+        </div>
+    </div>
+    <ul class="navbar-nav flex-row align-items-center ms-auto">
+      @if (count(session()->get('cart') ?? []))
+          <li class="nav-item w-px-50">
+              <a class="nav-link d-flex justify-content-center align-items-center" data-bs-toggle="modal" href="#" data-bs-target="#cartModal">
+                  <span class="tf-icons bx bx-sm bx-cart"></span>
+                  <span class="badge rounded-pill bg-danger text-white badge-notifications">{{ count(session()->get('cart')) }}</span>
+              </a>
+          </li>
+      @endif
 
-                <li>
-                    <a class="dropdown-item" href="{{ url('/lang') }}">
-                        <i class='bx bx-refresh me-2'></i>
-                        <span class="align-middle">{{ __('Switch language') }}</span>
-                    </a>
-                </li>
-                @if ($user->role_is('admin'))
-                    <li>
-                        <a class="dropdown-item" href="{{ url('/version') }}">
-                            <i class='bx bx-cog me-2'></i>
-                            <span class="align-middle">{{ __('Settings') }}</span>
-                        </a>
-                    </li>
-                @endif
+      @if ($user->role_is('admin'))
+          <li class="nav-item w-px-50">
+              <a class="nav-link d-flex justify-content-center align-items-center" href="{{ url('/version') }}">
+                  <i class="bx bx-cog bx-sm"></i>
+              </a>
+          </li>
+      @endif
 
-                {{-- <li>
-                <a class="dropdown-item" href="javascript:void(0);">
-                  <span class="d-flex align-items-center align-middle">
-                    <i class="flex-shrink-0 bx bx-credit-card me-2 pe-1"></i>
-                    <span class="flex-grow-1 align-middle">Billing</span>
-                    <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                  </span>
-                </a>
-              </li> --}}
-                <li>
-                    <div class="dropdown-divider"></div>
-                </li>
-
-                <li>
-                    <a class="dropdown-item" href="#" id="change_password">
-                        <i class='bx bx-key me-2'></i>
-                        <span class="align-middle">{{ __('Change password') }}</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item" href="{{ url('/auth/logout') }}">
-                        <i class='bx bx-power-off me-2'></i>
-                        <span class="align-middle">{{ __('Log Out') }}</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <!--/ User -->
-    </ul>
+      <li class="nav-item w-px-50">
+          <a class="nav-link d-flex justify-content-center align-items-center" href="#" id="change_password">
+              <i class='bx bx-key bx-sm'></i>
+          </a>
+      </li>
+      <li class="nav-item w-px-50">
+          <a class="nav-link d-flex justify-content-center align-items-center" href="{{ url('/auth/logout') }}">
+              <i class='bx bx-power-off bx-sm'></i>
+          </a>
+      </li>
+  </ul>
 </div>
 
 @if (!isset($navbarDetached))
@@ -159,7 +95,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="fw-bold py-1 mb-1">{{ __('Change password') }}</h4>
+                {{-- <h4 class="fw-bold py-1 mb-1">{{ __('Change password') }}</h4> --}}
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -210,10 +146,10 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>{{__('Product')}}</th>
-                                <th>{{__('Seller')}}</th>
-                                <th>{{__('Quantity')}}</th>
-                                <th>{{__('Price')}}</th>
+                                <th>{{ __('Product') }}</th>
+                                <th>{{ __('Seller') }}</th>
+                                <th>{{ __('Quantity') }}</th>
+                                <th>{{ __('Price') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -247,10 +183,12 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-danger" id="empty_cart">{{__('Empty Cart')}}</button>
-                <button type="button" class="btn btn-label-primary" id="finish_order">{{__('Place Order')}}</button>
+                <button type="button" class="btn btn-label-danger" id="empty_cart">{{ __('Empty Cart') }}</button>
+                <button type="button" class="btn btn-label-primary"
+                    id="finish_order">{{ __('Place Order') }}</button>
 
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">{{__('Close')}}</button>
+                <button type="button" class="btn btn-label-secondary"
+                    data-bs-dismiss="modal">{{ __('Close') }}</button>
 
             </div>
         </div>

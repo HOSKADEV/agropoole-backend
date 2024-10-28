@@ -4,8 +4,8 @@
 
 @section('content')
 
-    <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Stocks') }} /</span> {{ __('My stock') }}
+    <h4 class="fw-bold py-3 mb-3">{{ __('My stock') }}
+        {{-- <span class="text-muted fw-light">{{ __('Stocks') }} /</span> {{ __('My stock') }} --}}
         <button type="button" class="btn btn-primary" id="multi_create" style="float:right"><span
                 class="tf-icons bx bx-infinite bx-18px me-2"></span>{{ __('Global add') }}</button>
     </h4>
@@ -67,10 +67,10 @@
 
     {{-- stock modal --}}
     <div class="modal fade" id="modal" aria-hidden="true">
-        <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="fw-bold py-1 mb-1">{{ __('Edit stock') }}</h4>
+                   {{--  <h4 class="fw-bold py-1 mb-1">{{ __('Edit stock') }}</h4> --}}
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

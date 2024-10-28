@@ -50,7 +50,7 @@
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="fw-bold py-1 mb-1">{{__('add item')}}</h4>
+        {{-- <h4 class="fw-bold py-1 mb-1">{{__('add item')}}</h4> --}}
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -106,7 +106,7 @@
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="fw-bold py-1 mb-1">{{__('add item')}}</h4>
+        {{-- <h4 class="fw-bold py-1 mb-1">{{__('add item')}}</h4> --}}
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">

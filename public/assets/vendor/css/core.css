@@ -1224,6 +1224,10 @@ progress {
     flex: 0 0 auto;
     width: 16.66666667%;
   }
+  .col-md-x {
+    flex: 0 0 auto;
+    width: 23%;
+  }
 
   .col-md-3 {
     flex: 0 0 auto;
@@ -4234,6 +4238,10 @@ fieldset:disabled .btn {
 .card-body {
   flex: 1 1 auto;
   padding: 1.5rem 1.5rem;
+}
+.card-body-mini {
+  flex: 1 1 auto;
+  padding: 1rem 1rem;
 }
 
 .card-title {
@@ -19037,4 +19045,5 @@ html:not([dir=rtl]) .timeline-item {
 .text-fit{
   font-size: 1vw;
   width: 100%;
+  white-space: nowrap;
 }

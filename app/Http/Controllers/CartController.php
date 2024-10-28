@@ -17,62 +17,57 @@ use Illuminate\Support\Facades\Validator;
 class CartController extends Controller
 {
 
-  public function index(Request $request){
+  public function index(Request $request)
+  {
 
     $user = auth()->user();
 
-    if (in_array($user->role_is(), ['broker','store'] )) {
+    if (!in_array($user->role_is(), ['broker', 'store'])) {
+      return redirect()->route('pages-misc-error');
+    }
 
-      $categories = Category::all();
-      $subcategories = Subcategory::where('category_id', $request->category)->get();
-      $users = User::where('role', $user->role - 1)->has('stocks', '>', 0)->get();
+    $categories = Category::all();
+    $subcategories = Subcategory::where('category_id', $request->category)->get();
+    $users = User::where('role', $user->role - 1)->has('stocks', '>', 0)->get();
 
-      $stocks = Stock::whereHas('owner', function($query) use ($user){
-        $query->where('role', $user->role - 1);
-      });
+    $stocks = Stock::where('status','available')->whereHas('owner', function ($query) use ($user) {
+      $query->where('role', $user->role - 1);
+    });
 
 
-      if($request->owner){
+    if ($request->owner) {
       $stocks = $stocks->where('user_id', $request->owner);
     }
 
-    if($request->category){
+    if ($request->category) {
 
-      $stocks = $stocks->whereHas('product', function($query) use ($request){
-        $query->whereHas('subcategory', function($query) use ($request){
+      $stocks = $stocks->whereHas('product', function ($query) use ($request) {
+        $query->whereHas('subcategory', function ($query) use ($request) {
           $query->where('category_id', $request->category);
         });
       });
     }
 
 
-    if($request->subcategory){
-      $stocks = $stocks->whereHas('product', function($query) use ($request){
-        $query->where('subcategory_id',$request->subcategory);
+    if ($request->subcategory) {
+      $stocks = $stocks->whereHas('product', function ($query) use ($request) {
+        $query->where('subcategory_id', $request->subcategory);
       });
     }
 
-    if($request->search){
-      $stocks = $stocks->whereHas('product', function($query) use ($request){
-        $query->where('unit_name','like', '%'.$request->search.'%');
+    if ($request->search) {
+      $stocks = $stocks->whereHas('product', function ($query) use ($request) {
+        $query->where('unit_name', 'like', '%' . $request->search . '%');
       });
     }
 
-    $stocks = $stocks->latest()->with(['owner','product'])->paginate(8)->appends($request->all());
+    $stocks = $stocks->latest()->with(['owner', 'product'])->paginate(8)->appends($request->all());
 
     return view('content.stocks.browse')
-      ->with('categories',$categories)
-      ->with('subcategories',$subcategories)
-      ->with('stocks',$stocks)
-      ->with('users',$users);
-
-    }else{
-      return redirect()->route('pages-misc-error');
-    }
-
-
-
-
+      ->with('categories', $categories)
+      ->with('subcategories', $subcategories)
+      ->with('stocks', $stocks)
+      ->with('users', $users);
 
   }
   public function update(Request $request)

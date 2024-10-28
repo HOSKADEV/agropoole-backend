@@ -4,8 +4,8 @@
 
 @section('content')
 
-    <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Inbox') }} /</span> {{ __('Browse inbox') }}
+    <h4 class="fw-bold py-3 mb-3">{{ __('Inbox') }}
+        {{-- <span class="text-muted fw-light">{{ __('Inbox') }} /</span> {{ __('Browse inbox') }} --}}
     </h4>
 
     <!-- Basic Bootstrap Table -->
@@ -102,7 +102,7 @@
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="fw-bold py-1 mb-1">{{ __('Order payment') }}</h4>
+                    {{-- <h4 class="fw-bold py-1 mb-1">{{ __('Order payment') }}</h4> --}}
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -139,7 +139,7 @@
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="fw-bold py-1 mb-1">{{ __('Ship order') }}</h4>
+                    {{-- <h4 class="fw-bold py-1 mb-1">{{ __('Ship order') }}</h4> --}}
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -155,7 +155,7 @@
                         <div class="mb-3">
                             <label class="form-label" for="driver_id">{{ __('Driver') }}</label>
                             <select class="form-select" id="driver_id" name="driver_id">
-                                <option value="{{ auth()->user()->id }}"> {{ auth()->user()->enterprise() }}</option>
+                                <option value="{{ auth()->user()->id }}"> {{ __('Me') }}</option>
                                 @foreach ($drivers as $driver)
                                     <option value="{{ $driver->id }}"> {{ $driver->enterprise() }} </option>
                                 @endforeach
@@ -177,7 +177,7 @@
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="fw-bold py-1 mb-1">{{ __('Order note') }}</h4>
+                    {{-- <h4 class="fw-bold py-1 mb-1">{{ __('Order note') }}</h4> --}}
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -368,7 +368,17 @@
                 cancelButtonText: "{{ __('No') }}"
             }).then((result) => {
                 if (result.isConfirmed) {
-
+                    Swal.fire({
+                        title: "{{__('Wait a moment')}}",
+                        icon: 'info',
+                        html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
+                        showCloseButton: false,
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        allowEnterKey: false,
+                    });
                     $.ajax({
                         url: "{{ url('order/update') }}",
                         headers: {
@@ -382,7 +392,7 @@
                         dataType: 'JSON',
                         success: function(response) {
                             if (response.status == 1) {
-
+                                Swal.close();
                                 Swal.fire(
                                     "{{ __('Success') }}",
                                     "{{ __('success') }}",
@@ -461,6 +471,17 @@
 
             var formdata = new FormData($("#driver_form")[0]);
             $("#driver_modal").modal('hide');
+            Swal.fire({
+                title: "{{__('Wait a moment')}}",
+                icon: 'info',
+                html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
+                showCloseButton: false,
+                showCancelButton: false,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+            });
             $.ajax({
                 url: "{{ url('order/update') }}",
                 headers: {
@@ -473,7 +494,7 @@
                 processData: false,
                 success: function(response) {
                     if (response.status == 1) {
-
+                        Swal.close();
                         Swal.fire(
                             "{{ __('Success') }}",
                             "{{ __('success') }}",

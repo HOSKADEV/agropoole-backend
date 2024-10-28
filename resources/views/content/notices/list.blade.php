@@ -4,8 +4,8 @@
 
 @section('content')
 
-<h4 class="fw-bold py-3 mb-3">
-  <span class="text-muted fw-light">{{__('Notices')}} /</span> {{__('Browse notices')}}
+<h4 class="fw-bold py-3 mb-3">{{__('Notices')}}
+  {{-- <span class="text-muted fw-light">{{__('Notices')}} /</span> {{__('Browse notices')}} --}}
   <button type="button" id="add" class="btn rounded-pill btn-primary" style="float: right;">{{__('Add notice')}}</button>
 </h4>
 
@@ -33,7 +33,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="fw-bold py-1 mb-1">{{__('Add notice')}}</h4>
+        {{-- <h4 class="fw-bold py-1 mb-1">{{__('Add notice')}}</h4> --}}
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -87,7 +87,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="fw-bold py-1 mb-1">{{__('Notice content')}}</h4>
+        {{-- <h4 class="fw-bold py-1 mb-1">{{__('Notice content')}}</h4> --}}
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">

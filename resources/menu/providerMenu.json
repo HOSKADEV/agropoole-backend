@@ -23,7 +23,7 @@
 
     {
       "url": "/user/browse",
-      "name": "Users",
+      "name": "Brokers",
       "icon": "menu-icon tf-icons bx bxs-group",
       "slug": "user-browse"
     },

@@ -100,8 +100,8 @@
 
 @section('content')
 
-    <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Stocks') }} /</span> {{ __('Browse stocks') }}
+    <h4 class="fw-bold py-3 mb-3">{{ __('Stocks') }}
+        {{-- <span class="text-muted fw-light">{{ __('Stocks') }} /</span> {{ __('Browse stocks') }} --}}
         {{-- <button type="button" class="btn btn-primary" id="create" style="float:right">{{ __('Add Stock') }}</button> --}}
     </h4>
 
@@ -133,7 +133,7 @@
                 </div>
 
                 <div class="form-group col mx-3 my-3">
-                    <label for="category" class="form-label">{{ __('Owner filter') }}</label>
+                    <label for="category" class="form-label">{{auth()->user()->role_is('broker') ? __('Provider filter') : __('Broker filter')}}</label>
                     <select class="form-select" id="owner" name="owner">
                         <option value=""> {{ __('Not selected') }}</option>
                         @foreach ($users as $user)
@@ -196,9 +196,9 @@
                         <div class="card-body d-flex flex-column">
                             <h6 class="card-title product-name mb-3">{{ $product_name }}</h6>
                             <div class="mt-auto">
-                                <button class="btn btn-primary cart-button {{ $quantity ? 'hidden' : '' }}"
+                                <button class="btn btn-primary text-fit cart-button {{ $quantity ? 'hidden' : '' }}"
                                     onclick="toggleQuantityControls(this)">
-                                    <i class='bx bx-cart me-2'></i>Add to Cart
+                                    <i class='bx bx-cart mx-1'></i>{{__('Add to Cart')}}
                                 </button>
                                 <div class="quantity-section {{ $quantity ? 'active' : 'hidden' }}">
                                     <button class="btn btn-outline-primary btn-sm" onclick="decrementQuantity(this)">

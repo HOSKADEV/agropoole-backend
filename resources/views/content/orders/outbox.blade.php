@@ -4,8 +4,8 @@
 
 @section('content')
 
-    <h4 class="fw-bold py-3 mb-3">
-        <span class="text-muted fw-light">{{ __('Outbox') }} /</span> {{ __('Browse outbox') }}
+    <h4 class="fw-bold py-3 mb-3">{{ __('Outbox') }}
+        {{-- <span class="text-muted fw-light">{{ __('Outbox') }} /</span> {{ __('Browse outbox') }} --}}
     </h4>
 
     <!-- Basic Bootstrap Table -->
@@ -203,8 +203,6 @@
             });
         });
 
-
-
         function update_order(order_id, status) {
 
             Swal.fire({
@@ -218,7 +216,17 @@
                 cancelButtonText: "{{ __('No') }}"
             }).then((result) => {
                 if (result.isConfirmed) {
-
+                    Swal.fire({
+                        title: "{{__('Wait a moment')}}",
+                        icon: 'info',
+                        html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
+                        showCloseButton: false,
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        allowEnterKey: false,
+                    });
                     $.ajax({
                         url: "{{ url('order/update') }}",
                         headers: {
@@ -232,7 +240,7 @@
                         dataType: 'JSON',
                         success: function(response) {
                             if (response.status == 1) {
-
+                                Swal.close();
                                 Swal.fire(
                                     "{{ __('Success') }}",
                                     "{{ __('success') }}",
@@ -248,8 +256,6 @@
                 }
             })
         }
-
-
 
         $(document.body).on('click', '.refuse', function() {
 
@@ -293,5 +299,13 @@
 
             update_order(order_id, 'received')
         });
+
+        $(document.body).on('click', '.info', function() {
+
+            var order_id = $(this).attr('table_id');
+
+            $("#info_modal").modal('show');
+        });
+
     </script>
 @endsection

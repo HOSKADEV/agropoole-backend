@@ -33,7 +33,8 @@ class ProductController extends Controller
   }
   public function create(Request $request){
     //dd($request->all());
-    $request->merge(['user_id' => auth()->id()]);
+    $request->mergeIfMissing(['user_id' => auth()->id()]);
+    $request->mergeIfMissing(['status' => 'available']);
 
     $validator = Validator::make($request->all(), [
       'user_id' => 'required|exists:users,id',
