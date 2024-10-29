@@ -16,7 +16,7 @@
 
         .product-image {
             width: 100%;
-            height: 250px;
+            height: 200px;
             object-fit: cover;
             transition: transform 0.3s ease;
         }
