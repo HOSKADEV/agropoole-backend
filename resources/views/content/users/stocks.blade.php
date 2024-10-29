@@ -141,14 +141,14 @@
                 @endphp
                 <div class="col-md-3 mb-3">
                     <div class="card product-card">
-                        <div class="card-header owner-info p-2  mx-2">
-                            <div class="d-flex align-items-center">
+                        <div class="card-header owner-info p-2 w-100 mx-2">
+                            <div class="d-flex align-items-center w-100">
                                 <div class="avatar flex-shrink-0 me-2">
                                     <img src="{{ $owner_image }}" alt="User" class="rounded-circle"
                                         style="width: 32px; height: 32px;">
                                 </div>
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-0 text-fit w-75" title="{{ $owner_name }}">{{ $owner_name }}</h5>
+                                <div class="flex-grow-1 w-75">
+                                    <h5 class="mb-0 text-fit" title="{{ $owner_name }}">{{ $owner_name }}</h5>
                                 </div>
                             </div>
                         </div>

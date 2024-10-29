@@ -160,7 +160,8 @@
                 </div>
 
                 <div class="form-group col mx-3 my-3">
-                    <label for="category" class="form-label">{{auth()->user()->role_is('broker') ? __('Provider filter') : __('Broker filter')}}</label>
+                    <label for="category"
+                        class="form-label">{{ auth()->user()->role_is('broker') ? __('Provider filter') : __('Broker filter') }}</label>
                     <select class="form-select" id="owner" name="owner">
                         <option value=""> {{ __('Not selected') }}</option>
                         @foreach ($users as $user)
@@ -193,41 +194,38 @@
                     $quantity = $stock->in_cart();
                 @endphp
                 <div class="col-md-3 mb-4">
-                    <div class="card product-card"
-                        data-stock-id="{{ $stock_id }}"
-                        data-stock-price="{{ $stock_price }}"
-                        data-product-name="{{ $product_name }}"
-                        data-product-image="{{ $product_image }}"
-                        data-owner-name="{{ $owner_name }}"
+                    <div class="card product-card" data-stock-id="{{ $stock_id }}"
+                        data-stock-price="{{ $stock_price }}" data-product-name="{{ $product_name }}"
+                        data-product-image="{{ $product_image }}" data-owner-name="{{ $owner_name }}"
                         data-owner-image="{{ $owner_image }}">
-                        <div class="card-header owner-info p-2  mx-2">
-                          <div class="d-flex align-items-center">
-                              <div class="avatar flex-shrink-0 me-2">
-                                  <img src="{{ $owner_image }}" alt="User" class="rounded-circle"
-                                      style="width: 32px; height: 32px;">
-                              </div>
-                              <div class="flex-grow-1">
-                                  <h5 class="mb-0">{{ $owner_name }}</h5>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="product-image-container position-relative mx-3 mt-2">
-                          <img class="product-image rounded-3" src="{{ $product_image }}" alt="{{ $product_name }}">
-                          @if ($stock->show_price)
-                              <div class="product-price shadow-lg">
-                                  <span class="h6 mb-0">{{ $stock_price }} Dzd</span>
-                              </div>
-                          @endif
-                          <div class="image-preview">
-                              <img src="{{ $product_image }}" alt="{{ $product_name }}" class="preview-image">
-                          </div>
-                      </div>
+                        <div class="card-header owner-info p-2 w-100 mx-2">
+                            <div class="d-flex align-items-center w-100">
+                                <div class="avatar flex-shrink-0 me-2">
+                                    <img src="{{ $owner_image }}" alt="User" class="rounded-circle"
+                                        style="width: 32px; height: 32px;">
+                                </div>
+                                <div class="flex-grow-1 w-75">
+                                    <h5 class="mb-0 text-fit" title="{{ $owner_name }}">{{ $owner_name }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-image-container position-relative mx-3 mt-2">
+                            <img class="product-image rounded-3" src="{{ $product_image }}" alt="{{ $product_name }}">
+                            @if ($stock->show_price)
+                                <div class="product-price shadow-lg">
+                                    <span class="h6 mb-0">{{ $stock_price }} Dzd</span>
+                                </div>
+                            @endif
+                            <div class="image-preview">
+                                <img src="{{ $product_image }}" alt="{{ $product_name }}" class="preview-image">
+                            </div>
+                        </div>
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title product-name mb-1 text-center">{{ $product_name }}</h5>
+                            <h5 class="card-title product-name mb-1 text-fit text-center" title="{{$product_name}}">{{ $product_name }}</h5>
                             <div class="mt-auto">
-                                <button class="btn btn-primary text-fit cart-button {{ $quantity ? 'hidden' : '' }}"
+                                <button class="btn btn-primary cart-button {{ $quantity ? 'hidden' : '' }}"
                                     onclick="toggleQuantityControls(this)">
-                                    <i class='bx bx-cart mx-1'></i>{{__('Add to Cart')}}
+                                    <span style="font-size:0.8rem !important"><i class='bx bx-cart mx-1'></i>{{ __('Add to Cart') }}</span>
                                 </button>
                                 <div class="quantity-section {{ $quantity ? 'active' : 'hidden' }}">
                                     <button class="btn btn-outline-primary btn-sm" onclick="decrementQuantity(this)">
