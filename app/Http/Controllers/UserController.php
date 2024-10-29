@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\User;
 use App\Models\State;
+use App\Models\Stock;
+use App\Models\Category;
+use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -34,66 +37,113 @@ class UserController extends Controller
 
     $user = auth()->user();
     $states = State::all();
-      $users = User::where('status' , 'active')->whereNotNull('email');
+    $users = User::where('status', 'active')->whereNotNull('email');
 
-      $users = $user->role_is('broker')
-      ? $users->whereIn('role', [1,3])
+    $users = $user->role_is('broker')
+      ? $users->whereIn('role', [1, 3])
       : $users->where('role', 2);
 
 
 
 
-      if ($request->state) {
-        $users = $users->whereHas('city', function($query) use ($request){
-          $query->where('state_id', $request->state);
+    if ($request->state) {
+      $users = $users->whereHas('city', function ($query) use ($request) {
+        $query->where('state_id', $request->state);
+      });
+    }
+
+    if ($request->role) {
+      $users->where('role', $request->role);
+    }
+
+    if ($request->client) {
+
+      $query = function ($query) use ($user) {
+        $query->whereHas('boughtOrders', function ($q) use ($user) {
+          $q->where('seller_id', $user->id);
         });
-      }
-
-      if ($request->role) {
-        $users->where('role', $request->role);
-      }
-
-      if ($request->client) {
-
-        $query = function($query) use ($user){
-          $query->whereHas('boughtOrders', function($q) use ($user){
-            $q->where('seller_id', $user->id);
-          });
-          $query->orWhereHas('soldOrders', function($q) use ($user){
-            $q->where('buyer_id', $user->id);
-          });
-        };
+        $query->orWhereHas('soldOrders', function ($q) use ($user) {
+          $q->where('buyer_id', $user->id);
+        });
+      };
 
 
 
-        $users = $request->client == 1
+      $users = $request->client == 1
         ? $users->where($query)
         : $users->whereNot($query);
-      }
+    }
 
 
 
 
 
-      if ($request->search) {
-        $users = $users->where(function ($query) use ($request) {
-          $query->where('name', 'like', '%' . $request->search . '%');
-          $query->orWhere('enterprise_name', 'like', '%' . $request->search . '%');
-        });
-      }
+    if ($request->search) {
+      $users = $users->where(function ($query) use ($request) {
+        $query->where('name', 'like', '%' . $request->search . '%');
+        $query->orWhere('enterprise_name', 'like', '%' . $request->search . '%');
+      });
+    }
 
-      $users = $users->latest()->paginate(12)->appends($request->all());
+    $users = $users->latest()->paginate(12)->appends($request->all());
 
-      return view('content.users.browse')
-        ->with('states', $states)
-        ->with('users', $users);
+    return view('content.users.browse')
+      ->with('states', $states)
+      ->with('users', $users);
 
 
 
 
 
   }
-  //
+
+  public function stocks($id, Request $request)
+  {
+    $auth_user = auth()->user();
+    $user = User::find($id);
+
+    if ($auth_user->can_see_stock_of($user)) {
+
+    $categories = Category::all();
+    $subcategories = Subcategory::where('category_id', $request->category)->get();
+    $stocks = Stock::where('status','available')->where('user_id', $id);
+
+    //dd($stocks->get());
+    if ($request->category) {
+
+      $stocks = $stocks->whereHas('product', function ($query) use ($request) {
+        $query->whereHas('subcategory', function ($query) use ($request) {
+          $query->where('category_id', $request->category);
+        });
+      });
+    }
+
+
+    if ($request->subcategory) {
+      $stocks = $stocks->whereHas('product', function ($query) use ($request) {
+        $query->where('subcategory_id', $request->subcategory);
+      });
+    }
+
+    if ($request->search) {
+      $stocks = $stocks->whereHas('product', function ($query) use ($request) {
+        $query->where('unit_name', 'like', '%' . $request->search . '%');
+      });
+    }
+
+    $stocks = $stocks->latest()->with(['owner', 'product'])->paginate(8)->appends($request->all());
+
+    return view('content.users.stocks')
+      ->with('categories', $categories)
+      ->with('subcategories', $subcategories)
+      ->with('stocks', $stocks)
+      ->with('user', $user);
+
+    } else {
+      return redirect()->route('pages-misc-error');
+    }
+
+  }
   public function update(Request $request)
   {
 

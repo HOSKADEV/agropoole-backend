@@ -5,36 +5,20 @@
 @section('vendor-style')
     <style>
         .product-card {
+            transition: all 0.3s ease;
             height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .owner-info {
-            height: 60px;
-            display: flex;
-            align-items: center;
         }
 
         .product-image-container {
             position: relative;
-            height: 200px;
-            /* Adjust as needed */
+            overflow: hidden;
         }
 
         .product-image {
             width: 100%;
-            height: 100%;
+            height: 200px;
             object-fit: cover;
-        }
-
-        .product-price {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background-color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
+            transition: transform 0.3s ease;
         }
 
         .product-name {
@@ -44,6 +28,49 @@
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
+        }
+
+        .owner-info {
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .product-price {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .image-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgb(255, 255, 255);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .preview-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .product-image-container:hover .image-preview {
+            display: flex;
+        }
+
+        .fs-7 {
+            font-size: 0.875rem;
         }
 
         .quantity-controls {
@@ -173,28 +200,30 @@
                         data-product-image="{{ $product_image }}"
                         data-owner-name="{{ $owner_name }}"
                         data-owner-image="{{ $owner_image }}">
-                        <div class="card-header owner-info p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar flex-shrink-0 me-3">
-                                    <img src="{{ $owner_image }}" alt="User" class="rounded-circle"
-                                        style="width: 40px; height: 40px;">
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-0">{{ $owner_name }}</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-image-container">
-                            <img class="product-image" src="{{ $product_image }}" alt="{{ $product_name }}">
-                            @if ($stock->show_price)
-                                <div class="product-price">
-                                    <span class="h6 mb-0">{{ $stock_price }} Dzd</span>
-                                </div>
-                            @endif
-
-                        </div>
+                        <div class="card-header owner-info p-2  mx-2">
+                          <div class="d-flex align-items-center">
+                              <div class="avatar flex-shrink-0 me-2">
+                                  <img src="{{ $owner_image }}" alt="User" class="rounded-circle"
+                                      style="width: 32px; height: 32px;">
+                              </div>
+                              <div class="flex-grow-1">
+                                  <h5 class="mb-0">{{ $owner_name }}</h5>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="product-image-container position-relative mx-3 mt-2">
+                          <img class="product-image rounded-3" src="{{ $product_image }}" alt="{{ $product_name }}">
+                          @if ($stock->show_price)
+                              <div class="product-price shadow-lg">
+                                  <span class="h6 mb-0">{{ $stock_price }} Dzd</span>
+                              </div>
+                          @endif
+                          <div class="image-preview">
+                              <img src="{{ $product_image }}" alt="{{ $product_name }}" class="preview-image">
+                          </div>
+                      </div>
                         <div class="card-body d-flex flex-column">
-                            <h6 class="card-title product-name mb-3">{{ $product_name }}</h6>
+                            <h5 class="card-title product-name mb-1 text-center">{{ $product_name }}</h5>
                             <div class="mt-auto">
                                 <button class="btn btn-primary text-fit cart-button {{ $quantity ? 'hidden' : '' }}"
                                     onclick="toggleQuantityControls(this)">

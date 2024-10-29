@@ -1224,14 +1224,15 @@ progress {
     flex: 0 0 auto;
     width: 16.66666667%;
   }
-  .col-md-x {
-    flex: 0 0 auto;
-    width: 23%;
-  }
 
   .col-md-3 {
     flex: 0 0 auto;
     width: 25%;
+  }
+
+  .col-md-x {
+    flex: 0 0 auto;
+    width: 31.33333333%;
   }
 
   .col-md-4 {
@@ -19042,8 +19043,11 @@ html:not([dir=rtl]) .timeline-item {
   padding-bottom: 0 !important
 }
 
-.text-fit{
-  font-size: 1vw;
+.text-fit {
+  display: inline-block;
   width: 100%;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(16px, 1vw, 24px) !important;
 }

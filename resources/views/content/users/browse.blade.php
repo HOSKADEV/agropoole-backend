@@ -1,10 +1,10 @@
 @extends('layouts/contentNavbarLayout')
 
 @php
-  $title = auth()->user()->role_is('provider') ? __('Brokers') : __('Operators');
+    $title = auth()->user()->role_is('provider') ? __('Brokers') : __('Operators');
 @endphp
 
-@section('title', $title )
+@section('title', $title)
 
 @section('vendor-style')
     <style>
@@ -104,7 +104,7 @@
 
 @section('content')
 
-    <h4 class="fw-bold py-3 mb-3"> {{$title}}
+    <h4 class="fw-bold py-3 mb-3"> {{ $title }}
         {{-- <span class="text-muted fw-light">{{ __('Users') }} /</span> {{ __('Browse users') }} --}}
         {{-- <button type="button" class="btn btn-primary" id="create" style="float:right">{{ __('Add Stock') }}</button> --}}
     </h4>
@@ -118,29 +118,34 @@
                     <select class="form-select" id="state" name="state">
                         <option value=""> {{ __('Not selected') }}</option>
                         @foreach ($states as $state)
-                        <option value="{{$state->id}}" {{request('state') == $state->id ? 'selected' : ''}}> {{ $state->name }}</option>
+                            <option value="{{ $state->id }}" {{ request('state') == $state->id ? 'selected' : '' }}>
+                                {{ $state->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 @if (auth()->user()->role_is('broker'))
-                <div class="form-group col mx-3 my-3">
-                  <label for="role" class="form-label">{{ __('Role filter') }}</label>
-                  <select class="form-select" id="role" name="role">
-                      <option value=""> {{ __('Not selected') }}</option>
-                      <option value="1" {{request('role') == '1' ? 'selected' : ''}}> {{ __('provider') }}</option>
-                      <option value="3" {{request('role') == '3' ? 'selected' : ''}}> {{ __('store') }}</option>
-                  </select>
-              </div>
+                    <div class="form-group col mx-3 my-3">
+                        <label for="role" class="form-label">{{ __('Role filter') }}</label>
+                        <select class="form-select" id="role" name="role">
+                            <option value=""> {{ __('Not selected') }}</option>
+                            <option value="1" {{ request('role') == '1' ? 'selected' : '' }}> {{ __('provider') }}
+                            </option>
+                            <option value="3" {{ request('role') == '3' ? 'selected' : '' }}> {{ __('store') }}
+                            </option>
+                        </select>
+                    </div>
                 @endif
 
-<div class="form-group col mx-3 my-3">
-                  <label for="client" class="form-label">{{ __('Client filter') }}</label>
-                  <select class="form-select" id="client" name="client">
-                      <option value=""> {{ __('Not selected') }}</option>
-                      <option value="1" {{request('client') == '1' ? 'selected' : ''}}> {{ __('Yes') }}</option>
-                      <option value="2" {{request('client') == '2' ? 'selected' : ''}}> {{ __('No') }}</option>
-                  </select>
-              </div>
+                <div class="form-group col mx-3 my-3">
+                    <label for="client" class="form-label">{{ __('Client filter') }}</label>
+                    <select class="form-select" id="client" name="client">
+                        <option value=""> {{ __('Not selected') }}</option>
+                        <option value="1" {{ request('client') == '1' ? 'selected' : '' }}> {{ __('Yes') }}
+                        </option>
+                        <option value="2" {{ request('client') == '2' ? 'selected' : '' }}> {{ __('No') }}
+                        </option>
+                    </select>
+                </div>
 
                 <div class="form-group col mx-3 my-3">
                     <label for="search" class="form-label">{{ __('Search') }}</label>
@@ -154,40 +159,39 @@
 
         @if (count($users->items()))
             @foreach ($users->items() as $user)
-
-
-                  <div class="card col-md-x ms-3 mb-3 p-0" >
-
-                    <div class="card-body-mini m-0">
-                        <div class="d-flex justify-content-start align-items-center mb-6">
-                            <div class="avatar me-3">
-                                <img src="{{ $user->image() }}" alt="Avatar" class="rounded-circle">
+                <div class="card col-md-x ms-3 mb-3 p-0">
+                    <a href="{{ route('user-stocks', $user->id) }}">
+                        <div class="card-body-mini m-0">
+                            <div class="d-flex justify-content-start align-items-center mb-6">
+                                <div class="avatar me-3">
+                                    <img src="{{ $user->image() }}" alt="Avatar" class="rounded-circle">
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a href="{{ route('user-stocks', $user->id) }}" class="text-body text-nowrap">
+                                        <h6 class="mb-0">{{ $user->enterprise() }}</h6>
+                                    </a>
+                                    <span>{{ __($user->role_is()) }}</span>
+                                </div>
                             </div>
-                            <div class="d-flex flex-column">
-                                <a href="#" class="text-body text-nowrap">
-                                    <h6 class="mb-0">{{ $user->enterprise() }}</h6>
-                                </a>
-                                <span>{{ __($user->role_is()) }}</span>
-                            </div>
-                        </div>
-                        {{-- <div class="d-flex justify-content-start align-items-center mb-6">
+                            {{-- <div class="d-flex justify-content-start align-items-center mb-6">
                             <span
                                 class="avatar rounded-circle bg-label-success me-3 d-flex align-items-center justify-content-center"><i
                                     class='bx bx-cart bx-lg'></i></span>
                             <h6 class="text-nowrap mb-0">12 Orders</h6>
                         </div> --}}
-                        <div class="d-flex justify-content-between">
-                            <h6 class="mb-1">{{__('Contact info')}}</h6>
-                            {{-- <h6 class="mb-1"><a href="{{ $user->location() }}"><i class="bx bx-map"></i></a>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="mb-1">{{ __('Contact info') }}</h6>
+                                {{-- <h6 class="mb-1"><a href="{{ $user->location() }}"><i class="bx bx-map"></i></a>
                             </h6> --}}
+                            </div>
+
+                            <h6 class=" mb-1 text-fit" title="{{$user->email}}"><i class="bx bxs-envelope"></i> {{ $user->email }}</h6>
+                            <h6 class=" mb-1 text-fit" title="{{$user->phone}}"><i class="bx bxs-phone"></i> {{ $user->phone }}</h6>
+                            <h6 class=" mb-0 text-fit" title="{{$user->address()}}"><i class="bx bxs-map"></i> <a
+                                    href="{{ $user->location() }}">{{ $user->address() }}</a></h6>
                         </div>
-
-                        <h6 class=" mb-1 text-fit"><i class="bx bxs-envelope"></i> {{ $user->email }}</h6>
-                        <h6 class=" mb-1 text-fit"><i class="bx bxs-phone"></i> {{ $user->phone }}</h6>
-                        <h6 class=" mb-0 text-fit"><i class="bx bxs-map"></i> <a href="{{ $user->location() }}">{{ $user->address() }}</a></h6>
-                    </div>
+                    </a>
                 </div>
-
             @endforeach
         @else
             <div class="container-xxl container-p-y d-flex justify-content-center">
@@ -216,8 +220,8 @@
 @endsection
 
 @section('page-script')
-<script>
-  $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
             function submitForm() {
                 $("#form").submit();
             }

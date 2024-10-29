@@ -55,6 +55,7 @@ Route::group(['middleware' => ['auth']], function () {
   Route::get('/stock/index', 'App\Http\Controllers\StockController@index')->name('stock-index');
   Route::get('/cart/index', 'App\Http\Controllers\CartController@index')->name('cart-index');
   Route::post('/stock/list', 'App\Http\Controllers\DatatablesController@stocks')->name('stock-list');
+  Route::get('/user/{id}/stocks', 'App\Http\Controllers\UserController@stocks')->name('user-stocks');
 });
 
 Route::group(['middleware' => ['auth']], function () {

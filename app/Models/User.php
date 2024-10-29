@@ -179,4 +179,21 @@ class User extends Authenticatable
 
     return url($image);
   }
+
+  public function can_see_stock_of($user){
+    if(empty($user)){
+      return false;
+    }
+
+    $permissions = [
+      'admin' => [],
+      'provider' => ['broker'],
+      'broker' => ['provider','store'],
+      'store' => ['broker'],
+      'client' => [],
+      'driver' => []
+    ];
+
+    return in_array($user->role_is(), $permissions[$this->role_is()]) ? true : false;
+  }
 }
