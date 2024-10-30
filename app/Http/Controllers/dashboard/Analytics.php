@@ -2,18 +2,37 @@
 
 namespace App\Http\Controllers\dashboard;
 
-use App\Http\Controllers\Controller;
-use App\Models\Invoice;
-use App\Models\Order;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Auth;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\Invoice;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Charts\OrderStatusChart;
+use App\Charts\OrderMonthlyChart;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class Analytics extends Controller
 {
-  public function index()
+
+  public function index(){
+    $user = auth()->user();
+
+
+    $inbox_status_chart = new OrderStatusChart($user->boughtOrders());
+    $outbox_status_chart = new OrderStatusChart($user->soldOrders());
+    $inbox_monthly_chart = new OrderMonthlyChart($user->boughtOrders(), __('New incoming orders'));
+    $outbox_monthly_chart = new OrderMonthlyChart($user->soldOrders(),  __('New outgoing orders'));
+
+    return view('content.dashboard.dashboards-analytics')
+    ->with('inbox_status_chart',$inbox_status_chart->build())
+    ->with('outbox_status_chart',$outbox_status_chart->build())
+    ->with('inbox_monthly_chart',$inbox_monthly_chart->build())
+    ->with('outbox_monthly_chart',$outbox_monthly_chart->build());
+  }
+
+  /*  public function index()
   {
     //dd(Auth::id());
     $last_year = Carbon::now()->subYear()->lastOfMonth();
@@ -117,5 +136,5 @@ class Analytics extends Controller
     ]);
 
 
-  }
+  } */
 }
