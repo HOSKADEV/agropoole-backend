@@ -25,11 +25,32 @@ class Analytics extends Controller
     $inbox_monthly_chart = new OrderMonthlyChart($user->boughtOrders(), __('New incoming orders'));
     $outbox_monthly_chart = new OrderMonthlyChart($user->soldOrders(),  __('New outgoing orders'));
 
+    $all_times_inbox_count = $user->boughtOrders()->count();
+    $all_times_outbox_count = $user->soldOrders()->count();
+    $this_month_inbox_count = $user->boughtOrders()
+    ->whereYear('created_at',now()->year)
+    ->whereMonth('created_at', now()->month)
+    ->count();
+    $this_month_outbox_count = $user->soldOrders()
+    ->whereYear('created_at',now()->year)
+    ->whereMonth('created_at', now()->month)
+    ->count();
+
+    $stock_count = $user->stocks()->count();
+
+
+
     return view('content.dashboard.dashboards-analytics')
     ->with('inbox_status_chart',$inbox_status_chart->build())
     ->with('outbox_status_chart',$outbox_status_chart->build())
     ->with('inbox_monthly_chart',$inbox_monthly_chart->build())
-    ->with('outbox_monthly_chart',$outbox_monthly_chart->build());
+    ->with('outbox_monthly_chart',$outbox_monthly_chart->build())
+    ->with('all_times_inbox_count',$all_times_inbox_count)
+    ->with('all_times_outbox_count',$all_times_outbox_count)
+    ->with('this_month_inbox_count',$this_month_inbox_count)
+    ->with('this_month_outbox_count',$this_month_outbox_count)
+    ->with('stock_count',$stock_count)
+;
   }
 
   /*  public function index()

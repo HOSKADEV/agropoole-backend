@@ -7,7 +7,7 @@
 @endsection
 
 @section('vendor-script')
-    <script src="{{ $inbox_status_chart->cdn() }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     {{ $inbox_status_chart->script() }}
     {{ $outbox_status_chart->script() }}
     {{ $inbox_monthly_chart->script() }}
@@ -38,6 +38,80 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="row">
+      <div class="col-4 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <div class="card-title d-flex align-items-start justify-content-between mb-4">
+              <h5>{{__('Inbox')}}</h5>
+              <div class="avatar flex-shrink-0">
+                <span class="avatar-initial rounded bg-label-success"><i class="bx bx-archive-in"></i></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <p class="mb-1">{{__('All times')}}</p>
+            <h4 class="card-title mb-3">{{$all_times_inbox_count}}</h4>
+            <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
+              </div>
+
+              <div class="col">
+                <p class="mb-1">{{__('This month')}}</p>
+            <h4 class="card-title mb-3">{{$this_month_inbox_count}}</h4>
+            <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <div class="card-title d-flex align-items-start justify-content-between mb-4">
+              <div class="avatar flex-shrink-0">
+                <img src="../assets/img/icons/unicons/chart-success.png" alt="chart success" class="rounded">
+              </div>
+              <div class="dropdown">
+                <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="bx bx-dots-vertical-rounded text-muted"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3" style="">
+                  <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                  <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                </div>
+              </div>
+            </div>
+            <p class="mb-1">Profit</p>
+            <h4 class="card-title mb-3">$12,628</h4>
+            <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-4 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <div class="card-title d-flex align-items-start justify-content-between mb-4">
+              <div class="avatar flex-shrink-0">
+                <img src="../assets/img/icons/unicons/chart-success.png" alt="chart success" class="rounded">
+              </div>
+              <div class="dropdown">
+                <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="bx bx-dots-vertical-rounded text-muted"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3" style="">
+                  <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                  <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                </div>
+              </div>
+            </div>
+            <p class="mb-1">Profit</p>
+            <h4 class="card-title mb-3">$12,628</h4>
+            <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="row">
         <div class="col-6 mb-4">
