@@ -21,7 +21,7 @@ class OrderStatusChart
     {
 
       $data = $this->orders//->whereYear('created_at',now()->year)->whereMonth('created_at',now()->month)
-      ->groupBy('status')->select('status', DB::raw('COUNT(id) as orders'))
+      ->groupBy('status')->select('status', DB::raw('COUNT(orders.id) as orders'))
       ->get()->pluck('orders','status')->toArray();
 
       $xaxis = [];
@@ -37,7 +37,7 @@ class OrderStatusChart
         return $this->chart->donutChart()
             //->setTitle('Top 3 scorers of the team.')
             //->setSubtitle('Season 2021.')
-            ->setHeight(250)
+            ->setHeight(200)
             ->addData($yaxis)
             ->setLabels($xaxis);
     }

@@ -8,6 +8,13 @@
     },
 
     {
+      "url": "/stats",
+      "name": "Statistics",
+      "icon": "menu-icon tf-icons bx bxs-chart",
+      "slug": "stats"
+    },
+
+    {
       "url": "/order/index",
       "name": "Orders",
       "icon": "menu-icon tf-icons bx bxs-spreadsheet",

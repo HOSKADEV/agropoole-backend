@@ -19,6 +19,7 @@ $controller_path = 'App\Http\Controllers';
 
 // Main Page Route
 Route::get('/', 'App\Http\Controllers\dashboard\Analytics@index')->name('dashboard-analytics')->middleware('auth');
+Route::get('/stats', 'App\Http\Controllers\dashboard\Analytics@stats')->name('stats')->middleware('auth');
 Route::get('/privacy_policy', 'App\Http\Controllers\DocumentationController@public');
 
 Route::group(['middleware' => ['auth']], function () {

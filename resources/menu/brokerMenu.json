@@ -6,6 +6,14 @@
       "icon": "menu-icon tf-icons bx bxs-home-circle",
       "slug": "dashboard-analytics"
     },
+
+    {
+      "url": "/stats",
+      "name": "Statistics",
+      "icon": "menu-icon tf-icons bx bxs-chart",
+      "slug": "stats"
+    },
+
     {
       "url": "/product/index",
       "name": "Products",

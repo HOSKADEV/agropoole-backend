@@ -11,19 +11,21 @@ class OrderMonthlyChart
   protected $chart;
   protected $orders;
   protected $label;
-  public function __construct($orders, $label)
+  protected $column;
+  public function __construct($orders, $label, $column)
   {
     $this->chart = new LarapexChart();
     $this->orders = $orders;
     $this->label = $label;
+    $this->column = $column;
   }
 
   public function build()
   {
 
-    $db_data = $this->orders->whereDate('created_at', '>=', Carbon::now()->subMonths(6)->firstOfMonth())
-      ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
-      ->select(DB::raw('YEAR(created_at) as year'), DB::raw('MONTH(created_at) AS month'), DB::raw('COUNT(id) AS orders'))
+    $db_data = $this->orders->whereDate($this->column, '>=', Carbon::now()->subMonths(6)->firstOfMonth())
+      ->groupBy(DB::raw("YEAR({$this->column})"), DB::raw("MONTH({$this->column})"))
+      ->select(DB::raw("YEAR({$this->column}) as year"), DB::raw("MONTH({$this->column}) AS month"), DB::raw('COUNT(orders.id) AS orders'))
       ->get()->toArray();
 
     $data = [];
@@ -50,7 +52,7 @@ class OrderMonthlyChart
       ->setXAxis($xaxis)
       //->setSparkline()
       ->setStroke(width: 4, curve: 'smooth', /* colors:['#04EA8B'] */)
-      ->setHeight(250)
+      ->setHeight(200)
       ->setDataLabels(true)
       //->setFontFamily('Readex Pro')
       //->setFontColor(Session::get('theme') == 'dark' ? '#FFFFFF' : '#000000')

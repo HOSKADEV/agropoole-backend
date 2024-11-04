@@ -92,6 +92,24 @@ class User extends Authenticatable
       return $this->hasMany(Order::class, 'buyer_id');
   }
 
+  public function deliveredOrders(){
+    return $this->hasManyThrough(Order::class, Delivery::class, 'driver_id', 'id', 'id', 'order_id');
+  }
+
+  public function pendingSoldOrders()
+  {
+      return $this->soldOrders()->whereIn('status', ['pending','confirmed'] );
+  }
+
+  // Orders where user is the buyer
+  public function pendingBoughtOrders()
+  {
+    return $this->boughtOrders()->whereIn('status', ['accepted','delivered'] );
+  }
+
+  public function pendingDeliveredOrders(){
+    return $this->deliveredOrders()->whereIn('status', ['shipped','ongoing'] )->select('orders.*');
+  }
   public function orders()
   {
 

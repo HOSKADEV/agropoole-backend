@@ -16,41 +16,120 @@ use App\Http\Controllers\Controller;
 class Analytics extends Controller
 {
 
-  public function index(){
+  public function index()
+  {
     $user = auth()->user();
 
+    $data = [];
 
-    $inbox_status_chart = new OrderStatusChart($user->boughtOrders());
-    $outbox_status_chart = new OrderStatusChart($user->soldOrders());
-    $inbox_monthly_chart = new OrderMonthlyChart($user->boughtOrders(), __('New incoming orders'));
-    $outbox_monthly_chart = new OrderMonthlyChart($user->soldOrders(),  __('New outgoing orders'));
+    if (in_array($user->role_is(), ['broker', 'store'])) {
+      $data['all_times_inbox_count'] = $user->soldOrders()->count();
+      $data['all_times_outbox_count'] = $user->boughtOrders()->count();
 
-    $all_times_inbox_count = $user->boughtOrders()->count();
-    $all_times_outbox_count = $user->soldOrders()->count();
-    $this_month_inbox_count = $user->boughtOrders()
-    ->whereYear('created_at',now()->year)
-    ->whereMonth('created_at', now()->month)
-    ->count();
-    $this_month_outbox_count = $user->soldOrders()
-    ->whereYear('created_at',now()->year)
-    ->whereMonth('created_at', now()->month)
-    ->count();
+      $data['this_month_inbox_count'] = $user->soldOrders()
+        ->whereYear('created_at', now()->year)
+        ->whereMonth('created_at', now()->month)
+        ->count();
+      $data['this_month_outbox_count'] = $user->boughtOrders()
+        ->whereYear('created_at', now()->year)
+        ->whereMonth('created_at', now()->month)
+        ->count();
 
-    $stock_count = $user->stocks()->count();
+      $data['today_inbox_count'] = $user->soldOrders()
+        ->whereDate('created_at', now())
+        ->count();
+      $data['today_outbox_count'] = $user->boughtOrders()
+        ->whereDate('created_at', now())
+        ->count();
+
+      $data['pending_inbox_count'] = $user->pendingSoldOrders()->union($user->pendingDeliveredOrders())->count();
+      $data['pending_outbox_count'] = $user->pendingBoughtOrders()->count();
+
+      $data['all_times_stock_count'] = $user->stocks()->count();
+      $data['insufficient_stock_count'] = $user->stocks()->whereColumn('quantity', '<=', 'min_quantity')->count();
+      $data['this_month_stock_count'] = $user->stocks()
+        ->whereYear('created_at', now()->year)
+        ->whereMonth('created_at', now()->month)
+        ->count();
+
+      $data['today_stock_count'] = $user->stocks()
+        ->whereDate('created_at', now())
+        ->count();
+    }
+
+    if ($user->role_is('provider')) {
+      $data['all_times_inbox_count'] = $user->soldOrders()->count();
+
+      $data['this_month_inbox_count'] = $user->soldOrders()
+        ->whereYear('created_at', now()->year)
+        ->whereMonth('created_at', now()->month)
+        ->count();
+
+      $data['today_inbox_count'] = $user->soldOrders()
+        ->whereDate('created_at', now())
+        ->count();
+
+      $data['pending_inbox_count'] = $user->pendingSoldOrders()->union($user->pendingDeliveredOrders())->count();
+
+      $data['all_times_stock_count'] = $user->stocks()->count();
+      $data['insufficient_stock_count'] = $user->stocks()->whereColumn('quantity', '<=', 'min_quantity')->count();
+      $data['this_month_stock_count'] = $user->stocks()
+        ->whereYear('created_at', now()->year)
+        ->whereMonth('created_at', now()->month)
+        ->count();
+
+      $data['today_stock_count'] = $user->stocks()
+        ->whereDate('created_at', now())
+        ->count();
+    }
+
+    if ($user->role_is('driver')) {
+      $data['all_times_inbox_count'] = $user->deliveredOrders()->count();
+
+      $data['this_month_inbox_count'] = $user->deliveredOrders()
+        ->whereYear('deliveries.created_at', now()->year)
+        ->whereMonth('deliveries.created_at', now()->month)
+        ->count();
+
+      $data['today_inbox_count'] = $user->deliveredOrders()
+        ->whereDate('deliveries.created_at', now())
+        ->count();
+
+      $data['pending_inbox_count'] = $user->pendingDeliveredOrders()->count();
+    }
+
 
 
 
     return view('content.dashboard.dashboards-analytics')
-    ->with('inbox_status_chart',$inbox_status_chart->build())
-    ->with('outbox_status_chart',$outbox_status_chart->build())
-    ->with('inbox_monthly_chart',$inbox_monthly_chart->build())
-    ->with('outbox_monthly_chart',$outbox_monthly_chart->build())
-    ->with('all_times_inbox_count',$all_times_inbox_count)
-    ->with('all_times_outbox_count',$all_times_outbox_count)
-    ->with('this_month_inbox_count',$this_month_inbox_count)
-    ->with('this_month_outbox_count',$this_month_outbox_count)
-    ->with('stock_count',$stock_count)
-;
+      ->with($data)
+    ;
+  }
+
+  public function stats()
+  {
+    $user = auth()->user();
+
+    $data = [];
+
+    if (in_array($user->role_is(), ['broker', 'store'])) {
+        $data['inbox_status_chart'] = (new OrderStatusChart($user->soldOrders()))->build();
+        $data['outbox_status_chart'] = (new OrderStatusChart($user->boughtOrders()))->build();
+        $data['inbox_monthly_chart'] = (new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at'))->build();
+        $data['outbox_monthly_chart'] = (new OrderMonthlyChart($user->boughtOrders(), __('New outgoing orders'), 'created_at'))->build();
+    }
+
+    if ($user->role_is('provider')) {
+        $data['inbox_status_chart'] = (new OrderStatusChart($user->soldOrders()))->build();
+        $data['inbox_monthly_chart'] = (new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at'))->build();
+    }
+
+    if ($user->role_is('driver')) {
+        $data['inbox_status_chart'] = (new OrderStatusChart($user->deliveredOrders()))->build();
+        $data['inbox_monthly_chart'] = (new OrderMonthlyChart($user->deliveredOrders(), __('New incoming orders'), 'deliveries.created_at'))->build();
+    }
+
+    return view('content.dashboard.stats')->with($data);
   }
 
   /*  public function index()
