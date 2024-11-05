@@ -27,6 +27,10 @@ class Stock extends Model
     return $this->belongsTo(Product::class)->withTrashed();
   }
 
+  public function items(){
+    return $this->hasMany(Item::class);
+  }
+
   public function owner()
   {
     return $this->belongsTo(User::class, 'user_id');

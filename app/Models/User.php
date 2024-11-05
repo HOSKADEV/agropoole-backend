@@ -214,4 +214,16 @@ class User extends Authenticatable
 
     return in_array($user->role_is(), $permissions[$this->role_is()]) ? true : false;
   }
+
+
+  public function topStocks($date=null){
+    return $this->stocks()->withCount(['items' => function($query) use($date){
+      if($date){
+        $query->whereYear('created_at',$date->year)->whereMonth('created_at',$date->month);
+      }
+    }])->having('items_count', '>', 0)->orderBy('items_count', 'DESC');
+  }
+  public function topBuyers(){
+
+  }
 }

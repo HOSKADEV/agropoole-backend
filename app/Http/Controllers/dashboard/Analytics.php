@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\dashboard;
 
+use App\Charts\TopStocksChart;
 use Auth;
 use App\Models\User;
 use App\Models\Order;
@@ -106,27 +107,30 @@ class Analytics extends Controller
     ;
   }
 
-  public function stats()
+  public function stats(Request $request)
   {
     $user = auth()->user();
 
     $data = [];
 
     if (in_array($user->role_is(), ['broker', 'store'])) {
-        $data['inbox_status_chart'] = (new OrderStatusChart($user->soldOrders()))->build();
-        $data['outbox_status_chart'] = (new OrderStatusChart($user->boughtOrders()))->build();
-        $data['inbox_monthly_chart'] = (new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at'))->build();
-        $data['outbox_monthly_chart'] = (new OrderMonthlyChart($user->boughtOrders(), __('New outgoing orders'), 'created_at'))->build();
+        $data['inbox_status_chart'] = (new OrderStatusChart($user->soldOrders(), $request->inboxStatusFilter));
+        $data['outbox_status_chart'] = (new OrderStatusChart($user->boughtOrders(), $request->outboxStatusFilter));
+        $data['inbox_monthly_chart'] = (new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at'));
+        $data['outbox_monthly_chart'] = (new OrderMonthlyChart($user->boughtOrders(), __('New outgoing orders'), 'created_at'));
+
+        $data['top_stocks_chart'] = (new TopStocksChart($user, $request->topStocksFilter));
     }
 
+
     if ($user->role_is('provider')) {
-        $data['inbox_status_chart'] = (new OrderStatusChart($user->soldOrders()))->build();
-        $data['inbox_monthly_chart'] = (new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at'))->build();
+        $data['inbox_status_chart'] = (new OrderStatusChart($user->soldOrders(), $request->inboxStatusFilter));
+        $data['inbox_monthly_chart'] = (new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at'));
     }
 
     if ($user->role_is('driver')) {
-        $data['inbox_status_chart'] = (new OrderStatusChart($user->deliveredOrders()))->build();
-        $data['inbox_monthly_chart'] = (new OrderMonthlyChart($user->deliveredOrders(), __('New incoming orders'), 'deliveries.created_at'))->build();
+        $data['inbox_status_chart'] = (new OrderStatusChart($user->deliveredOrders(), $request->inboxStatusFilter));
+        $data['inbox_monthly_chart'] = (new OrderMonthlyChart($user->deliveredOrders(), __('New incoming orders'), 'deliveries.created_at'));
     }
 
     return view('content.dashboard.stats')->with($data);

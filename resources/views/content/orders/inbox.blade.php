@@ -270,7 +270,7 @@
                             name: 'status',
                             render: function(data) {
                                 if (data == 'pending') {
-                                    return '<span class="badge bg-label-secondary">{{ __('pending') }}</span>';
+                                    return '<span class="badge bg-label-primary">{{ __('pending') }}</span>';
                                 }
                                 if (data == 'accepted') {
                                     return '<span class="badge bg-label-blue">{{ __('accepted') }}</span>';

@@ -41,10 +41,6 @@ class Product extends Model
       return $this->belongsTo(Subcategory::class);
     }
 
-    public function items(){
-      return $this->hasMany(Item::class);
-    }
-
     public function stocks(){
       return $this->hasMany(Stock::class);
     }
