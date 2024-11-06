@@ -343,5 +343,9 @@
   "New Today": "Nouveau aujourd'hui",
   "Today": "Aujourd'hui",
   "Need Action": "Besoin d'action",
-  "Stocks": "Stocks"
+  "Stocks": "Stocks",
+  "No data": "Pas de données",
+  "Orders count": "Nombre de commandes",
+  "New incoming orders": "Nouvelles commandes",
+  "New outgoing orders": "Nouvelles demandes"
 }
