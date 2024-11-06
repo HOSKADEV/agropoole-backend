@@ -186,7 +186,7 @@
     </div>
 
 
-    {{ $stocks->onEachSide(1)->links() }}
+    {{ $stocks->onEachSide(1)->links('pagination::bootstrap') }}
 
 
 

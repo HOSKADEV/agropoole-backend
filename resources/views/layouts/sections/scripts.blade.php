@@ -37,6 +37,107 @@
         $("#change_password_modal").modal("show");
     });
 
+    $('#update_profil').on('click', function() {
+        $("#update_profil_modal").modal("show");
+    });
+
+    $('#update_profil_state').on('change', function() {
+
+        var state_id = $(this).val();
+
+        $.ajax({
+            url: '{{ url('city/get?all=1') }}',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'POST',
+            data: {
+                state_id: state_id
+            },
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.status == 1) {
+
+                    var cities = document.getElementById('update_profil_city');
+                    cities.innerHTML =
+                        '<option value="">{{ __('Not selected') }}</option>';
+
+                    for (var i = 0; i < response.data.length; i++) {
+                        var option = document.createElement('option');
+                        option.value = response.data[i].id;
+                        option.innerHTML = response.data[i].name;
+                        cities.appendChild(option);
+                    }
+
+                }
+            }
+        });
+    });
+
+    $('#submit_update_profil').on('click', function() {
+        Swal.fire({
+            title: "{{ __('Wait a moment') }}",
+            icon: 'info',
+            html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
+            showCloseButton: false,
+            showCancelButton: false,
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+        });
+
+        var queryString = new FormData($("#update_profil_form")[0]);
+
+
+
+        $("#update_profil_modal").modal("hide");
+
+
+        $.ajax({
+            url: "{{ url('user/update') }}",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'POST',
+            data: queryString,
+            dataType: 'JSON',
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                Swal.close();
+                if (response.status == 1) {
+                    Swal.fire({
+                        title: "{{ __('Success') }}",
+                        text: "{{ __('success') }}",
+                        icon: 'success',
+                        confirmButtonText: 'Ok'
+                    }).then((result) => {
+                        location.reload();
+                    });
+                } else {
+                    //console.log(response.message);
+                    Swal.fire(
+                        "{{ __('Error') }}",
+                        response.message,
+                        'error'
+                    );
+                }
+            },
+            error: function(data) {
+                Swal.close();
+                //var errors = data.responseJSON;
+                //console.log(errors);
+                Swal.fire(
+                    "{{ __('Error') }}",
+                    errors.message,
+                    'error'
+                );
+                // Render the errors with js ...
+            }
+        });
+    });
+
     $('#submit_password').on('click', function() {
 
         var old_password = $('#old_password').val();
@@ -178,5 +279,18 @@
                 // Render the errors with js ...
             }
         });
+    });
+
+    $(document.body).on('change', '#avatar', function() {
+        const fileInput = document.querySelector('#avatar');
+        if (fileInput.files[0]) {
+            $('#uploaded-avatar').attr('src', window.URL.createObjectURL(fileInput.files[0]));
+        }
+    });
+
+    $(document.body).on('click', '#avatar-reset', function() {
+        const fileInput = document.querySelector('#avatar');
+        fileInput.value = '';
+        $('#uploaded-avatar').attr('src', $('#old-avatar').attr('src'));
     });
 </script>

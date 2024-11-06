@@ -1,7 +1,10 @@
 @php
     $containerNav = $containerNav ?? 'container-fluid';
     $navbarDetached = $navbarDetached ?? '';
-    $user = auth()->user();
+    $auth_user = auth()->user();
+    $auth_user_state = $auth_user->city->state_id;
+    $states = DB::table('states')->get();
+    $cities = DB::table('cities')->where('state_id', $auth_user_state)->get();
 @endphp
 
 <!-- Navbar -->
@@ -41,47 +44,49 @@
     <div class="navbar-nav align-items-center">
         <div class="d-flex">
             <div class="flex-shrink-0 me-3">
-                <div class="avatar avatar-online">
+                <div class="avatar avatar-online" id="update_profil">
                     {{-- <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle">
             @include('_partials.macros', ['width' => 25, 'withbg' => '#696cff']) --}}
-                    <img class="w-px-40 h-px-40 rounded-circle" src="{{ $user->image() }}">
+                    <img class="w-px-40 h-px-40 rounded-circle" src="{{ $auth_user->image() }}">
                 </div>
             </div>
             <div class="flex-grow-1">
-                <span class="fw-semibold d-block">{{ $user->enterprise() }}</span>
-                <small class="text-muted">{{ __($user->role_is()) }}</small>
+                <span class="fw-semibold d-block">{{ $auth_user->enterprise() }}</span>
+                <small class="text-muted">{{ __($auth_user->role_is()) }}</small>
             </div>
         </div>
     </div>
     <ul class="navbar-nav flex-row align-items-center ms-auto">
-      @if (count(session()->get('cart') ?? []))
-          <li class="nav-item w-px-50">
-              <a class="nav-link d-flex justify-content-center align-items-center" data-bs-toggle="modal" href="#" data-bs-target="#cartModal">
-                  <span class="tf-icons bx bx-sm bx-cart"></span>
-                  <span class="badge rounded-pill bg-danger text-white badge-notifications">{{ count(session()->get('cart')) }}</span>
-              </a>
-          </li>
-      @endif
+        @if (count(session()->get('cart') ?? []))
+            <li class="nav-item w-px-50">
+                <a class="nav-link d-flex justify-content-center align-items-center" data-bs-toggle="modal"
+                    href="#" data-bs-target="#cartModal">
+                    <span class="tf-icons bx bx-sm bx-cart"></span>
+                    <span
+                        class="badge rounded-pill bg-danger text-white badge-notifications">{{ count(session()->get('cart')) }}</span>
+                </a>
+            </li>
+        @endif
 
-      @if ($user->role_is('admin'))
-          <li class="nav-item w-px-50">
-              <a class="nav-link d-flex justify-content-center align-items-center" href="{{ url('/version') }}">
-                  <i class="bx bx-cog bx-sm"></i>
-              </a>
-          </li>
-      @endif
+        @if ($auth_user->role_is('admin'))
+            <li class="nav-item w-px-50">
+                <a class="nav-link d-flex justify-content-center align-items-center" href="{{ url('/version') }}">
+                    <i class="bx bx-cog bx-sm"></i>
+                </a>
+            </li>
+        @endif
 
-      <li class="nav-item w-px-50">
-          <a class="nav-link d-flex justify-content-center align-items-center" href="#" id="change_password">
-              <i class='bx bx-key bx-sm'></i>
-          </a>
-      </li>
-      <li class="nav-item w-px-50">
-          <a class="nav-link d-flex justify-content-center align-items-center" href="{{ url('/auth/logout') }}">
-              <i class='bx bx-power-off bx-sm'></i>
-          </a>
-      </li>
-  </ul>
+        <li class="nav-item w-px-50">
+            <a class="nav-link d-flex justify-content-center align-items-center" href="#" id="change_password">
+                <i class='bx bx-key bx-sm'></i>
+            </a>
+        </li>
+        <li class="nav-item w-px-50">
+            <a class="nav-link d-flex justify-content-center align-items-center" href="{{ url('/auth/logout') }}">
+                <i class='bx bx-power-off bx-sm'></i>
+            </a>
+        </li>
+    </ul>
 </div>
 
 @if (!isset($navbarDetached))
@@ -118,11 +123,110 @@
 
                 <br>
 
-                <div class="mb-4">
-                    <button type="submit" id="submit_password" name="submit_password" class="btn btn-primary"
-                        style="margin-left: 40%">{{ __('Change') }}</button>
+                <div class="mb-4 text-center">
+                    <button type="submit" id="submit_password" name="submit_password"
+                        class="btn btn-primary">{{ __('Change') }}</button>
                 </div>
 
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="update_profil_modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                {{-- <h4 class="fw-bold py-1 mb-1">{{ __('Change password') }}</h4> --}}
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
+                    enctype="multipart/form-data" id="update_profil_form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card-body h-50">
+                                <div class="d-flex align-items-start align-items-sm-center gap-4">
+                                    <div hidden><img src="{{ $auth_user->image() }}" alt="image"
+                                            class="d-block rounded" height="100" width="100" id="old-avatar" />
+                                    </div>
+                                    <img src="{{ $auth_user->image() }}" alt="image" class="d-block rounded"
+                                        height="100" width="100" id="uploaded-avatar" />
+                                    <div class="button-wrapper">
+                                        <label for="avatar" class="btn btn-primary mb-3" tabindex="0">
+                                            <span class="d-none d-sm-block">{{ __('Upload new image') }}</span>
+                                            <i class="bx bx-upload d-block d-sm-none"></i>
+                                            <input type="file" id="avatar" name="image" hidden
+                                                accept="image/png, image/jpeg" />
+                                        </label>
+                                        <button type="button" class="btn btn-outline-secondary" id="avatar-reset">
+                                            <i class="bx bx-reset d-block d-sm-none"></i>
+                                            <span class="d-none d-sm-block">{{ __('Reset') }}</span>
+                                        </button>
+                                        <br>
+                                        {{-- <small class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</small> --}}
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <hr class="my-0"> --}}
+
+                            <div class="mb-3">
+                                <label class="form-label" for="name">{{ __('Name') }}</label>
+                                <input type="text" class="form-control" name="name"
+                                    value="{{ $auth_user->name }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="enterprise_name">{{ __('Enterprise') }}</label>
+                                <input type="text" class="form-control" name="enterprise_name"
+                                    value="{{ $auth_user->enterprise_name }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+
+
+                            <div class="mb-3">
+                                <label class="form-label" for="phone">{{ __('Phone') }}</label>
+                                <input type="text" class="form-control" name="phone"
+                                    value="{{ $auth_user->phone }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="email">{{ __('Email') }}</label>
+                                <input type="text" class="form-control" name="email"
+                                    value="{{ $auth_user->email }}">
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label class="form-label" for="state">{{ __('State') }}</label>
+                                <select class="form-select" id="update_profil_state">
+                                    @foreach ($states as $state)
+                                        <option value="{{ $state->id }}"
+                                            {{ $state->id == $auth_user_state ? 'selected' : '' }}>{{ $state->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="city">{{ __('City') }}</label>
+                                <select class="form-select" id="update_profil_city" name="city">
+                                    @foreach ($cities as $city)
+                                        <option value="{{ $city->id }}"
+                                            {{ $city->id == $auth_user->city_id ? 'selected' : '' }}>{{ $city->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="mb-4 text-center">
+                <button type="submit" id="submit_update_profil"
+                    class="btn btn-primary">{{ __('Send') }}</button>
             </div>
         </div>
     </div>

@@ -147,7 +147,7 @@ class UserController extends Controller
   public function update(Request $request)
   {
 
-    $request->mergeIfMissing(['user_id' => auth()->user()->id]);
+    $request->mergeIfMissing(['user_id' => auth()->id()]);
 
     $validator = Validator::make($request->all(), [
       //'firstname' => 'sometimes|string',
@@ -157,7 +157,7 @@ class UserController extends Controller
       'name' => 'sometimes|string',
       'phone' => 'sometimes|numeric',
       /* 'phone' => ['sometimes','numeric','digits:10',Rule::unique('users')->ignore($user->id)], */
-      //'email' => ['sometimes','email',Rule::unique('users')->ignore($user->id)],
+      'email' => ['sometimes','email',Rule::unique('users')->ignore(auth()->id())],
       'image' => 'sometimes|mimetypes:image/*',
       'status' => 'sometimes|in:1,2,3',
 

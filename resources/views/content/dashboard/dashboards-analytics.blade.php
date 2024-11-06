@@ -54,7 +54,7 @@
                             <!-- Total Orders -->
                             <div class="col-6 col-md-3">
                                 <div class="d-flex flex-column border rounded p-3 h-100">
-                                    <span class="text-muted small">{{ __('Total inbox') }}</span>
+                                    <span class="text-muted small">{{ __('Total') }}</span>
                                     <h3
                                         class="mt-2 mb-1 @if ($all_times_inbox_count > 0) text-primary @else text-secondary @endif">
                                         {{ $all_times_inbox_count }}
@@ -67,10 +67,10 @@
                                 </div>
                             </div>
 
-                            <!-- This Month Orders -->
+                            <!-- This month Orders -->
                             <div class="col-6 col-md-3">
                                 <div class="d-flex flex-column border rounded p-3 h-100">
-                                    <span class="text-muted small">{{ __('Monthly inbox') }}</span>
+                                    <span class="text-muted small">{{ __('New this month') }}</span>
                                     <h3
                                         class="mt-2 mb-1 @if ($this_month_inbox_count > 0) text-info @else text-secondary @endif">
                                         {{ $this_month_inbox_count }}
@@ -139,7 +139,7 @@
                             <!-- Total Orders -->
                             <div class="col-6 col-md-3">
                                 <div class="d-flex flex-column border rounded p-3 h-100">
-                                    <span class="text-muted small">{{ __('Total outbox') }}</span>
+                                    <span class="text-muted small">{{ __('Total') }}</span>
                                     <h3
                                         class="mt-2 mb-1 @if ($all_times_outbox_count > 0) text-primary @else text-secondary @endif">
                                         {{ $all_times_outbox_count }}
@@ -152,10 +152,10 @@
                                 </div>
                             </div>
 
-                            <!-- This Month Orders -->
+                            <!-- This month Orders -->
                             <div class="col-6 col-md-3">
                                 <div class="d-flex flex-column border rounded p-3 h-100">
-                                    <span class="text-muted small">{{ __('Monthly outbox') }}</span>
+                                    <span class="text-muted small">{{ __('New this month') }}</span>
                                     <h3
                                         class="mt-2 mb-1 @if ($this_month_outbox_count > 0) text-info @else text-secondary @endif">
                                         {{ $this_month_outbox_count }}
@@ -223,7 +223,7 @@
                             <!-- Total Orders -->
                             <div class="col-6 col-md-3">
                                 <div class="d-flex flex-column border rounded p-3 h-100">
-                                    <span class="text-muted small">{{ __('Total stock') }}</span>
+                                    <span class="text-muted small">{{ __('Total') }}</span>
                                     <h3
                                         class="mt-2 mb-1 @if ($all_times_stock_count > 0) text-primary @else text-secondary @endif">
                                         {{ $all_times_stock_count }}
@@ -236,10 +236,10 @@
                                 </div>
                             </div>
 
-                            <!-- This Month Orders -->
+                            <!-- This month Orders -->
                             <div class="col-6 col-md-3">
                                 <div class="d-flex flex-column border rounded p-3 h-100">
-                                    <span class="text-muted small">{{ __('Monthly stock') }}</span>
+                                    <span class="text-muted small">{{ __('New this month') }}</span>
                                     <h3
                                         class="mt-2 mb-1 @if ($this_month_stock_count > 0) text-info @else text-secondary @endif">
                                         {{ $this_month_stock_count }}

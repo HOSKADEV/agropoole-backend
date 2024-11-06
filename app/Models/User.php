@@ -83,37 +83,39 @@ class User extends Authenticatable
   // Orders where user is the seller
   public function soldOrders()
   {
-      return $this->hasMany(Order::class, 'seller_id');
+    return $this->hasMany(Order::class, 'seller_id');
   }
 
   // Orders where user is the buyer
   public function boughtOrders()
   {
-      return $this->hasMany(Order::class, 'buyer_id');
+    return $this->hasMany(Order::class, 'buyer_id');
   }
 
-  public function deliveredOrders(){
+  public function deliveredOrders()
+  {
     return $this->hasManyThrough(Order::class, Delivery::class, 'driver_id', 'id', 'id', 'order_id');
   }
 
   public function pendingSoldOrders()
   {
-      return $this->soldOrders()->whereIn('status', ['pending','confirmed'] );
+    return $this->soldOrders()->whereIn('status', ['pending', 'confirmed']);
   }
 
   // Orders where user is the buyer
   public function pendingBoughtOrders()
   {
-    return $this->boughtOrders()->whereIn('status', ['accepted','delivered'] );
+    return $this->boughtOrders()->whereIn('status', ['accepted', 'delivered']);
   }
 
-  public function pendingDeliveredOrders(){
-    return $this->deliveredOrders()->whereIn('status', ['shipped','ongoing'] )->select('orders.*');
+  public function pendingDeliveredOrders()
+  {
+    return $this->deliveredOrders()->whereIn('status', ['shipped', 'ongoing'])->select('orders.*');
   }
   public function orders()
   {
 
-      return $this->soldOrders()->union($this->boughtOrders());
+    return $this->soldOrders()->union($this->boughtOrders());
   }
 
   public function notifications()
@@ -161,7 +163,8 @@ class User extends Authenticatable
     return 'https://maps.google.com/?q=' . $this->latitude . ',' . $this->longitude;
   }
 
-  public function address(){
+  public function address()
+  {
     return $this->city?->state?->name . '/' . $this->city?->name;
   }
 
@@ -173,7 +176,8 @@ class User extends Authenticatable
     }
   }
 
-  public function role_is($role = null){
+  public function role_is($role = null)
+  {
 
     $roles = [
       0 => 'admin',
@@ -187,26 +191,28 @@ class User extends Authenticatable
     return $role ? $roles[$this->role] == $role : $roles[$this->role];
   }
 
-  public function image(){
+  public function image()
+  {
     $image = 'assets/img/avatars/avatar.png';
-    if ($this->role_is('admin')){
+    if ($this->role_is('admin')) {
       $image = 'logo.png';
-    }else if($this->image){
+    } else if ($this->image) {
       $image = $this->image;
     }
 
     return url($image);
   }
 
-  public function can_see_stock_of($user){
-    if(empty($user)){
+  public function can_see_stock_of($user)
+  {
+    if (empty($user)) {
       return false;
     }
 
     $permissions = [
       'admin' => [],
       'provider' => ['broker'],
-      'broker' => ['provider','store'],
+      'broker' => ['provider', 'store'],
       'store' => ['broker'],
       'client' => [],
       'driver' => []
@@ -216,14 +222,71 @@ class User extends Authenticatable
   }
 
 
-  public function topStocks($date=null){
-    return $this->stocks()->withCount(['items' => function($query) use($date){
-      if($date){
-        $query->whereYear('created_at',$date->year)->whereMonth('created_at',$date->month);
+  public function topStocks($date = null)
+  {
+    return $this->stocks()->withCount([
+      'items' => function ($query) use ($date) {
+        if ($date) {
+          $query->whereYear('created_at', $date->year)->whereMonth('created_at', $date->month);
+        }
       }
-    }])->having('items_count', '>', 0)->orderBy('items_count', 'DESC');
+    ])->having('items_count', '>', 0)->orderBy('items_count', 'DESC');
   }
-  public function topBuyers(){
+
+  public function topProducts($date = null)
+  {
+    return $this->stocks()->join('items', function ($query) use ($date) {
+      $query->on('items.stock_id', '=', 'stocks.id');
+      if ($date) {
+        $query->whereYear('items.created_at', $date->year)->whereMonth('items.created_at', $date->month);
+      }
+    })
+      ->join('products', 'stocks.product_id', 'products.id')
+      ->groupBy('product_id')
+      ->selectRaw('products.*, COUNT(items.id) AS items_count')
+      //->having('items_count', '>', 0)
+      ->orderBy('items_count', 'DESC');
+  }
+  public function topBuyers($date = null)
+  {
+    $result = $this->soldOrders();
+
+    if ($date) {
+      $result->whereYear('orders.created_at', $date->year)->whereMonth('orders.created_at', $date->month);
+    }
+
+    return $result->join('users', 'orders.buyer_id', 'users.id')
+      ->groupBy('buyer_id')
+      ->selectRaw('users.*, COUNT(orders.id) AS orders_count')
+      ->orderBy('orders_count', 'DESC');
+  }
+
+  public function topSellers($date = null)
+  { //for driver
+    $result = $this->deliveredOrders();
+    if ($date) {
+      $result = $result->whereYear('deliveries.created_at', $date->year)->whereMonth('deliveries.created_at', $date->month);
+    }
+
+    return $result->join('users', 'orders.seller_id', 'users.id')
+      ->groupBy('seller_id')
+      ->selectRaw('users.*, COUNT(orders.id) AS orders_count')
+      ->orderBy('orders_count', 'DESC');
+  }
+
+  public function topStates($date = null)
+  {
+    $result = $this->soldOrders();
+
+    if ($date) {
+      $result->whereYear('orders.created_at', $date->year)->whereMonth('orders.created_at', $date->month);
+    }
+    return $result->join('users', 'orders.seller_id', 'users.id')
+      ->join('cities', 'users.city_id', 'cities.id')
+      ->join('states', 'cities.state_id', 'states.id')
+      ->groupBy('state_id')
+      ->selectRaw('states.*, COUNT(orders.id) AS orders_count')
+      ->orderBy('orders_count', 'DESC');
 
   }
 }

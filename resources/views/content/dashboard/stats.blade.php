@@ -7,12 +7,15 @@
 @endsection
 
 @php
-    $inbox_status_chart = empty($inbox_status_chart) ?: $inbox_status_chart->build();
-    $outbox_status_chart = empty($outbox_status_chart) ?: $outbox_status_chart->build();
-    $inbox_monthly_chart = empty($inbox_monthly_chart) ?: $inbox_monthly_chart->build();
-    $outbox_monthly_chart = empty($outbox_monthly_chart) ?: $outbox_monthly_chart->build();
+    $inbox_status_chart = empty($inbox_status_chart) ? null : $inbox_status_chart->build();
+    $outbox_status_chart = empty($outbox_status_chart) ? null : $outbox_status_chart->build();
+    $inbox_monthly_chart = empty($inbox_monthly_chart) ? null : $inbox_monthly_chart->build();
+    $outbox_monthly_chart = empty($outbox_monthly_chart) ? null : $outbox_monthly_chart->build();
 
-    $top_stocks_chart = empty($top_stocks_chart) ?: $top_stocks_chart->build();
+    $top_products_chart = empty($top_products_chart) ? null : $top_products_chart->build();
+    $top_buyers_chart = empty($top_buyers_chart) ? null : $top_buyers_chart->build();
+    $top_states_chart = empty($top_states_chart) ? null : $top_states_chart->build();
+    $top_sellers_chart = empty($top_sellers_chart) ? null : $top_sellers_chart->build();
 @endphp
 
 @section('vendor-script')
@@ -22,7 +25,10 @@
     {{ empty($outbox_status_chart) ?: $outbox_status_chart->script() }}
     {{ empty($inbox_monthly_chart) ?: $inbox_monthly_chart->script() }}
     {{ empty($outbox_monthly_chart) ?: $outbox_monthly_chart->script() }}
-    {{ empty($top_stocks_chart) ?: $top_stocks_chart->script() }}
+    {{ empty($top_products_chart) ?: $top_products_chart->script() }}
+    {{ empty($top_buyers_chart) ?: $top_buyers_chart->script() }}
+    {{ empty($top_states_chart) ?: $top_states_chart->script() }}
+    {{ empty($top_sellers_chart) ?: $top_sellers_chart->script() }}
 @endsection
 
 @section('content')
@@ -33,10 +39,10 @@
                     <div class="card h-100">
                         <div class="card-title mx-3 mt-3">
                             <div class="row  justify-content-between">
-                                <div class="form-group col-8 card-title-elements">
+                                <div class="form-group col-7 card-title-elements">
                                     <h5 class="mx-4 mt-1">{{ __('Inbox Status Chart') }} </h5>
                                 </div>
-                                <div class="form-group col-4">
+                                <div class="form-group col-5">
                                     <select class="form-select" id="inboxStatusFilter" name="inboxStatusFilter">
                                         <option value="" {{ request('inboxStatusFilter') ?: 'selected' }}>
                                             {{ __('All time') }}</option>
@@ -79,10 +85,10 @@
                     <div class="card h-100">
                         <div class="card-title mx-3 mt-3">
                             <div class="row  justify-content-between">
-                                <div class="form-group col-8 card-title-elements">
+                                <div class="form-group col-7 card-title-elements">
                                     <h5 class="mx-4 mt-1">{{ __('Outbox Status Chart') }} </h5>
                                 </div>
-                                <div class="form-group col-4">
+                                <div class="form-group col-5">
                                     <select class="form-select" id="outboxStatusFilter" name="outboxStatusFilter">
                                         <option value="" {{ request('outboxStatusFilter') ?: 'selected' }}>
                                             {{ __('All time') }}</option>
@@ -116,33 +122,112 @@
         @endif
 
         @if (in_array(auth()->user()->role_is(), ['provider', 'broker', 'store']))
-        <div class="row">
+            <div class="row">
 
-          <div class="col-4 mb-4">
-              <div class="card h-100">
-                  <div class="card-title mx-3 mt-3">
-                      <div class="row  justify-content-between">
-                          <div class="form-group col-6 card-title-elements">
-                              <h5>{{ __('Top Stocks') }} </h5>
-                          </div>
-                          <div class="form-group col-6">
-                              <select class="form-select" id="topStocksFilter" name="topStocksFilter">
-                                  <option value="" {{ request('topStocksFilter') ?: 'selected' }}>
-                                      {{ __('All time') }}</option>
-                                  <option value="1" {{ empty(request('topStocksFilter')) ?: 'selected' }}>
-                                      {{ __('This month') }}</option>
-                              </select>
-                          </div>
-                      </div>
-                  </div>
+                <div class="col-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-title mx-3 mt-3 mb-1">
+                            <div class="row  justify-content-center">
+                                <div class="form-group col-8 text-center">
+                                    <h5>{{ __('Top Products') }} </h5>
+                                </div>
+                                <div class="form-group col-8">
+                                    <select class="form-select" id="topProductsFilter" name="topProductsFilter">
+                                        <option value="" {{ request('topProductsFilter') ?: 'selected' }}>
+                                            {{ __('All time') }}</option>
+                                        <option value="1" {{ empty(request('topProductsFilter')) ?: 'selected' }}>
+                                            {{ __('This month') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
-                  <div class="card-body">
-                      {{ $top_stocks_chart->container() }}
-                  </div>
-              </div>
-          </div>
+                        <div class="card-body m-1 p-1">
+                            {{ $top_products_chart->container() }}
+                        </div>
+                    </div>
+                </div>
 
-      </div>
+                <div class="col-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-title mx-3 mt-3 mb-1">
+                            <div class="row  justify-content-center">
+                              <div class="form-group col-8 text-center">
+                                    <h5>{{ __('Top Buyers') }} </h5>
+                                </div>
+                                <div class="form-group col-8">
+                                    <select class="form-select" id="topBuyersFilter" name="topBuyersFilter">
+                                        <option value="" {{ request('topBuyersFilter') ?: 'selected' }}>
+                                            {{ __('All time') }}</option>
+                                        <option value="1" {{ empty(request('topBuyersFilter')) ?: 'selected' }}>
+                                            {{ __('This month') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body m-1 p-1">
+                            {{ $top_buyers_chart->container() }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-title mx-3 mt-3 mb-1">
+                            <div class="row  justify-content-center">
+                              <div class="form-group col-8 text-center">
+                                    <h5>{{ __('Top States') }} </h5>
+                                </div>
+                                <div class="form-group col-8">
+                                    <select class="form-select" id="topStatesFilter" name="topStatesFilter">
+                                        <option value="" {{ request('topStatesFilter') ?: 'selected' }}>
+                                            {{ __('All time') }}</option>
+                                        <option value="1" {{ empty(request('topStatesFilter')) ?: 'selected' }}>
+                                            {{ __('This month') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body m-1 p-1">
+                            {{ $top_states_chart->container() }}
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        @endif
+
+        @if (in_array(auth()->user()->role_is(), ['driver']))
+            <div class="row">
+
+                <div class="col-12 mb-4">
+                    <div class="card h-100">
+                        <div class="card-title mx-3 mt-3 mb-1">
+                            <div class="row  justify-content-between">
+                                <div class="form-group col-7 card-title-elements">
+                                    <h5>{{ __('Top Sellers') }} </h5>
+                                </div>
+                                <div class="form-group col-5">
+                                    <select class="form-select" id="topSellersFilter" name="topSellersFilter">
+                                        <option value="" {{ request('topSellersFilter') ?: 'selected' }}>
+                                            {{ __('All time') }}</option>
+                                        <option value="1" {{ empty(request('topSellersFilter')) ?: 'selected' }}>
+                                            {{ __('This month') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body m-1 p-1">
+                            {{ $top_sellers_chart->container() }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         @endif
     </form>
 
@@ -166,12 +251,28 @@
                 }, 1000);
             });
 
-            $('#topStocksFilter').on('change', function() {
+            $('#topProductsFilter').on('change', function() {
+                timer = setTimeout(function() {
+                    submitForm();
+                }, 1000);
+            });
+            $('#topBuyersFilter').on('change', function() {
                 timer = setTimeout(function() {
                     submitForm();
                 }, 1000);
             });
 
+            $('#topStatesFilter').on('change', function() {
+                timer = setTimeout(function() {
+                    submitForm();
+                }, 1000);
+            });
+
+            $('#topSellersFilter').on('change', function() {
+                timer = setTimeout(function() {
+                    submitForm();
+                }, 1000);
+            });
         });
     </script>
 @endsection

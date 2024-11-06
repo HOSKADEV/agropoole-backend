@@ -11,12 +11,13 @@ class OrderStatusChart
   protected $chart;
   protected $orders;
   protected $filter;
-
-  public function __construct($orders, $filter = null)
+protected $column;
+  public function __construct($orders, $filter = null, $column='created_at')
   {
     $this->chart = new LarapexChart();
     $this->orders = $orders;
     $this->filter = $filter;
+    $this->column = $column;
   }
 
   public function build()
@@ -25,7 +26,7 @@ class OrderStatusChart
     $data = $this->orders;
 
     if ($this->filter) {
-      $data = $data->whereYear('created_at', now()->year)->whereMonth('created_at', now()->month);
+      $data = $data->whereYear($this->column, now()->year)->whereMonth($this->column, now()->month);
     }
 
     $data = $data->groupBy('status')->select('status', DB::raw('COUNT(orders.id) as orders'))

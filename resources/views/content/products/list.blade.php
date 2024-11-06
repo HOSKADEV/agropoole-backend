@@ -537,7 +537,7 @@
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 allowEnterKey: false,
-            });
+              });
 
                 /* var formdata = new FormData($("#form")[0]); */
                 var queryString = new FormData($("#form")[0]);

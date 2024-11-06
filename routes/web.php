@@ -156,9 +156,8 @@ Route::group(['middleware' => ['auth']], function () {
   Route::post('/user/delete', 'App\Http\Controllers\UserController@delete');
   Route::post('/user/restore', 'App\Http\Controllers\UserController@restore');
   Route::post('/user/update', 'App\Http\Controllers\UserController@update');
-
+  Route::post('/city/get', 'App\Http\Controllers\CityController@get');
   Route::post('/shipping/switch', 'App\Http\Controllers\SetController@shipping');
-
   Route::post('/version/update', 'App\Http\Controllers\VersionController@update');
 
   //language
@@ -177,13 +176,13 @@ Route::get('/auth/redirect', function () {
 
 Route::get('/auth/callback', function () {
   $google_user = Socialite::driver('google')->stateless()->user();
-//dd($google_user);
-  $user = User::where('email',$google_user->email)->first();
+  //dd($google_user);
+  $user = User::where('email', $google_user->email)->first();
 
-  if($user){
+  if ($user) {
     Auth::login($user);
     return redirect()->route('dashboard-analytics');
-  }else{
+  } else {
     return redirect()->route('login');
   }
 
