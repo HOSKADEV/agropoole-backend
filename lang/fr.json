@@ -350,5 +350,16 @@
   "New outgoing orders": "Nouvelles demandes",
   "Statistics" : "Statistiques",
   "No results":"Pas de résultats",
-  "Your search did not return any results":"Votre recherche n'a donné aucun résultat"
+  "Your search did not return any results":"Votre recherche n'a donné aucun résultat",
+  "Order Status Chart": "Statut des Demandes",
+  "Order Count Chart": "Nombre de commandes",
+  "Inbox Count Chart": "Nombre de commandes",
+  "Outbox Count Chart": "Nombre de demandes",
+
+  "User Status Chart": "Rôles des utilisateurs",
+  "User Count Chart": "Nombre d'utilisateurs",
+  "Monthly" : "Mensuel",
+  "Daily" : "Quotidien",
+  "New users" :"Nouveaux utilisateurs",
+  "New orders" : "Nouvelles commandes"
 }

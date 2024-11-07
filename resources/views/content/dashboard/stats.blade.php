@@ -9,8 +9,8 @@
 @php
     $inbox_status_chart = empty($inbox_status_chart) ? null : $inbox_status_chart->build();
     $outbox_status_chart = empty($outbox_status_chart) ? null : $outbox_status_chart->build();
-    $inbox_monthly_chart = empty($inbox_monthly_chart) ? null : $inbox_monthly_chart->build();
-    $outbox_monthly_chart = empty($outbox_monthly_chart) ? null : $outbox_monthly_chart->build();
+    $inbox_count_chart = empty($inbox_count_chart) ? null : $inbox_count_chart->build();
+    $outbox_count_chart = empty($outbox_count_chart) ? null : $outbox_count_chart->build();
 
     $top_products_chart = empty($top_products_chart) ? null : $top_products_chart->build();
     $top_buyers_chart = empty($top_buyers_chart) ? null : $top_buyers_chart->build();
@@ -23,8 +23,8 @@
 
     {{ empty($inbox_status_chart) ?: $inbox_status_chart->script() }}
     {{ empty($outbox_status_chart) ?: $outbox_status_chart->script() }}
-    {{ empty($inbox_monthly_chart) ?: $inbox_monthly_chart->script() }}
-    {{ empty($outbox_monthly_chart) ?: $outbox_monthly_chart->script() }}
+    {{ empty($inbox_count_chart) ?: $inbox_count_chart->script() }}
+    {{ empty($outbox_count_chart) ?: $outbox_count_chart->script() }}
     {{ empty($top_products_chart) ?: $top_products_chart->script() }}
     {{ empty($top_buyers_chart) ?: $top_buyers_chart->script() }}
     {{ empty($top_states_chart) ?: $top_states_chart->script() }}
@@ -63,13 +63,21 @@
                     <div class="card h-100">
 
                         <div class="card-title mx-3 mt-3">
-                            <div class="form-group col-8 card-title-elements">
-                                <h5 class="mx-4 mt-1">{{ __('Inbox Monthly Chart') }} </h5>
+                            <div class="row  justify-content-between">
+                                <div class="form-group col-7 card-title-elements">
+                                    <h5 class="mx-4 mt-1">{{ __('Inbox Count Chart') }} </h5>
+                                </div>
+                                <div class="form-group col-5">
+                                    <select class="form-select" id="inboxCountFilter" name="inboxCountFilter">
+                                        <option value="monthly" {{ request('inboxCountFilter') != 'daily' ? 'selected' : '' }}>{{ __('Monthly') }}</option>
+                                        <option value="daily" {{ request('inboxCountFilter') == 'daily' ? 'selected' : '' }}>{{ __('Daily') }}</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
                         <div class="card-body">
-                            {{ $inbox_monthly_chart->container() }}
+                            {{ $inbox_count_chart->container() }}
                         </div>
                     </div>
                 </div>
@@ -107,14 +115,22 @@
                 <div class="col-6 mb-4">
                     <div class="card h-100">
 
-                        <div class="card-title mx-3 mt-3">
-                            <div class="form-group col-8 card-title-elements">
-                                <h5 class="mx-4 mt-1">{{ __('Outbox Monthly Chart') }} </h5>
+                      <div class="card-title mx-3 mt-3">
+                        <div class="row  justify-content-between">
+                            <div class="form-group col-7 card-title-elements">
+                                <h5 class="mx-4 mt-1">{{ __('Outbox Count Chart') }} </h5>
+                            </div>
+                            <div class="form-group col-5">
+                                <select class="form-select" id="outboxCountFilter" name="outboxCountFilter">
+                                    <option value="monthly" {{ request('outboxCountFilter') != 'daily' ? 'selected' : '' }}>{{ __('Monthly') }}</option>
+                                    <option value="daily" {{ request('outboxCountFilter') == 'daily' ? 'selected' : '' }}>{{ __('Daily') }}</option>
+                                </select>
                             </div>
                         </div>
+                    </div>
 
                         <div class="card-body">
-                            {{ $outbox_monthly_chart->container() }}
+                            {{ $outbox_count_chart->container() }}
                         </div>
                     </div>
                 </div>
@@ -152,7 +168,7 @@
                     <div class="card h-100">
                         <div class="card-title mx-3 mt-3 mb-1">
                             <div class="row  justify-content-center">
-                              <div class="form-group col-8 text-center">
+                                <div class="form-group col-8 text-center">
                                     <h5>{{ __('Top Buyers') }} </h5>
                                 </div>
                                 <div class="form-group col-8">
@@ -176,7 +192,7 @@
                     <div class="card h-100">
                         <div class="card-title mx-3 mt-3 mb-1">
                             <div class="row  justify-content-center">
-                              <div class="form-group col-8 text-center">
+                                <div class="form-group col-8 text-center">
                                     <h5>{{ __('Top States') }} </h5>
                                 </div>
                                 <div class="form-group col-8">
@@ -246,6 +262,18 @@
             });
 
             $('#outboxStatusFilter').on('change', function() {
+                timer = setTimeout(function() {
+                    submitForm();
+                }, 1000);
+            });
+
+            $('#inboxCountFilter').on('change', function() {
+                timer = setTimeout(function() {
+                    submitForm();
+                }, 1000);
+            });
+
+            $('#outboxCountFilter').on('change', function() {
                 timer = setTimeout(function() {
                     submitForm();
                 }, 1000);

@@ -6,8 +6,20 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}">
 @endsection
 
-@section('vendor-script')
+@php
+    $order_status_chart = empty($order_status_chart) ? null : $order_status_chart->build();
+    $order_count_chart = empty($order_count_chart) ? null : $order_count_chart->build();
+    $user_status_chart = empty($user_status_chart) ? null : $user_status_chart->build();
+    $user_count_chart = empty($user_count_chart) ? null : $user_count_chart->build();
+@endphp
 
+@section('vendor-script')
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    {{ empty($order_status_chart) ?: $order_status_chart->script() }}
+    {{ empty($order_count_chart) ?: $order_count_chart->script() }}
+    {{ empty($user_status_chart) ?: $user_status_chart->script() }}
+    {{ empty($user_count_chart) ?: $user_count_chart->script() }}
 @endsection
 
 @section('content')
@@ -35,6 +47,113 @@
                 </div>
             </div>
         </div>
+        <form id="form" method="GET" action="{{ route('dashboard-analytics') }}">
+            <div class="row">
+
+                <div class="col-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-title mx-3 mt-3">
+                            <div class="row  justify-content-between">
+                                <div class="form-group col-7 card-title-elements">
+                                    <h5 class="mx-4 mt-1">{{ __('Order Status Chart') }} </h5>
+                                </div>
+                                <div class="form-group col-5">
+                                    <select class="form-select" id="orderStatusFilter" name="orderStatusFilter">
+                                        <option value="" {{ request('orderStatusFilter') ?: 'selected' }}>
+                                            {{ __('All time') }}</option>
+                                        <option value="1" {{ empty(request('orderStatusFilter')) ?: 'selected' }}>
+                                            {{ __('This month') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            {{ $order_status_chart->container() }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 mb-4">
+                    <div class="card h-100">
+
+                        <div class="card-title mx-3 mt-3">
+                            <div class="row  justify-content-between">
+                                <div class="form-group col-7 card-title-elements">
+                                    <h5 class="mx-4 mt-1">{{ __('Order Count Chart') }} </h5>
+                                </div>
+                                <div class="form-group col-5">
+                                    <select class="form-select" id="orderCountFilter" name="orderCountFilter">
+                                        <option value="monthly"
+                                            {{ request('orderCountFilter') != 'daily' ? 'selected' : '' }}>
+                                            {{ __('Monthly') }}</option>
+                                        <option value="daily"
+                                            {{ request('orderCountFilter') == 'daily' ? 'selected' : '' }}>
+                                            {{ __('Daily') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            {{ $order_count_chart->container() }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+              <div class="col-6 mb-4">
+                  <div class="card h-100">
+                      <div class="card-title mx-3 mt-3">
+                          <div class="row  justify-content-between">
+                              <div class="form-group col-7 card-title-elements">
+                                  <h5 class="mx-4 mt-1">{{ __('User Status Chart') }} </h5>
+                              </div>
+                              <div class="form-group col-5">
+                                  <select class="form-select" id="userStatusFilter" name="userStatusFilter">
+                                      <option value="" {{ request('userStatusFilter') ?: 'selected' }}>
+                                          {{ __('All time') }}</option>
+                                      <option value="1" {{ empty(request('userStatusFilter')) ?: 'selected' }}>
+                                          {{ __('This month') }}</option>
+                                  </select>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="card-body">
+                          {{ $user_status_chart->container() }}
+                      </div>
+                  </div>
+              </div>
+              <div class="col-6 mb-4">
+                  <div class="card h-100">
+
+                      <div class="card-title mx-3 mt-3">
+                          <div class="row  justify-content-between">
+                              <div class="form-group col-7 card-title-elements">
+                                  <h5 class="mx-4 mt-1">{{ __('User Count Chart') }} </h5>
+                              </div>
+                              <div class="form-group col-5">
+                                  <select class="form-select" id="userCountFilter" name="userCountFilter">
+                                      <option value="monthly"
+                                          {{ request('userCountFilter') != 'daily' ? 'selected' : '' }}>
+                                          {{ __('Monthly') }}</option>
+                                      <option value="daily"
+                                          {{ request('userCountFilter') == 'daily' ? 'selected' : '' }}>
+                                          {{ __('Daily') }}</option>
+                                  </select>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="card-body">
+                          {{ $user_count_chart->container() }}
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </form>
     @endif
     @if (in_array(auth()->user()->role_is(), ['provider', 'broker', 'store', 'driver']))
         <div class="row">
@@ -293,4 +412,37 @@
 
 
 
+@endsection
+
+@section('page-script')
+    <script>
+        $(document).ready(function() {
+            function submitForm() {
+                $("#form").submit();
+            }
+            $('#orderStatusFilter').on('change', function() {
+                timer = setTimeout(function() {
+                    submitForm();
+                }, 1000);
+            });
+
+            $('#orderCountFilter').on('change', function() {
+                timer = setTimeout(function() {
+                    submitForm();
+                }, 1000);
+            });
+
+            $('#userStatusFilter').on('change', function() {
+                timer = setTimeout(function() {
+                    submitForm();
+                }, 1000);
+            });
+
+            $('#userCountFilter').on('change', function() {
+                timer = setTimeout(function() {
+                    submitForm();
+                }, 1000);
+            });
+        });
+    </script>
 @endsection

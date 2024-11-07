@@ -147,9 +147,9 @@
                         <div class="col-md-6">
                             <div class="card-body h-50">
                                 <div class="d-flex align-items-start align-items-sm-center gap-4">
-                                    {{-- <div hidden><img src="{{ $auth_user->image() }}" alt="image"
+                                    <div hidden><img src="{{ $auth_user->image() }}" alt="image"
                                             class="d-block rounded" height="100" width="100" id="old-avatar" />
-                                    </div> --}}
+                                    </div>
                                     <img src="{{ $auth_user->image() }}" alt="image" class="d-block rounded"
                                         height="100" width="100" id="uploaded-avatar" />
                                     <div class="button-wrapper">

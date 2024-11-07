@@ -112,15 +112,15 @@
                             name: 'type',
                             render: function(data) {
                                 if (data == 1) {
-                                    return '<span class="badge bg-label-primary">{{ __('Provider') }}</span>';
+                                    return '<span class="badge bg-label-purple">{{ __('Provider') }}</span>';
                                 } else if (data == 2) {
-                                    return '<span class="badge bg-label-success">{{ __('Broker') }}</span>';
+                                    return '<span class="badge bg-label-blue">{{ __('Broker') }}</span>';
                                 } else if (data == 3) {
-                                    return '<span class="badge bg-label-warning">{{ __('Store') }}</span>';
+                                    return '<span class="badge bg-label-cyan">{{ __('Store') }}</span>';
                                 } else if (data == 4) {
-                                    return '<span class="badge bg-label-info">{{ __('Client') }}</span>';
+                                    return '<span class="badge bg-label-teal">{{ __('Client') }}</span>';
                                 } else if (data == 5) {
-                                    return '<span class="badge bg-label-danger">{{ __('Driver') }}</span>';
+                                    return '<span class="badge bg-label-green">{{ __('Driver') }}</span>';
                                 }
                             }
                         },
