@@ -8,12 +8,8 @@
 @endphp
   <!-- ! Hide app brand if navbar-full -->
   <div class="app-brand demo">
-    <a href="{{url('/')}}" class="app-brand-link">
-      {{-- <span class="app-brand-logo">
-        @include('_partials.macros',["width"=>25,"withbg"=>'#696cff'])
-      </span> --}}
-      <span class="app-brand-text demo menu-text fw-bold ms-2">{{config('variables.templateName')}}</span>
-    </a>
+    <img src="{{ url('logo.png') }}" alt="image" class="d-block rounded" height="40" width="40" />
+     <span class="app-brand-text demo menu-text fw-bold">gropole</span>
 
     <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-autod-block d-xl-none">
       <i class="bx bx-chevron-left bx-sm align-middle"></i>

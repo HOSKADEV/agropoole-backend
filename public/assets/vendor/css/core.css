@@ -262,7 +262,7 @@ a {
 }
 
 a:hover {
-  color: #004B80;
+  color: #0071BE;
 }
 
 a:not([href]):not([class]),
@@ -2984,7 +2984,7 @@ fieldset:disabled .btn {
 }
 
 .btn-link:hover {
-  color: #004B80;
+  color: #0071BE;
 }
 
 .btn-link:disabled,
@@ -3539,7 +3539,7 @@ fieldset:disabled .btn {
 
 .nav-link:hover,
 .nav-link:focus {
-  color: #004B80;
+  color: #0071BE;
 }
 
 .nav-link.disabled {
@@ -4296,14 +4296,14 @@ fieldset:disabled .btn {
 }
 
 .btn-label-primary {
-  color: #004B80 !important;
+  color: #0071BE !important;
   border-color: rgba(0, 0, 0, 0);
   background: #cce4f5
 }
 
 .btn-label-primary:hover {
   border-color: rgba(0, 0, 0, 0) !important;
-  background: #004B80 !important;
+  background: #0071BE !important;
   color: #fff !important;
   box-shadow: 0 .125rem .25rem 0 rgba(105, 108, 255, .4) !important
 }
@@ -4311,7 +4311,7 @@ fieldset:disabled .btn {
 .btn-label-primary:focus,
 .btn-label-primary.focus {
   color: #fff !important;
-  background: #004B80
+  background: #0071BE
 }
 
 .btn-label-primary:active,
@@ -4319,7 +4319,7 @@ fieldset:disabled .btn {
 .btn-label-primary.show.dropdown-toggle,
 .show>.btn-label-primary.dropdown-toggle {
   color: #fff !important;
-  background-color: #004B80 !important;
+  background-color: #0071BE !important;
   border-color: rgba(0, 0, 0, 0) !important
 }
 
@@ -6446,7 +6446,7 @@ fieldset:disabled .btn {
 
 .link-primary:hover,
 .link-primary:focus {
-  color: #004B80;
+  color: #0071BE;
 }
 
 .link-secondary {
@@ -10510,7 +10510,7 @@ button.list-group-item-gray.active {
 }
 
 .border-primary {
-  border-color: #004B80 !important;
+  border-color: #0071BE !important;
 }
 
 .border-secondary {
@@ -18904,12 +18904,12 @@ html:not([dir=rtl]) .timeline-item {
 }
 
 .timeline .timeline-point-primary {
-  background-color: #004B80 !important;
+  background-color: #0071BE !important;
   outline: 3px solid rgba(105, 108, 255, .12)
 }
 
 .timeline.timeline-outline .timeline-point-primary {
-  border: 2px solid #004B80 !important
+  border: 2px solid #0071BE !important
 }
 
 .timeline .timeline-indicator-primary {
@@ -18917,7 +18917,7 @@ html:not([dir=rtl]) .timeline-item {
 }
 
 .timeline .timeline-indicator-primary i {
-  color: #004B80 !important
+  color: #0071BE !important
 }
 
 .timeline .timeline-point-secondary {

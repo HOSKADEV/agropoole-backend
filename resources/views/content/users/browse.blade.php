@@ -194,17 +194,17 @@
                 </div>
             @endforeach
         @else
-            <div class="container-xxl container-p-y d-flex justify-content-center">
-                <div class="misc-wrapper" style="text-align: center !important">
-                    <h3 class="mb-2 mx-2">{{ __('No stock') }}</h3>
-                    <p class="mb-6 mx-2">
-                        {{ __('This product you are looking for is not available at the moment') }}
-                    </p>
-                    <div class="mt-6">
-                        <img src="{{ url('/assets/img/illustrations/Empty-amico.png') }}" width="400" class="img-fluid">
-                    </div>
-                </div>
-            </div>
+        <div class="container-xxl container-p-y d-flex justify-content-center">
+          <div class="misc-wrapper" style="text-align: center !important">
+              <h3 class="mb-2 mx-2">{{ __('No results') }}</h3>
+              <p class="mb-6 mx-2">
+                  {{ __('Your search did not return any results') }}
+              </p>
+              <div class="mt-6">
+                  <img src="{{ url('/assets/img/illustrations/Search-rafiki.png') }}" width="400" class="img-fluid">
+              </div>
+          </div>
+      </div>
 
         @endif
 

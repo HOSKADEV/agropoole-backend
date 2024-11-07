@@ -36,7 +36,7 @@ protected $column;
     $yaxis = [];
 
     $colors = [
-      'pending' => '#004B80',
+      'pending' => '#696cff',
       'accepted' => '#007bff',
       'canceled' => '#ff3e1d',
       'confirmed' => '#fd7e14',

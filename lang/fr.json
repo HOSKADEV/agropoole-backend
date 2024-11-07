@@ -347,5 +347,8 @@
   "No data": "Pas de données",
   "Orders count": "Nombre de commandes",
   "New incoming orders": "Nouvelles commandes",
-  "New outgoing orders": "Nouvelles demandes"
+  "New outgoing orders": "Nouvelles demandes",
+  "Statistics" : "Statistiques",
+  "No results":"Pas de résultats",
+  "Your search did not return any results":"Votre recherche n'a donné aucun résultat"
 }

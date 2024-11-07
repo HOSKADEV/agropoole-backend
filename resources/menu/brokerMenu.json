@@ -49,6 +49,20 @@
       "name": "Orders outbox",
       "icon": "menu-icon tf-icons bx bxs-archive-out",
       "slug": "order-outbox"
+    },
+
+    {
+      "url": "/pos",
+      "name": "POS",
+      "icon": "menu-icon tf-icons bx bxs-map-pin",
+      "slug": "pos"
+    },
+
+    {
+      "url": "/diffusion",
+      "name": "Diffusion",
+      "icon": "menu-icon tf-icons bx bxs-bell",
+      "slug": "diffusion"
     }
   ]
 }

@@ -160,6 +160,13 @@ Route::group(['middleware' => ['auth']], function () {
   Route::post('/shipping/switch', 'App\Http\Controllers\SetController@shipping');
   Route::post('/version/update', 'App\Http\Controllers\VersionController@update');
 
+  Route::get('/pos', function () {
+    return view('content.misc.pos');
+  })->name('pos');
+
+  Route::get('/diffusion', function () {
+    return view('content.misc.diffusion');
+  })->name('diffusion');
   //language
   Route::get('/lang', function () {
     $locale = session()->get('locale') == 'ar' ? 'fr' : 'ar';

@@ -40,6 +40,20 @@
       "name": "Orders",
       "icon": "menu-icon tf-icons bx bxs-archive-in",
       "slug": "order-inbox"
+    },
+
+    {
+      "url": "/pos",
+      "name": "POS",
+      "icon": "menu-icon tf-icons bx bxs-map-pin",
+      "slug": "pos"
+    },
+
+    {
+      "url": "/diffusion",
+      "name": "Diffusion",
+      "icon": "menu-icon tf-icons bx bxs-bell",
+      "slug": "diffusion"
     }
 
   ]

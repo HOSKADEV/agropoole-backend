@@ -111,7 +111,7 @@
                                     <img src="{{ $order->seller->image() }}" alt="Avatar" class="rounded-circle">
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <a href="app-user-view-account.html" class="text-body text-nowrap">
+                                    <a href="#" class="text-body text-nowrap">
                                         <h6 class="mb-0">{{ $order->seller->enterprise() }}</h6>
                                     </a>
                                     <span>{{ __($order->seller->role_is()) }}</span>
@@ -146,7 +146,7 @@
                                     <img src="{{ $order->buyer->image() }}" alt="Avatar" class="rounded-circle">
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <a href="app-user-view-account.html" class="text-body text-nowrap">
+                                    <a href="#" class="text-body text-nowrap">
                                         <h6 class="mb-0">{{ $order->buyer->enterprise() }}</h6>
                                     </a>
                                     <span>{{ __($order->buyer->role_is()) }}</span>
@@ -181,7 +181,7 @@
                                         <img src="{{ $order->driver->image() }}" alt="Avatar" class="rounded-circle">
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <a href="app-user-view-account.html" class="text-body text-nowrap">
+                                        <a href="#" class="text-body text-nowrap">
                                             <h6 class="mb-0">{{ $order->driver->enterprise() }}</h6>
                                         </a>
                                         <span>{{ __($order->driver->role_is()) }}</span>

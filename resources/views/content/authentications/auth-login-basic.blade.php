@@ -16,11 +16,9 @@
                     <div class="card-body">
                         <!-- Logo -->
                         <div class="app-brand justify-content-center">
-                            <a href="{{ url('/') }}" class="app-brand-link gap-2">
-                                {{-- <span class="app-brand-logo demo">@include('_partials.macros',["width"=>25,"withbg"=>'#696cff'])</span> --}}
-                                <span
-                                    class="app-brand-text demo text-body fw-bolder">{{ config('variables.templateName') }}</span>
-                            </a>
+                            {{-- <span class="app-brand-logo demo">@include('_partials.macros',["width"=>25,"withbg"=>'#696cff'])</span> --}}
+                            <img src="{{ url('logo.png') }}" alt="image" class="d-block rounded" height="40" width="40" />
+                            <span class="app-brand-text demo menu-text fw-bold">gropole</span>
                         </div>
                         <!-- /Logo -->
                         <h4 class="mb-2">{{ __('Welcome to') }} {{ config('variables.templateName') }}! 👋</h4>
@@ -32,7 +30,7 @@
                             <div class="mb-3">
                                 <label for="email" class="form-label">{{ __('Email') }}</label>
                                 <input type="text" class="form-control" id="email" name="email"
-                                    placeholder="{{__('Enter your email')}}" autofocus>
+                                    placeholder="{{ __('Enter your email') }}" autofocus>
                             </div>
                             <div class="mb-3 form-password-toggle">
                                 <div class="d-flex justify-content-between">
@@ -57,12 +55,13 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <button class="btn btn-primary d-grid w-100" type="submit">{{__('Sign in')}}</button>
+                                <button class="btn btn-primary d-grid w-100" type="submit">{{ __('Sign in') }}</button>
                             </div>
                             <div class="mb-3">
-                              <a class="btn btn-outline-primary w-100" href="{{url('/auth/redirect')}}">
-                                <span class="tf-icons bx bxl-google bx-18px me-2"></span> {{__('Sign in with Google')}}
-                              </a>
+                                <a class="btn btn-outline-primary w-100" href="{{ url('/auth/redirect') }}">
+                                    <span class="tf-icons bx bxl-google bx-18px me-2"></span>
+                                    {{ __('Sign in with Google') }}
+                                </a>
                             </div>
                         </form>
 
