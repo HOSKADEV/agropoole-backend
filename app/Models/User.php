@@ -257,8 +257,8 @@ class User extends Authenticatable
 
     return $result->join('users', 'orders.buyer_id', 'users.id')
       ->groupBy('buyer_id')
-      ->selectRaw('users.*, COUNT(orders.id) AS orders_count')
-      ->orderBy('orders_count', 'DESC');
+      ->selectRaw('users.*, COUNT(orders.id) AS orders')
+      ->orderBy('orders', 'DESC');
   }
 
   public function topSellers($date = null)
@@ -270,8 +270,8 @@ class User extends Authenticatable
 
     return $result->join('users', 'orders.seller_id', 'users.id')
       ->groupBy('seller_id')
-      ->selectRaw('users.*, COUNT(orders.id) AS orders_count')
-      ->orderBy('orders_count', 'DESC');
+      ->selectRaw('users.*, COUNT(orders.id) AS orders')
+      ->orderBy('orders', 'DESC');
   }
 
   public function topStates($date = null)
@@ -285,8 +285,8 @@ class User extends Authenticatable
       ->join('cities', 'users.city_id', 'cities.id')
       ->join('states', 'cities.state_id', 'states.id')
       ->groupBy('state_id')
-      ->selectRaw('states.*, COUNT(orders.id) AS orders_count')
-      ->orderBy('orders_count', 'DESC');
+      ->selectRaw('states.*, COUNT(orders.id) AS orders')
+      ->orderBy('orders', 'DESC');
 
   }
 }

@@ -22,7 +22,7 @@
         }
 
         .product-name {
-            height: 40px;
+            height: 70px;
             /* Adjust as needed */
             overflow: hidden;
             display: -webkit-box;
@@ -134,6 +134,7 @@
                 @php
                     $stock_id = $stock->id;
                     $stock_price = $stock->show_price ? $stock->price : null;
+                    $stock_status = $stock->status;
                     $product_name = $stock->product->unit_name;
                     $product_image = $stock->product->image();
                     $owner_name = $stock->owner->enterprise();
@@ -165,7 +166,13 @@
                             </div>
                         </div>
                         <div class="card-body d-flex flex-column py-2 px-3">
-                            <h5 class="card-title product-name mb-2 text-center">{{ $product_name }}</h5>
+                            <div class="card-title product-name mb-2 text-center">
+                              <h5 class="mb-0 text-fit" title="{{ $product_name }}">{{ $product_name }}</h5>
+                              <small class="mt-0">
+                                <span class="badge bg-label-{{$stock_status == 'available' ? 'success' : 'danger'}}">
+                                  {{__($stock_status)}}</span></small>
+                            </div>
+
                         </div>
                     </div>
                 </div>

@@ -104,40 +104,44 @@ class UserController extends Controller
 
     if ($auth_user->can_see_stock_of($user)) {
 
-    $categories = Category::all();
-    $subcategories = Subcategory::where('category_id', $request->category)->get();
-    $stocks = Stock::where('status','available')->where('user_id', $id);
+      $categories = Category::all();
+      $subcategories = Subcategory::where('category_id', $request->category)->get();
+      $stocks = Stock::where('user_id', $id);
 
-    //dd($stocks->get());
-    if ($request->category) {
+      if(!$auth_user->soldOrders()->where('buyer_id',$user->id)->count()){
+        $stocks->where('status', 'available');
+      }
 
-      $stocks = $stocks->whereHas('product', function ($query) use ($request) {
-        $query->whereHas('subcategory', function ($query) use ($request) {
-          $query->where('category_id', $request->category);
+      //dd($stocks->get());
+      if ($request->category) {
+
+        $stocks = $stocks->whereHas('product', function ($query) use ($request) {
+          $query->whereHas('subcategory', function ($query) use ($request) {
+            $query->where('category_id', $request->category);
+          });
         });
-      });
-    }
+      }
 
 
-    if ($request->subcategory) {
-      $stocks = $stocks->whereHas('product', function ($query) use ($request) {
-        $query->where('subcategory_id', $request->subcategory);
-      });
-    }
+      if ($request->subcategory) {
+        $stocks = $stocks->whereHas('product', function ($query) use ($request) {
+          $query->where('subcategory_id', $request->subcategory);
+        });
+      }
 
-    if ($request->search) {
-      $stocks = $stocks->whereHas('product', function ($query) use ($request) {
-        $query->where('unit_name', 'like', '%' . $request->search . '%');
-      });
-    }
+      if ($request->search) {
+        $stocks = $stocks->whereHas('product', function ($query) use ($request) {
+          $query->where('unit_name', 'like', '%' . $request->search . '%');
+        });
+      }
 
-    $stocks = $stocks->latest()->with(['owner', 'product'])->paginate(8)->appends($request->all());
+      $stocks = $stocks->latest()->with(['owner', 'product'])->paginate(8)->appends($request->all());
 
-    return view('content.users.stocks')
-      ->with('categories', $categories)
-      ->with('subcategories', $subcategories)
-      ->with('stocks', $stocks)
-      ->with('user', $user);
+      return view('content.users.stocks')
+        ->with('categories', $categories)
+        ->with('subcategories', $subcategories)
+        ->with('stocks', $stocks)
+        ->with('user', $user);
 
     } else {
       return redirect()->route('pages-misc-error');
@@ -157,7 +161,7 @@ class UserController extends Controller
       'name' => 'sometimes|string',
       'phone' => 'sometimes|numeric',
       /* 'phone' => ['sometimes','numeric','digits:10',Rule::unique('users')->ignore($user->id)], */
-      'email' => ['sometimes','email',Rule::unique('users')->ignore(auth()->id())],
+      'email' => ['sometimes', 'email', Rule::unique('users')->ignore(auth()->id())],
       'image' => 'sometimes|mimetypes:image/*',
       'status' => 'sometimes|in:1,2,3',
 

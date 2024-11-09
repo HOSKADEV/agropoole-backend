@@ -11,12 +11,15 @@ class TopUsersChart
     protected $chart;
     protected $users;
 
+    protected $label;
+
     protected $horizontal;
 
-    public function __construct($users, $horizontal=true)
+    public function __construct($users, $label, $horizontal=true)
     {
         $this->chart = new LarapexChart();
         $this->users = $users;
+        $this->label = $label;
         $this->horizontal = $horizontal;
     }
 
@@ -31,7 +34,7 @@ class TopUsersChart
 
       foreach($data as $user) {
         $xaxis[] = empty($user->enterprise_name) ? $user->name : $user->enterprise_name;
-        $yaxis[] = $user->orders_count;
+        $yaxis[] = $user->orders;
       }
 
 
@@ -40,7 +43,7 @@ class TopUsersChart
             //->setTitle('Top 3 scorers of the team.')
             //->setSubtitle('Season 2021.')
             ->setHeight(200)
-            ->addData(__('Orders count'),$yaxis)
+            ->addData(__($this->label),$yaxis)
             ->setLabels($xaxis)
             ->setHorizontal($this->horizontal)
             ->setColors(['#03c3ec']);
