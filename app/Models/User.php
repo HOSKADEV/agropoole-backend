@@ -285,8 +285,8 @@ class User extends Authenticatable
       ->join('cities', 'users.city_id', 'cities.id')
       ->join('states', 'cities.state_id', 'states.id')
       ->groupBy('state_id')
-      ->selectRaw('states.*, COUNT(orders.id) AS orders')
-      ->orderBy('orders', 'DESC');
+      ->selectRaw('states.*, COUNT(orders.id) AS orders_count')
+      ->orderBy('orders_count', 'DESC');
 
   }
 }

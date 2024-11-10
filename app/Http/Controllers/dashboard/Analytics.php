@@ -112,7 +112,7 @@ class Analytics extends Controller
         ? new OrderMonthlyChart(Order::query(), __('New orders'), 'created_at')
         : new OrderDailyChart(Order::query(), __('New orders'), 'created_at');
 
-        $data['user_status_chart'] = new UserStatusChart(User::query(), $request->userStatusFilter);
+      $data['user_status_chart'] = new UserStatusChart(User::query(), $request->userStatusFilter);
 
       $data['user_count_chart'] = $request->userCountFilter != 'daily'
         ? new UserMonthlyChart(User::query(), __('New users'), 'created_at')
@@ -130,47 +130,53 @@ class Analytics extends Controller
   public function stats(Request $request)
   {
     $user = auth()->user();
-    //dd($user->topBuyers()->get());
-    $data = [];
+    if ($user->role_is() != 'admin') {
+      $data = [];
 
-    if (in_array($user->role_is(), ['broker', 'store'])) {
-      $data['inbox_status_chart'] = new OrderStatusChart($user->soldOrders(), $request->inboxStatusFilter);
-      $data['outbox_status_chart'] = new OrderStatusChart($user->boughtOrders(), $request->outboxStatusFilter);
+      if (in_array($user->role_is(), ['broker', 'store'])) {
+        $data['inbox_status_chart'] = new OrderStatusChart($user->soldOrders(), $request->inboxStatusFilter);
+        $data['outbox_status_chart'] = new OrderStatusChart($user->boughtOrders(), $request->outboxStatusFilter);
 
-      $data['inbox_count_chart'] = $request->inboxCountFilter != 'daily'
-        ? new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at')
-        : new OrderDailyChart($user->soldOrders(), __('New incoming orders'), 'created_at');
+        $data['inbox_count_chart'] = $request->inboxCountFilter != 'daily'
+          ? new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at')
+          : new OrderDailyChart($user->soldOrders(), __('New incoming orders'), 'created_at');
 
         $data['outbox_count_chart'] = $request->outboxCountFilter != 'daily'
-        ? new OrderMonthlyChart($user->boughtOrders(), __('New outgoing orders'), 'created_at')
-        : new OrderDailyChart($user->boughtOrders(), __('New outgoing orders'), 'created_at');
+          ? new OrderMonthlyChart($user->boughtOrders(), __('New outgoing orders'), 'created_at')
+          : new OrderDailyChart($user->boughtOrders(), __('New outgoing orders'), 'created_at');
 
-      $data['top_products_chart'] = new TopProductsChart($user, $request->topProductsFilter);
-      $data['top_buyers_chart'] = new TopUsersChart($user->topBuyers(empty($request->topBuyersFilter) ? null : now()));
-      $data['top_states_chart'] = new TopStatesChart($user->topStates(empty($request->topStatesFilter) ? null : now()));
+        $data['top_products_chart'] = new TopProductsChart($user, $request->topProductsFilter);
+        $data['top_buyers_chart'] = new TopUsersChart($user->topBuyers(empty($request->topBuyersFilter) ? null : now()), __('Orders count'));
+        $data['top_states_chart'] = new TopStatesChart($user->topStates(empty($request->topStatesFilter) ? null : now()));
+      }
+
+
+      if ($user->role_is('provider')) {
+        $data['inbox_status_chart'] = new OrderStatusChart($user->soldOrders(), $request->inboxStatusFilter);
+        $data['inbox_count_chart'] = $request->inboxCountFilter != 'daily'
+          ? new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at')
+          : new OrderDailyChart($user->soldOrders(), __('New incoming orders'), 'created_at');
+        $data['top_products_chart'] = new TopProductsChart($user, $request->topProductsFilter);
+        $data['top_buyers_chart'] = new TopUsersChart($user->topBuyers(empty($request->topBuyersFilter) ? null : now()), __('Orders count'));
+        $data['top_states_chart'] = new TopStatesChart($user->topStates(empty($request->topStatesFilter) ? null : now()));
+      }
+
+      if ($user->role_is('driver')) {
+        $data['inbox_status_chart'] = new OrderStatusChart($user->deliveredOrders(), $request->inboxStatusFilter, 'deliveries.created_at');
+        $data['inbox_count_chart'] = $request->inboxCountFilter != 'daily'
+          ? new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at')
+          : new OrderDailyChart($user->soldOrders(), __('New incoming orders'), 'created_at');
+
+        $data['top_sellers_chart'] = new TopUsersChart($user->topSellers(empty($request->topSellersFilter) ? null : now()), __('Orders count'), false);
+      }
+
+      return view('content.dashboard.stats')->with($data);
+
+
+
+    } else {
+      return redirect()->route('pages-misc-error');
     }
-
-
-    if ($user->role_is('provider')) {
-      $data['inbox_status_chart'] = new OrderStatusChart($user->soldOrders(), $request->inboxStatusFilter);
-      $data['inbox_count_chart'] = $request->inboxCountFilter != 'daily'
-        ? new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at')
-        : new OrderDailyChart($user->soldOrders(), __('New incoming orders'), 'created_at');
-      $data['top_products_chart'] = new TopProductsChart($user, $request->topProductsFilter);
-      $data['top_buyers_chart'] = new TopUsersChart($user->topBuyers(empty($request->topBuyersFilter) ? null : now()));
-      $data['top_states_chart'] = new TopStatesChart($user->topStates(empty($request->topStatesFilter) ? null : now()));
-    }
-
-    if ($user->role_is('driver')) {
-      $data['inbox_status_chart'] = new OrderStatusChart($user->deliveredOrders(), $request->inboxStatusFilter, 'deliveries.created_at');
-      $data['inbox_count_chart'] = $request->inboxCountFilter != 'daily'
-        ? new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at')
-        : new OrderDailyChart($user->soldOrders(), __('New incoming orders'), 'created_at');
-
-      $data['top_sellers_chart'] = new TopUsersChart($user->topSellers(empty($request->topSellersFilter) ? null : now()), false);
-    }
-
-    return view('content.dashboard.stats')->with($data);
   }
 
   /*  public function index()

@@ -31,36 +31,45 @@ class OrderController extends Controller
 
   public function index()
   {
-    //$drivers = Driver::all();
-    //$shipping = Set::where('name', 'shipping')->first();
-    return view('content.orders.list');
-      //->with('drivers', $drivers)
-      //->with('shipping', $shipping);
+    if (auth()->user()->role_is('driver')) {
+      return view('content.orders.list');
+    } else {
+      return redirect()->route('pages-misc-error');
+    }
   }
 
   public function inbox()
   {
-    $drivers = User::where('role', 5)->where('status','ACTIVE')->get();
-    //$shipping = Set::where('name', 'shipping')->first();
-    return view('content.orders.inbox')
-      ->with('drivers', $drivers);
-      //->with('shipping', $shipping);
+    if (in_array(auth()->user()->role_is(), ['provider', 'broker', 'store'])) {
+      $drivers = User::where('role', 5)->where('status', 'ACTIVE')->get();
+      return view('content.orders.inbox')
+        ->with('drivers', $drivers);
+    } else {
+      return redirect()->route('pages-misc-error');
+    }
   }
 
   public function outbox()
   {
-    //$drivers = User::where('role', 5)->where('status','ACTIVE')->get();
-    //$shipping = Set::where('name', 'shipping')->first();
+    if (in_array(auth()->user()->role_is(), ['broker', 'store'])) {
     return view('content.orders.outbox');
-      //->with('drivers', $drivers);
-      //->with('shipping', $shipping);
+  } else {
+    return redirect()->route('pages-misc-error');
+  }
   }
 
-  public function info($id){
-    $order = Order::findOrFail($id);
+  public function info($id)
+  {
 
+    $order = Order::findOrFail($id);
+    if ($order->buyer_id == auth()->id()
+     || $order->seller_id == auth()->id()
+     || $order->driver_id == auth()->id()) {
     return view('content.orders.info')
-    ->with('order',$order);
+      ->with('order', $order);
+    } else {
+      return redirect()->route('pages-misc-error');
+    }
   }
 
   public function distance(Request $request)
@@ -203,7 +212,7 @@ class OrderController extends Controller
 
   public function create(Request $request)
   {
-    if (count(session('cart',[]))) {
+    if (count(session('cart', []))) {
       $request->mergeIfMissing(['stocks' => session('cart')]);
       session()->put(['cart' => []]);
     }

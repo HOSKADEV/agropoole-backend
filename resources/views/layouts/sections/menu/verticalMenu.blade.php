@@ -8,9 +8,7 @@
 @endphp
   <!-- ! Hide app brand if navbar-full -->
   <div class="app-brand demo">
-    <img src="{{ url('logo.png') }}" alt="image" class="d-block rounded" height="40" width="40" />
-     <span class="app-brand-text demo menu-text fw-bold">gropole</span>
-
+    <img src="{{ url('agropole.png') }}" alt="image" class="d-block rounded" height="60" width="180" />
     <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-autod-block d-xl-none">
       <i class="bx bx-chevron-left bx-sm align-middle"></i>
     </a>

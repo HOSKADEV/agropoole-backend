@@ -34,64 +34,57 @@ class UserController extends Controller
 
   public function browse(Request $request)
   {
+    if (in_array(auth()->user()->role_is(), ['provider', 'broker', 'store'])) {
+      $user = auth()->user();
+      $states = State::all();
+      $users = User::where('status', 'active')->whereNotNull('email');
 
-    $user = auth()->user();
-    $states = State::all();
-    $users = User::where('status', 'active')->whereNotNull('email');
+      $users = $user->role_is('broker')
+        ? $users->whereIn('role', [1, 3])
+        : $users->where('role', 2);
 
-    $users = $user->role_is('broker')
-      ? $users->whereIn('role', [1, 3])
-      : $users->where('role', 2);
-
-
-
-
-    if ($request->state) {
-      $users = $users->whereHas('city', function ($query) use ($request) {
-        $query->where('state_id', $request->state);
-      });
-    }
-
-    if ($request->role) {
-      $users->where('role', $request->role);
-    }
-
-    if ($request->client) {
-
-      $query = function ($query) use ($user) {
-        $query->whereHas('boughtOrders', function ($q) use ($user) {
-          $q->where('seller_id', $user->id);
+      if ($request->state) {
+        $users = $users->whereHas('city', function ($query) use ($request) {
+          $query->where('state_id', $request->state);
         });
-        $query->orWhereHas('soldOrders', function ($q) use ($user) {
-          $q->where('buyer_id', $user->id);
+      }
+
+      if ($request->role) {
+        $users->where('role', $request->role);
+      }
+
+      if ($request->client) {
+
+        $query = function ($query) use ($user) {
+          $query->whereHas('boughtOrders', function ($q) use ($user) {
+            $q->where('seller_id', $user->id);
+          });
+          $query->orWhereHas('soldOrders', function ($q) use ($user) {
+            $q->where('buyer_id', $user->id);
+          });
+        };
+
+        $users = $request->client == 1
+          ? $users->where($query)
+          : $users->whereNot($query);
+      }
+
+      if ($request->search) {
+        $users = $users->where(function ($query) use ($request) {
+          $query->where('name', 'like', '%' . $request->search . '%');
+          $query->orWhere('enterprise_name', 'like', '%' . $request->search . '%');
         });
-      };
+      }
 
+      $users = $users->latest()->paginate(12)->appends($request->all());
 
+      return view('content.users.browse')
+        ->with('states', $states)
+        ->with('users', $users);
 
-      $users = $request->client == 1
-        ? $users->where($query)
-        : $users->whereNot($query);
+    } else {
+      return redirect()->route('pages-misc-error');
     }
-
-
-
-
-
-    if ($request->search) {
-      $users = $users->where(function ($query) use ($request) {
-        $query->where('name', 'like', '%' . $request->search . '%');
-        $query->orWhere('enterprise_name', 'like', '%' . $request->search . '%');
-      });
-    }
-
-    $users = $users->latest()->paginate(12)->appends($request->all());
-
-    return view('content.users.browse')
-      ->with('states', $states)
-      ->with('users', $users);
-
-
 
 
 
@@ -108,7 +101,7 @@ class UserController extends Controller
       $subcategories = Subcategory::where('category_id', $request->category)->get();
       $stocks = Stock::where('user_id', $id);
 
-      if(!$auth_user->soldOrders()->where('buyer_id',$user->id)->count()){
+      if (!$auth_user->soldOrders()->where('buyer_id', $user->id)->count()) {
         $stocks->where('status', 'available');
       }
 

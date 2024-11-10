@@ -16,9 +16,7 @@
                     <div class="card-body">
                         <!-- Logo -->
                         <div class="app-brand justify-content-center">
-                            {{-- <span class="app-brand-logo demo">@include('_partials.macros',["width"=>25,"withbg"=>'#696cff'])</span> --}}
-                            <img src="{{ url('logo.png') }}" alt="image" class="d-block rounded" height="40" width="40" />
-                            <span class="app-brand-text demo menu-text fw-bold">gropole</span>
+                            <img src="{{ url('agropole.png') }}" alt="image" class="d-block rounded" height="60" width="180" />
                         </div>
                         <!-- /Logo -->
                         <h4 class="mb-2">{{ __('Welcome to') }} {{ config('variables.templateName') }}! 👋</h4>
