@@ -21,6 +21,8 @@
   "Cart": "Panier",
   "Available": "Disponible",
   "Unavailable": "Indisponible",
+  "available": "Disponible",
+  "unavailable": "Indisponible",
   "Occupied": "Occupé",
   "Unoccupied": "Inoccupé",
   "Block": "Bloquer",
