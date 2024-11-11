@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\VersionResource;
-use App\Models\Version;
 use Auth;
 use Exception;
+use App\Models\Version;
 use Illuminate\Http\Request;
+use App\Models\Documentation;
+use App\Http\Resources\VersionResource;
 use Illuminate\Support\Facades\Validator;
 
 class VersionController extends Controller
@@ -17,8 +18,10 @@ class VersionController extends Controller
 
       $android = Version::android();
       $ios = Version::ios();
+      $privacy_policy = Documentation::privacy_policy()->content_en;
 
       return view('content.version.index')
+        ->with('privacy_policy', $privacy_policy)
         ->with('android', $android)
         ->with('ios', $ios);
 

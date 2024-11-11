@@ -77,7 +77,7 @@ class DocumentationController extends Controller
         return response()->json([
           'status' => 1,
           'message' => 'success',
-          'data' => ['content' => $privacy_policy->content($lang)]
+          'data' => $privacy_policy->content_en
         ]);
 
       }catch(Exception $e){
