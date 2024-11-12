@@ -161,6 +161,7 @@ class UserController extends Controller
       'enterprise_name' => 'sometimes',
       'longitude' => 'sometimes',
       'latitude' => 'sometimes',
+      'delivery_price' => 'sometimes',
     ]);
 
     if ($validator->fails()) {

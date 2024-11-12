@@ -18,6 +18,7 @@ class Order extends Model
       'buyer_id',
       'phone',
       'status',
+      'with_delivery',
       'longitude',
       'latitude',
       'note',

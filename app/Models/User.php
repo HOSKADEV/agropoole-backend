@@ -32,6 +32,7 @@ class User extends Authenticatable
     'status',
     'fcm_token',
     'enterprise_name',
+    'delivery_price',
     'longitude',
     'latitude'
   ];

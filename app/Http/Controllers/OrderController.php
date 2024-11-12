@@ -52,21 +52,23 @@ class OrderController extends Controller
   public function outbox()
   {
     if (in_array(auth()->user()->role_is(), ['broker', 'store'])) {
-    return view('content.orders.outbox');
-  } else {
-    return redirect()->route('pages-misc-error');
-  }
+      return view('content.orders.outbox');
+    } else {
+      return redirect()->route('pages-misc-error');
+    }
   }
 
   public function info($id)
   {
 
     $order = Order::findOrFail($id);
-    if ($order->buyer_id == auth()->id()
-     || $order->seller_id == auth()->id()
-     || $order->driver_id == auth()->id()) {
-    return view('content.orders.info')
-      ->with('order', $order);
+    if (
+      $order->buyer_id == auth()->id()
+      || $order->seller_id == auth()->id()
+      || $order->driver_id == auth()->id()
+    ) {
+      return view('content.orders.info')
+        ->with('order', $order);
     } else {
       return redirect()->route('pages-misc-error');
     }
@@ -222,6 +224,7 @@ class OrderController extends Controller
       'phone' => 'required|numeric|digits:10',
       'longitude' => 'required|string',
       'latitude' => 'required|string',
+      'with_delivery' => 'sometimes|in:yes,no',
       'stocks' => 'required|array',
       'stocks.*.stock_id' => 'required|distinct|exists:stocks,id',
       'stocks.*.quantity' => 'required|numeric'
@@ -267,6 +270,8 @@ class OrderController extends Controller
         }
 
         $order->refresh();
+        $invoice = Invoice::create(['order_id' => $order->id]);
+        $invoice->total();
         $order->notify();
       }
 
@@ -392,7 +397,7 @@ class OrderController extends Controller
       'driver_id' => 'sometimes|exists:users,id',
       'status' => 'sometimes|in:pending,accepted,canceled,confirmed,shipped,ongoing,delivered,received',
       //'tax_type' => 'sometimes|in:1,2',
-      //'tax_amount' => 'sometimes|numeric',
+      'tax_amount' => 'sometimes|numeric',
       //'payment_method' => 'sometimes|in:1,2',
       'note' => 'sometimes'
     ]);
@@ -454,6 +459,12 @@ class OrderController extends Controller
           'order_id' => $request->order_id,
           'driver_id' => $request->driver_id,
         ]);
+      }
+
+      if ($request->has('tax_amount')) {
+        $invoice = Invoice::firstOrCreate(['order_id' => $order->id]);
+        $invoice->tax_amount = $request->tax_amount;
+        $invoice->total();
       }
 
       //dd($request->only(['status','note']));

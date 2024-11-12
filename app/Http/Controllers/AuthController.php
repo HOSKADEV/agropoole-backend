@@ -31,6 +31,7 @@ class AuthController extends Controller
         'role' => 'required|in:1,2,3,4,5',
         'longitude' => 'sometimes',
         'latitude' => 'sometimes',
+        'delivery_price' => 'sometimes',
       ]);
 
       if ($validator->fails()){
