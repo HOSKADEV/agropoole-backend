@@ -149,9 +149,9 @@ Route::group(['middleware' => ['auth']], function () {
   Route::post('/notice/update', 'App\Http\Controllers\NoticeController@update');
   Route::post('/notice/delete', 'App\Http\Controllers\NoticeController@delete');
 
-//  Route::get('/documentation/privacy_policy', 'App\Http\Controllers\DocumentationController@index')->name('documentation_privacy_policy');
+ // Route::get('/documentation/privacy_policy', 'App\Http\Controllers\DocumentationController@index')->name('documentation_privacy_policy');
 //  Route::get('/documentation/about', 'App\Http\Controllers\DocumentationController@index')->name('documentation_about');
-
+Route::get('/policy', 'App\Http\Controllers\DocumentationController@policy')->name('policy');
   Route::post('/documentation/update', 'App\Http\Controllers\DocumentationController@update');
 
   Route::post('/user/delete', 'App\Http\Controllers\UserController@delete');

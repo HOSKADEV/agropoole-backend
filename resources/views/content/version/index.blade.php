@@ -105,35 +105,10 @@
 
     <div class="row">
         <!-- Snow Theme -->
+        <div id="privacy_policy" hidden>{!! $privacy_policy !!}</div>
         <div class="col-12">
             <div class="card mb-3">
                 <div class="card-body">
-                    <div id="snow-toolbar">
-                        <span class="ql-formats">
-                            <select class="ql-font"></select>
-                            <select class="ql-size"></select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-bold"></button>
-                            <button class="ql-italic"></button>
-                            <button class="ql-underline"></button>
-                            <button class="ql-strike"></button>
-                        </span>
-                        <span class="ql-formats">
-                            <select class="ql-color"></select>
-                            <select class="ql-background"></select>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-script" value="sub"></button>
-                            <button class="ql-script" value="super"></button>
-                        </span>
-                        <span class="ql-formats">
-                            <button class="ql-header" value="1"></button>
-                            <button class="ql-header" value="2"></button>
-                            <button class="ql-blockquote"></button>
-                            <button class="ql-code-block"></button>
-                        </span>
-                    </div>
                     <div id="snow-editor">
                     </div>
                     <div class="mt-3" style="text-align: center">
@@ -151,14 +126,12 @@
         <script>
             $(document).ready(function() {
                 const quill = new Quill("#snow-editor", {
-                    bounds: "#snow-editor",
-                    modules: {
-                        toolbar: "#snow-toolbar",
-                    },
                     theme: "snow",
                 });
 
-                quill.clipboard.dangerouslyPasteHTML('{!! $privacy_policy !!}');
+
+
+                quill.clipboard.dangerouslyPasteHTML($('#privacy_policy').html());
 
                 $('#submit').on('click', function() {
                     var queryString = new FormData($("#version_form")[0]);
