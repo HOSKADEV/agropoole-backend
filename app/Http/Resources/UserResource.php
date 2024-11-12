@@ -24,6 +24,7 @@ class UserResource extends JsonResource
           'status' => $this->status,
           'fcm_token' => $this->fcm_token,
           'enterprise_name' => $this->enterprise_name,
+          'delivery_price' => $this->delivery_price,
           'longitude' => $this->longitude,
           'latitude' => $this->latitude,
           'state' => new StateResource($this->city->state),
