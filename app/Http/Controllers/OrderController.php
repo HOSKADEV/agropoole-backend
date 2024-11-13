@@ -67,6 +67,7 @@ class OrderController extends Controller
       || $order->seller_id == auth()->id()
       || $order->driver_id == auth()->id()
     ) {
+      $order->total();
       return view('content.orders.info')
         ->with('order', $order);
     } else {
@@ -270,8 +271,7 @@ class OrderController extends Controller
         }
 
         $order->refresh();
-        $invoice = Invoice::create(['order_id' => $order->id]);
-        $invoice->total();
+        $order->total();
         $order->notify();
       }
 
@@ -390,7 +390,7 @@ class OrderController extends Controller
   public function update(Request $request)
   {
 
-    //dd($request->only(['status','note']));
+    //dd($request->all());
 
     $validator = Validator::make($request->all(), [
       'order_id' => 'required|exists:orders,id',
@@ -462,9 +462,7 @@ class OrderController extends Controller
       }
 
       if ($request->has('tax_amount')) {
-        $invoice = Invoice::firstOrCreate(['order_id' => $order->id]);
-        $invoice->tax_amount = $request->tax_amount;
-        $invoice->total();
+        $order->total($request->tax_amount);
       }
 
       //dd($request->only(['status','note']));

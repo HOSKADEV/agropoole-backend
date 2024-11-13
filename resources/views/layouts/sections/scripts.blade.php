@@ -234,7 +234,7 @@
 
         var queryString = new FormData($("#finish_order_form")[0]);
 
-
+        queryString.append('with_delivery',$('#with_delivery').prop("checked") ? 'yes' : 'no')
 
         $("#cartModal").modal("hide");
 

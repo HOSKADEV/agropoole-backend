@@ -64,7 +64,15 @@
       "name": "Diffusion",
       "icon": "menu-icon tf-icons bx bxs-bell",
       "slug": "diffusion"
+    },
+
+    {
+      "url": "/policy",
+      "name": "Privacy policy",
+      "icon": "menu-icon tf-icons bx bxs-file",
+      "slug": "policy"
     }
+
 
   ]
 }

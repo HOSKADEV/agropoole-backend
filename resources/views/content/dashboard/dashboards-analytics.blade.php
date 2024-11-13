@@ -228,7 +228,7 @@
                                     </h3>
                                     <div
                                         class="d-flex align-items-center mt-auto rounded-bottom @if ($pending_inbox_count > 0) text-warning @else text-secondary @endif">
-                                        <i class="bx bx-bell me-1"></i>
+                                        <i class="bx bx-info-circle me-1"></i>
                                         <span class="small">{{ __('Pending') }}</span>
                                     </div>
                                 </div>
@@ -313,7 +313,7 @@
                                     </h3>
                                     <div
                                         class="d-flex align-items-center mt-auto rounded-bottom @if ($pending_outbox_count > 0) text-warning @else text-secondary @endif">
-                                        <i class="bx bx-bell me-1"></i>
+                                        <i class="bx bx-info-circle me-1"></i>
                                         <span class="small">{{ __('Pending') }}</span>
                                     </div>
                                 </div>

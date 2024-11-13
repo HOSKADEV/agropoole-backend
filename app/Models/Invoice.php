@@ -32,19 +32,13 @@ class Invoice extends Model
     }
 
 
-    public function total(){
+    public function total($tax_amount = null){
 
       $this->purchase_amount = $this->order->cart->items()->sum('amount');
 
-      /* if($this->tax_type == 'fixed'){
-        $this->total_amount = $this->purchase_amount + $this->tax_amount;
-      }else{
-        $this->total_amount = $this->purchase_amount * (1 + ($this->tax_amount/100));
-      } */
+      $this->tax_amount = is_null($tax_amount) ? $this->tax_amount : $tax_amount;
 
       $this->total_amount = $this->purchase_amount + $this->tax_amount;
-
-
 
       $this->save();
 

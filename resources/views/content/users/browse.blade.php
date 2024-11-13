@@ -213,7 +213,7 @@
     </div>
 
 
-    {{ $users->onEachSide(1)->links() }}
+    {{ $users->onEachSide(1)->links('pagination::bootstrap') }}
 
 
 

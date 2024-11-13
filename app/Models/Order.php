@@ -88,6 +88,11 @@ class Order extends Model
       return 'https://maps.google.com/?q='.$this->longitude.','.$this->latitude;
     }
 
+    public function total($tax_amount = null){
+      $invoice = Invoice::firstOrCreate(['order_id' => $this->id]);
+      $invoice->total($tax_amount);
+    }
+
     public function notify(){
 
       $controller = new Controller();

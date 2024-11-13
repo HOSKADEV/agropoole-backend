@@ -56,46 +56,47 @@
     </div>
 
     {{-- invoice modal --}}
-    {{-- <div class="modal fade" id="invoice_modal"  aria-hidden="true">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="fw-bold py-1 mb-1">{{__('Create invoice')}}</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
+    <div class="modal fade" id="invoice_modal" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {{-- <h4 class="fw-bold py-1 mb-1">{{ __('Create invoice') }}</h4> --}}
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
 
 
-        <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
-          enctype="multipart/form-data" id="invoice_form">
+                    <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
+                        enctype="multipart/form-data" id="invoice_form">
 
-            <input type="text" id="invoice_order_id" name="order_id" hidden />
+                        <input type="text" id="invoice_order_id" name="order_id" hidden />
 
-            <div class="mb-3">
-              <label class="form-label" for="tax_type">{{__('Tax type')}}</label>
-              <select class="form-select" id="tax_type" name="tax_type">
-                <option value="1" > {{__('Fixed')}}</option>
-                <option value="2" > {{__('Percentage')}}</option>
-              </select>
+                        {{-- <div class="mb-3">
+                            <label class="form-label" for="tax_type">{{ __('Tax type') }}</label>
+                            <select class="form-select" id="tax_type" name="tax_type">
+                                <option value="1"> {{ __('Fixed') }}</option>
+                                <option value="2"> {{ __('Percentage') }}</option>
+                            </select>
+                        </div> --}}
+
+                        <div class="mb-3">
+                            <label class="form-label" for="tax_amount">{{ __('Tax amount') }}</label>
+                            <input type="number" class="form-control" id="tax_amount" name="tax_amount">
+                            </select>
+                        </div>
+
+                        <div class="mb-3" style="text-align: center">
+                            <button type="submit" id="submit_invoice" name="submit_invoice"
+                                class="btn btn-primary">{{ __('Send') }}</button>
+                        </div>
+
+
+
+                    </form>
+                </div>
             </div>
-
-            <div class="mb-3">
-              <label class="form-label" for="tax_amount">{{__('Tax amount')}}</label>
-              <input type="number" class="form-control" id="tax_amount" name="tax_amount">
-              </select>
-            </div>
-
-          <div class="mb-3" style="text-align: center">
-            <button type="submit" id="submit_invoice" name="submit_invoice" class="btn btn-primary">{{__('Send')}}</button>
-          </div>
-
-
-
-        </form>
-      </div>
+        </div>
     </div>
-  </div>
-</div> --}}
 
     {{-- payment modal --}}
     <div class="modal fade" id="payment_modal" aria-hidden="true">
@@ -369,7 +370,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: "{{__('Wait a moment')}}",
+                        title: "{{ __('Wait a moment') }}",
                         icon: 'info',
                         html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
                         showCloseButton: false,
@@ -472,7 +473,7 @@
             var formdata = new FormData($("#driver_form")[0]);
             $("#driver_modal").modal('hide');
             Swal.fire({
-                title: "{{__('Wait a moment')}}",
+                title: "{{ __('Wait a moment') }}",
                 icon: 'info',
                 html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
                 showCloseButton: false,
@@ -503,6 +504,74 @@
                             location.reload();
                         });
                     }
+                }
+            });
+
+
+        });
+
+        $(document.body).on('click', '.tax', function() {
+            document.getElementById('invoice_form').reset();
+            var order_id = $(this).attr('table_id');
+            var tax_amount = $(this).attr('tax_amount');
+            document.getElementById('invoice_order_id').value = order_id;
+            document.getElementById('tax_amount').value = tax_amount;
+            $("#invoice_modal").modal('show');
+        });
+
+        $(document.body).on('click', '#submit_invoice', function() {
+
+            var formdata = new FormData($("#invoice_form")[0]);
+            $("#invoice_modal").modal('hide');
+            Swal.fire({
+                title: "{{ __('Wait a moment') }}",
+                icon: 'info',
+                html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
+                showCloseButton: false,
+                showCancelButton: false,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+            });
+            $.ajax({
+                url: "{{ url('order/update') }}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: 'POST',
+                data: formdata,
+                dataType: 'JSON',
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                  Swal.close();
+                    if (response.status == 1) {
+
+                        Swal.fire(
+                            "{{ __('Success') }}",
+                            "{{ __('success') }}",
+                            'success'
+                        ).then((result) => {
+                            location.reload();
+                        });
+                    }else{
+                    Swal.fire(
+                        "{{ __('Error') }}",
+                        response.message,
+                        'error'
+                    );
+                    }
+                },
+                error: function(data) {
+                    var errors = data.responseJSON;
+                    Swal.close();
+                    Swal.fire(
+                        "{{ __('Error') }}",
+                        errors.message,
+                        'error'
+                    );
+                    // Render the errors with js ...
                 }
             });
 

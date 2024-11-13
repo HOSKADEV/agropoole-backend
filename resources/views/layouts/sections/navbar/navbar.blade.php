@@ -197,28 +197,63 @@
                                     value="{{ $auth_user->email }}">
                             </div>
 
+                            @if ($auth_user->role_is('store'))
+                                <div class="row justify-content-between">
+                                    <div class="col mb-3">
+                                        <label class="form-label" for="state">{{ __('State') }}</label>
+                                        <select class="form-select" id="update_profil_state">
+                                            @foreach ($states as $state)
+                                                <option value="{{ $state->id }}"
+                                                    {{ $state->id == $auth_user_state ? 'selected' : '' }}>
+                                                    {{ $state->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                            <div class="mb-3">
-                                <label class="form-label" for="state">{{ __('State') }}</label>
-                                <select class="form-select" id="update_profil_state">
-                                    @foreach ($states as $state)
-                                        <option value="{{ $state->id }}"
-                                            {{ $state->id == $auth_user_state ? 'selected' : '' }}>{{ $state->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                                    <div class="col mb-3">
+                                        <label class="form-label" for="city">{{ __('City') }}</label>
+                                        <select class="form-select" id="update_profil_city" name="city">
+                                            @foreach ($cities as $city)
+                                                <option value="{{ $city->id }}"
+                                                    {{ $city->id == $auth_user->city_id ? 'selected' : '' }}>
+                                                    {{ $city->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
 
-                            <div class="mb-3">
-                                <label class="form-label" for="city">{{ __('City') }}</label>
-                                <select class="form-select" id="update_profil_city" name="city">
-                                    @foreach ($cities as $city)
-                                        <option value="{{ $city->id }}"
-                                            {{ $city->id == $auth_user->city_id ? 'selected' : '' }}>{{ $city->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="delivery_price">{{ __('Delivery price') }}</label>
+                                    <input type="text" class="form-control" name="delivery_price"
+                                        value="{{ $auth_user->delivery_price }}">
+                                </div>
+                            @else
+                                <div class="mb-3">
+                                    <label class="form-label" for="state">{{ __('State') }}</label>
+                                    <select class="form-select" id="update_profil_state">
+                                        @foreach ($states as $state)
+                                            <option value="{{ $state->id }}"
+                                                {{ $state->id == $auth_user_state ? 'selected' : '' }}>
+                                                {{ $state->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="city">{{ __('City') }}</label>
+                                    <select class="form-select" id="update_profil_city" name="city">
+                                        @foreach ($cities as $city)
+                                            <option value="{{ $city->id }}"
+                                                {{ $city->id == $auth_user->city_id ? 'selected' : '' }}>
+                                                {{ $city->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
 
                         </div>
                     </div>
@@ -283,17 +318,27 @@
                             @endif
                         </tbody>
                     </table>
-
                 </form>
+
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-danger" id="empty_cart">{{ __('Empty Cart') }}</button>
-                <button type="button" class="btn btn-label-primary"
-                    id="finish_order">{{ __('Place Order') }}</button>
+                <div class="row w-100">
+                    <div class="col-md-3 text-start">
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" value="" id="with_delivery">
+                            <label class="form-check-label" for="with_delivery">{{ __('With delivery') }}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-9 text-end">
+                        <button type="button" class="btn btn-label-danger"
+                            id="empty_cart">{{ __('Empty Cart') }}</button>
+                        <button type="button" class="btn btn-label-primary"
+                            id="finish_order">{{ __('Place Order') }}</button>
 
-                <button type="button" class="btn btn-label-secondary"
-                    data-bs-dismiss="modal">{{ __('Close') }}</button>
-
+                        <button type="button" class="btn btn-label-secondary"
+                            data-bs-dismiss="modal">{{ __('Close') }}</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

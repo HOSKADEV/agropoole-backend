@@ -15,13 +15,7 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-      $invoice = $this->invoice;
-
-      if(empty($invoice)){
-        $invoice = Invoice::create(['order_id' => $this->id]);
-        $invoice->total();
-      }
-
+      $this->total();
 
       return [
         'id' => $this->id,
@@ -32,9 +26,9 @@ class OrderResource extends JsonResource
         'with_delivery' => $this->with_delivery,
         'created_at' => $this->created_at,
         'updated_at' => $this->updated_at,
-        'purchase_amount' => $invoice->purchase_amount,
-        'tax_amount' => $invoice->tax_amount,
-        'total_amount' => $invoice->total_amount,
+        'purchase_amount' => $this->invoice->purchase_amount,
+        'tax_amount' => $this->invoice->tax_amount,
+        'total_amount' => $this->invoice->total_amount,
         //'invoice' => is_null($this->invoice) ? null :new InvoiceResource($this->invoice),
         'status' => $this->histories()->latest()->first()?->status ?? $this->status,
         'history' => new HistoryCollection($this->histories),

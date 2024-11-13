@@ -19,6 +19,13 @@
       "name": "Orders",
       "icon": "menu-icon tf-icons bx bxs-spreadsheet",
       "slug": "order-index"
+    },
+
+    {
+      "url": "/policy",
+      "name": "Privacy policy",
+      "icon": "menu-icon tf-icons bx bxs-file",
+      "slug": "policy"
     }
 
   ]
