@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\UserResource;
 use App\Http\Resources\StockResource;
 use App\Http\Resources\StockCollection;
 use Illuminate\Support\Facades\Validator;
@@ -335,6 +336,41 @@ class StockController extends Controller
         'message' => $e->getMessage()
       ]
     );
+    }
+  }
+
+  public function owner(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'stock_id' => 'required|exists:stocks,id',
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $validator->errors()->first()
+        ]
+      );
+    }
+
+    try {
+
+      $stock = Stock::findOrFail($request->stock_id);
+
+      return response()->json([
+        'status' => 1,
+        'message' => 'success',
+        'data' => new UserResource($stock->owner),
+      ]);
+
+    } catch (Exception $e) {
+      //dd($e->getMessage());
+
+      return response()->json([
+        'status' => 0,
+        'message' => $e->getMessage(),
+      ]);
     }
   }
 

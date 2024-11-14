@@ -82,8 +82,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
   Route::post('/v1/stock/update','App\Http\Controllers\StockController@update');
   Route::post('/v1/stock/delete','App\Http\Controllers\StockController@delete');
   Route::post('/v1/stock/restore','App\Http\Controllers\StockController@restore');
+  Route::post('/v1/stock/owner','App\Http\Controllers\StockController@owner');
   Route::post('/v1/stock/multi_create','App\Http\Controllers\StockController@multi_create');
-
 
   Route::post('/v1/discount/create','App\Http\Controllers\DiscountController@create');
   Route::post('/v1/discount/update','App\Http\Controllers\DiscountController@update');
