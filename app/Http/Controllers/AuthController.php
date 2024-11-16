@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Kreait\Firebase\Auth\UserQuery;
 use App\Http\Resources\UserResource;
@@ -92,6 +93,7 @@ class AuthController extends Controller
         'fcm_token' => 'sometimes',
       ]);
 
+
       if ($validator->fails()){
         return response()->json([
             'status' => 0,
@@ -104,19 +106,31 @@ class AuthController extends Controller
 
         if($request->uid){
           $auth = Firebase::auth();
-
           $firebase_user = $auth->getUser($request->uid);
+        }
 
-          $user = User::where('email',$firebase_user->email)->first();
+        $email = $request->uid ? $firebase_user->email : $request->email;
 
-          if(is_null($user)){
-            $user = User::create([
+        $user = User::withTrashed()->where('email',$email)->first();
+
+        if($user?->trashed()){
+          if(Carbon::now()->diffInDays($user->deleted_at) <= 90){
+            $user->restore();
+          }else{
+            $user->nullify();
+          }
+        }
+
+        if($request->uid){
+
+            $user = User::firstOrCreate(
+            ['email' => $firebase_user->email],
+            [
               'name' => $firebase_user->displayName,
-              'email' => $firebase_user->email,
               'phone' => $firebase_user->phoneNumber,
               'image' => $firebase_user->photoUrl,
             ]);
-          }
+
         }else{
 
           $credentials = $request->only('email', 'password');

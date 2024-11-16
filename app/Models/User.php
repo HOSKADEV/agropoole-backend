@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Askedio\SoftCascade\Traits\SoftCascadeTrait;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,7 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-  use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+  use HasApiTokens, HasFactory, Notifiable, SoftDeletes, SoftCascadeTrait;
 
   /**
    * The attributes that are mass assignable.
@@ -55,6 +57,8 @@ class User extends Authenticatable
   protected $casts = [
     'email_verified_at' => 'datetime',
   ];
+
+  protected $softCascade = ['stocks'];
 
   public function city()
   {
@@ -289,5 +293,36 @@ class User extends Authenticatable
       ->selectRaw('states.*, COUNT(orders.id) AS orders_count')
       ->orderBy('orders_count', 'DESC');
 
+  }
+
+  public function cancel_orders()
+  {
+    $orders = $this->orders()->whereNot('status', 'received')->get();
+
+    foreach ($orders as $order) {
+      $order->update(['status' => 'canceled']);
+      History::create(['order_id' => $order->id, 'user_id' => $this->id, 'status' => 'canceled']);
+      $order->notify();
+    }
+    return;
+  }
+
+  public function nullify(){
+    $this->update([
+    'city_id' => 1,
+    'name' => 'deleted#' . $this->id,
+    'email' => 'deleted#' . $this->id . '@mail.com',
+    'phone' => null,
+    'image' => null,
+    'password' => null,
+    'status' => 2,
+    'fcm_token' => null,
+    'enterprise_name'  => null,
+    'delivery_price' => 0,
+    'longitude' => null,
+    'latitude' => null,
+    ]);
+
+    return null;
   }
 }

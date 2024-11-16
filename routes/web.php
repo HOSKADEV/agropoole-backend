@@ -178,23 +178,9 @@ Route::get('/policy', 'App\Http\Controllers\DocumentationController@policy')->na
 
 });
 
-Route::get('/auth/redirect', function () {
-  return Socialite::driver('google')->redirect();
-});
+Route::get('/auth/redirect', 'App\Http\Controllers\authentications\LoginBasic@redirect');
 
-Route::get('/auth/callback', function () {
-  $google_user = Socialite::driver('google')->stateless()->user();
-  //dd($google_user);
-  $user = User::where('email', $google_user->email)->first();
-
-  if ($user) {
-    Auth::login($user);
-    return redirect()->route('dashboard-analytics');
-  } else {
-    return redirect()->route('login');
-  }
-
-});
+Route::get('/auth/callback', 'App\Http\Controllers\authentications\LoginBasic@callback');
 
 
 // pages

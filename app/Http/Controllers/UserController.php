@@ -387,9 +387,15 @@ class UserController extends Controller
 
       $user = $request->user();
 
-      $user->update(['status' => 2, 'email' => null, 'fcm_token' => null]);
+      //$user->update(['status' => 2, 'email' => null, 'fcm_token' => null]);
+
+      $user->update(['fcm_token' => null]);
+
+      $user->cancel_orders();
 
       $user->tokens()->delete();
+
+      $user->delete();
 
       return response()->json([
         'status' => 1,
