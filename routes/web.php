@@ -178,6 +178,14 @@ Route::get('/policy', 'App\Http\Controllers\DocumentationController@policy')->na
 
 });
 
+Route::get('/privacy-policy', function () {
+  return view('content.pages.privacy-policy')->with('data',\App\Models\Documentation::privacy_policy()->content_en);
+})->name('privacy-policy');
+
+Route::get('/delete-account', function () {
+  return view('content.pages.delete-account');
+})->name('delete-account');
+
 Route::get('/auth/redirect', 'App\Http\Controllers\authentications\LoginBasic@redirect');
 
 Route::get('/auth/callback', 'App\Http\Controllers\authentications\LoginBasic@callback');
