@@ -38,6 +38,7 @@
             </div>
 
             <div class="row">
+              <p>
                 Agropole s'engage à protéger vos données personnelles conformément à notre politique de confidentialité. Voici la procédure pour supprimer définitivement votre compte de notre base de données via l'application.
                     <br><br>
                     <strong>Important :</strong>
@@ -49,7 +50,7 @@
                     </ul>
                     <br>
                     Pour supprimer votre compte, suivez ces étapes :
-
+              </p>
             </div>
 
             <div class="row justify-content-center">
@@ -77,9 +78,11 @@
             <div style="margin-top: 30px;"></div>
 
             <div class="row">
+              <p>
                 Une fois que vous aurez cliqué sur "Supprimer", le processus de suppression commencera immédiatement.
                 <br><br>
                 <strong>Rappel :</strong> Toutes vos commandes en cours seront annulées immédiatement. Cette action est irréversible.
+              </p>
             </div>
         </div>
     </section>
