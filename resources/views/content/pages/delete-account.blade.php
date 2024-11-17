@@ -43,9 +43,9 @@
                         Agropole s'engage à protéger vos données personnelles conformément à notre politique de
                         confidentialité. Voici la procédure pour supprimer définitivement votre compte de notre base de
                         données via l'application.
+                        <br><br>
+                        <strong>Important :</strong>
                     </p>
-                    <br><br>
-                    <strong>Important :</strong>
                     <ul>
                         <li>
                             <p>La suppression de votre compte entraînera l'annulation immédiate de toutes les commandes

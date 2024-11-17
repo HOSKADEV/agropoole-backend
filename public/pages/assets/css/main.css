@@ -115,7 +115,7 @@ a:hover {
 p{
   font-weight: 300;
   font-size: larger;
-  color:grey;
+  color:rgb(62, 62, 62);
   font-family: var(--nav-font);
 }
 h1,
