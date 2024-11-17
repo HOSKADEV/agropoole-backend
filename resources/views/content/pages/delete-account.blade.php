@@ -43,10 +43,10 @@
                     <br><br>
                     <strong>Important :</strong>
                     <ul>
-                        <li>La suppression de votre compte entraînera l'annulation immédiate de toutes les commandes en cours, sans possibilité de restauration.</li>
-                        <li>Vos informations seront complètement supprimées après 90 jours.</li>
-                        <li>Si vous vous connectez avant la fin des 90 jours, seule la suppression sera annulée, mais pas l'annulation des commandes.</li>
-                        <li>Après 90 jours, toute nouvelle connexion créera un nouveau compte.</li>
+                        <li><p>La suppression de votre compte entraînera l'annulation immédiate de toutes les commandes en cours, sans possibilité de restauration.</p></li>
+                        <li><p>Vos informations seront complètement supprimées après 90 jours.</p></li>
+                        <li><p>Si vous vous connectez avant la fin des 90 jours, seule la suppression sera annulée, mais pas l'annulation des commandes.</p></li>
+                        <li><p>Après 90 jours, toute nouvelle connexion créera un nouveau compte.</p></li>
                     </ul>
                     <br>
                     Pour supprimer votre compte, suivez ces étapes :
