@@ -67,7 +67,7 @@
     },
 
     {
-      "url": "/policy",
+      "url": "/privacy-policy",
       "name": "Privacy policy",
       "icon": "menu-icon tf-icons bx bxs-file",
       "slug": "policy"

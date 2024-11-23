@@ -39,7 +39,7 @@ class TopProductsChart
             //->setTitle('Top 3 scorers of the team.')
             //->setSubtitle('Season 2021.')
             ->setHeight(200)
-            ->addData(__('Orders count'),$yaxis)
+            ->addData(__('Ordered quantity'),$yaxis)
             ->setLabels($xaxis)
             ->setHorizontal(true)
             ->setColors(['#20c997']);

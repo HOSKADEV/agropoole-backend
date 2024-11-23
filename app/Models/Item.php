@@ -51,7 +51,7 @@ class Item extends Model
 
     public function name(){
       //return $this->type == 'unit' ? $this->unit_name : $this->pack_name;
-      return $this->unit_name;
+      return $this->stock?->product?->unit_name;
     }
 
     public function price(){

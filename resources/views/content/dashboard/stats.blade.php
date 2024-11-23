@@ -11,6 +11,7 @@
     $outbox_status_chart = empty($outbox_status_chart) ? null : $outbox_status_chart->build();
     $inbox_count_chart = empty($inbox_count_chart) ? null : $inbox_count_chart->build();
     $outbox_count_chart = empty($outbox_count_chart) ? null : $outbox_count_chart->build();
+    $inbox_amount_chart = empty($inbox_amount_chart) ? null : $inbox_amount_chart->build();
 
     $top_products_chart = empty($top_products_chart) ? null : $top_products_chart->build();
     $top_buyers_chart = empty($top_buyers_chart) ? null : $top_buyers_chart->build();
@@ -25,6 +26,7 @@
     {{ empty($outbox_status_chart) ?: $outbox_status_chart->script() }}
     {{ empty($inbox_count_chart) ?: $inbox_count_chart->script() }}
     {{ empty($outbox_count_chart) ?: $outbox_count_chart->script() }}
+    {{ empty($inbox_amount_chart) ?: $inbox_amount_chart->script() }}
     {{ empty($top_products_chart) ?: $top_products_chart->script() }}
     {{ empty($top_buyers_chart) ?: $top_buyers_chart->script() }}
     {{ empty($top_states_chart) ?: $top_states_chart->script() }}
@@ -214,6 +216,37 @@
 
 
             </div>
+            <div class="row">
+
+              <div class="col-12 mb-4">
+                  <div class="card h-100">
+                      <div class="card-title mx-3 mt-3 mb-1">
+                          <div class="row  justify-content-between">
+                              <div class="form-group col-10 card-title-elements">
+                                  <h5>{{ __('Inbox Amount Chart') }} </h5>
+                              </div>
+                              <div class="form-group col-2">
+                                  <select class="form-select" id="inboxAmountFilter" name="inboxAmountFilter">
+                                    @php
+                                      $this_year = now()->year;
+                                    @endphp
+                                      @for ($year = $this_year; $year>=2024; $year--)
+                                      <option value="{{$year}}" {{ request('inboxAmountFilter') == $year ? 'selected' : '' }}>
+                                        {{ $year }}</option>
+                                      @endfor
+
+                                  </select>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="card-body m-1 p-1">
+                          {{ $inbox_amount_chart->container() }}
+                      </div>
+                  </div>
+              </div>
+
+          </div>
         @endif
 
         @if (in_array(auth()->user()->role_is(), ['driver']))
@@ -256,6 +289,12 @@
                 $("#form").submit();
             }
             $('#inboxStatusFilter').on('change', function() {
+                timer = setTimeout(function() {
+                    submitForm();
+                }, 1000);
+            });
+
+            $('#inboxAmountFilter').on('change', function() {
                 timer = setTimeout(function() {
                     submitForm();
                 }, 1000);

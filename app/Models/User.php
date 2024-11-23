@@ -240,35 +240,42 @@ class User extends Authenticatable
 
   public function topProducts($date = null)
   {
-    return $this->stocks()->join('items', function ($query) use ($date) {
-      $query->on('items.stock_id', '=', 'stocks.id');
-      if ($date) {
-        $query->whereYear('items.created_at', $date->year)->whereMonth('items.created_at', $date->month);
-      }
-    })
+    return $this->stocks()->withTrashed()
+      ->join('items', function ($query) use ($date) {
+        $query->on('items.stock_id', '=', 'stocks.id');
+        if ($date) {
+          $query->whereYear('items.created_at', $date->year)
+            ->whereMonth('items.created_at', $date->month);
+        }
+      })
+      ->join('carts', 'items.cart_id', '=', 'carts.id')
+      ->join('orders', function ($join) {
+        $join->on('carts.order_id', '=', 'orders.id');
+        $join->where('orders.status', '=', 'received');
+      })
       ->join('products', 'stocks.product_id', 'products.id')
       ->groupBy('product_id')
-      ->selectRaw('products.*, COUNT(items.id) AS items_count')
+      ->selectRaw('products.*, SUM(items.quantity) AS items_count')
       //->having('items_count', '>', 0)
       ->orderBy('items_count', 'DESC');
   }
   public function topBuyers($date = null)
   {
-    $result = $this->soldOrders();
-
+    $result = $this->soldOrders()->where('orders.status', 'received');
     if ($date) {
       $result->whereYear('orders.created_at', $date->year)->whereMonth('orders.created_at', $date->month);
     }
 
     return $result->join('users', 'orders.buyer_id', 'users.id')
+      ->join('invoices', 'invoices.order_id', 'orders.id')
       ->groupBy('buyer_id')
-      ->selectRaw('users.*, COUNT(orders.id) AS orders')
+      ->selectRaw('users.*, SUM(invoices.purchase_amount) AS orders')
       ->orderBy('orders', 'DESC');
   }
 
   public function topSellers($date = null)
   { //for driver
-    $result = $this->deliveredOrders();
+    $result = $this->deliveredOrders()->where('orders.status', 'received');
     if ($date) {
       $result = $result->whereYear('deliveries.created_at', $date->year)->whereMonth('deliveries.created_at', $date->month);
     }
@@ -281,12 +288,12 @@ class User extends Authenticatable
 
   public function topStates($date = null)
   {
-    $result = $this->soldOrders();
+    $result = $this->soldOrders()->where('orders.status', 'received');
 
     if ($date) {
       $result->whereYear('orders.created_at', $date->year)->whereMonth('orders.created_at', $date->month);
     }
-    return $result->join('users', 'orders.seller_id', 'users.id')
+    return $result->join('users', 'orders.buyer_id', 'users.id')
       ->join('cities', 'users.city_id', 'cities.id')
       ->join('states', 'cities.state_id', 'states.id')
       ->groupBy('state_id')
@@ -307,20 +314,21 @@ class User extends Authenticatable
     return;
   }
 
-  public function nullify(){
+  public function nullify()
+  {
     $this->update([
-    'city_id' => 1,
-    'name' => 'deleted#' . $this->id,
-    'email' => 'deleted#' . $this->id . '@mail.com',
-    'phone' => null,
-    'image' => null,
-    'password' => null,
-    'status' => 2,
-    'fcm_token' => null,
-    'enterprise_name'  => null,
-    'delivery_price' => 0,
-    'longitude' => null,
-    'latitude' => null,
+      'city_id' => 1,
+      'name' => 'deleted#' . $this->id,
+      'email' => 'deleted#' . $this->id . '@mail.com',
+      'phone' => null,
+      'image' => null,
+      'password' => null,
+      'status' => 2,
+      'fcm_token' => null,
+      'enterprise_name' => null,
+      'delivery_price' => 0,
+      'longitude' => null,
+      'latitude' => null,
     ]);
 
     return null;

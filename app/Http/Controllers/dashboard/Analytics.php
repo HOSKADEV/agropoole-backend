@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
 use App\Charts\OrderDailyChart;
 use App\Charts\UserStatusChart;
 use App\Charts\OrderStatusChart;
+use App\Charts\OrderYearlyChart;
 use App\Charts\TopProductsChart;
 use App\Charts\UserMonthlyChart;
 use App\Charts\OrderMonthlyChart;
@@ -136,7 +137,7 @@ class Analytics extends Controller
       if (in_array($user->role_is(), ['broker', 'store'])) {
         $data['inbox_status_chart'] = new OrderStatusChart($user->soldOrders(), $request->inboxStatusFilter);
         $data['outbox_status_chart'] = new OrderStatusChart($user->boughtOrders(), $request->outboxStatusFilter);
-
+        $data['inbox_amount_chart'] = new OrderYearlyChart($user->soldOrders(), $request->inboxAmountFilter);
         $data['inbox_count_chart'] = $request->inboxCountFilter != 'daily'
           ? new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at')
           : new OrderDailyChart($user->soldOrders(), __('New incoming orders'), 'created_at');
@@ -146,18 +147,19 @@ class Analytics extends Controller
           : new OrderDailyChart($user->boughtOrders(), __('New outgoing orders'), 'created_at');
 
         $data['top_products_chart'] = new TopProductsChart($user, $request->topProductsFilter);
-        $data['top_buyers_chart'] = new TopUsersChart($user->topBuyers(empty($request->topBuyersFilter) ? null : now()), __('Orders count'));
+        $data['top_buyers_chart'] = new TopUsersChart($user->topBuyers(empty($request->topBuyersFilter) ? null : now()), __('Orders amount'));
         $data['top_states_chart'] = new TopStatesChart($user->topStates(empty($request->topStatesFilter) ? null : now()));
       }
 
 
       if ($user->role_is('provider')) {
         $data['inbox_status_chart'] = new OrderStatusChart($user->soldOrders(), $request->inboxStatusFilter);
+        $data['inbox_amount_chart'] = new OrderYearlyChart($user->soldOrders(), $request->inboxAmountFilter);
         $data['inbox_count_chart'] = $request->inboxCountFilter != 'daily'
           ? new OrderMonthlyChart($user->soldOrders(), __('New incoming orders'), 'created_at')
           : new OrderDailyChart($user->soldOrders(), __('New incoming orders'), 'created_at');
         $data['top_products_chart'] = new TopProductsChart($user, $request->topProductsFilter);
-        $data['top_buyers_chart'] = new TopUsersChart($user->topBuyers(empty($request->topBuyersFilter) ? null : now()), __('Orders count'));
+        $data['top_buyers_chart'] = new TopUsersChart($user->topBuyers(empty($request->topBuyersFilter) ? null : now()), __('Orders amount'));
         $data['top_states_chart'] = new TopStatesChart($user->topStates(empty($request->topStatesFilter) ? null : now()));
       }
 

@@ -29,18 +29,18 @@
                         <div class="mb-3">
                             <label class="form-label" for="android_version_number">{{ __('Version number') }}</label>
                             <input type="text" class="form-control" id="android_version_number"
-                                name="android_version_number" value="{{ $android->version_number }}" />
+                                name="android_version_number" value="{{ $android->version_number }}" disabled/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="android_build_number">{{ __('Build number') }}</label>
                             <input type="text" class="form-control" id="android_build_number" name="android_build_number"
-                                value="{{ $android->build_number }}" />
+                                value="{{ $android->build_number }}" disabled/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="android_priority">{{ __('Priority') }}</label>
-                            <select class="form-select" id="android_priority" name="android_priority">
+                            <select class="form-select" id="android_priority" name="android_priority" disabled>
                                 <option value="0" @if ($android->priority == 0) selected @endif>
                                     {{ __('Optional') }}</option>
                                 <option value="1" @if ($android->priority == 1) selected @endif>
@@ -50,7 +50,7 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="android_link">{{ __('Link') }}</label>
-                            <textarea class="form-control" id="android_link" name="android_link"> {{ $android->link }}</textarea>
+                            <textarea class="form-control" id="android_link" name="android_link" disabled> {{ $android->link }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -67,18 +67,18 @@
                         <div class="mb-3">
                             <label class="form-label" for="ios_version_number">{{ __('Version number') }}</label>
                             <input type="text" class="form-control" id="ios_version_number" name="ios_version_number"
-                                value="{{ $ios->version_number }}" />
+                                value="{{ $ios->version_number }}" disabled/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="ios_build_number">{{ __('Build number') }}</label>
                             <input type="text" class="form-control" id="ios_build_number" name="ios_build_number"
-                                value="{{ $ios->build_number }}" />
+                                value="{{ $ios->build_number }}" disabled/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="ios_priority">{{ __('Priority') }}</label>
-                            <select class="form-select" id="ios_priority" name="ios_priority">
+                            <select class="form-select" id="ios_priority" name="ios_priority" disabled>
                                 <option value="0" @if ($ios->priority == 0) selected @endif>
                                     {{ __('Optional') }}</option>
                                 <option value="1" @if ($ios->priority == 1) selected @endif>
@@ -88,15 +88,15 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="ios_link">{{ __('Link') }}</label>
-                            <textarea class="form-control" id="ios_link" name="ios_link">{{ $ios->link }}</textarea>
+                            <textarea class="form-control" id="ios_link" name="ios_link" disabled>{{ $ios->link }}</textarea>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="mb-3" style="text-align: center">
+        {{-- <div class="mb-3" style="text-align: center">
             <button type="submit" id="submit" name="submit" class="btn btn-primary">{{ __('Send') }}</button>
-        </div>
+        </div> --}}
     </form>
 
     <h4 class="fw-bold py-3 mb-3">

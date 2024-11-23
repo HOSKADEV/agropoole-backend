@@ -10,9 +10,7 @@ class TopUsersChart
 {
     protected $chart;
     protected $users;
-
     protected $label;
-
     protected $horizontal;
 
     public function __construct($users, $label, $horizontal=true)
