@@ -116,6 +116,12 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+      "name" => "Nom",
+      "email" => "E-mail",
+      "phone" => "Téléphone",
+      "city_id" => "Commune",
+      "password" => "Mot de passe",
+    ],
 
 ];

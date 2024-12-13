@@ -200,8 +200,8 @@ Route::group(['middleware' => ['auth']], function () {
 Route::get('/pages/misc-error', 'App\Http\Controllers\pages\MiscError@index')->name('pages-misc-error');
 });
 // authentication
-//Route::get('/auth/register-basic', 'App\Http\Controllers\authentications\RegisterBasic@index')->name('auth-register-basic');
-//Route::post('/auth/register-action', 'App\Http\Controllers\authentications\RegisterBasic@register');
+Route::get('/auth/register-basic', 'App\Http\Controllers\authentications\RegisterBasic@index')->name('auth-register-basic');
+Route::post('/auth/register-action', 'App\Http\Controllers\authentications\RegisterBasic@register');
 Route::get('/auth/login-basic', 'App\Http\Controllers\authentications\LoginBasic@index')->name('login');
 Route::post('/auth/login-action', 'App\Http\Controllers\authentications\LoginBasic@login');
 Route::get('/auth/logout', 'App\Http\Controllers\authentications\LogoutBasic@logout')->name('auth-logout');

@@ -63,12 +63,12 @@
                             </div>
                         </form>
 
-                        {{-- <p class="text-center">
-            <span>New on our platform?</span>
+                        <p class="text-center">
+            <span>{{__('New on our platform?')}}</span>
             <a href="{{url('auth/register-basic')}}">
-              <span>Create an account</span>
+              <span>{{__('Create an account')}}</span>
             </a>
-          </p> --}}
+          </p>
                     </div>
                 </div>
             </div>

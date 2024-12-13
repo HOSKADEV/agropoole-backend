@@ -368,5 +368,17 @@
   "Change tax amount": "Modifier le montant de la livraison",
   "Delivery price": "Prix de la livraison",
   "Ordered quantity": "Quantité commandée",
-  "Orders amount": "Montant des commandes"
+  "Orders amount": "Montant des commandes",
+
+  "I am a Provider": "Je suis un Fournisseur",
+  "Create new products and sell to brokers": "Créer de nouveaux produits et vendre aux distributeurs",
+  "I am a Broker": "Je suis un Distributeur",
+  "Buy from providers, sell to stores in bulk": "Acheter des fournisseurs, vendre aux magasins en gros",
+  "I am a Store": "Je suis un Magasin",
+  "Buy from brokers, sell to clients in normal quantities": "Acheter des distributeurs, vendre aux clients en quantités normales",
+  "I am a Driver": "Je suis un Livreur",
+  "Deliver orders between different roles in the supply chain": "Livrer des commandes entre différents rôles de la chaîne d'approvisionnement",
+  "Create an account": "Créer un compte",
+  "New on our platform?" : "Nouveau sur notre plateforme ?",
+  "Back to login" : "Retour à la connexion"
 }

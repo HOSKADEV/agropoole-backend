@@ -21,6 +21,7 @@
     "laravel/socialite": "^5.16",
     "laravel/tinker": "^2.7",
     "laraveldaily/laravel-invoices": "3.0",
+    "php-flasher/flasher-laravel": "^1.15",
     "spatie/laravel-collection-macros": "^7.12",
     "yajra/laravel-datatables-oracle": "^10.7"
   },
