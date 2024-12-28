@@ -133,3 +133,8 @@ h1,
   color: #ffffff;
   cursor: pointer;
 }
+
+#update_profile_map {
+  width: 100%;
+  border: 1px solid #dee2e6;
+}

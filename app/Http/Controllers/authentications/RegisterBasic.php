@@ -50,6 +50,8 @@ class RegisterBasic extends Controller
       'phone' => 'required',
       'password' => 'required',
       'role' => 'required|in:1,2,3,5',
+      'longitude' => 'required',
+      'latitude' => 'required',
     ]);
 
     if ($validator->fails()){
@@ -64,6 +66,8 @@ class RegisterBasic extends Controller
       'phone' => $request->phone,
       'password' => Hash::make($request->password),
       'role' => $request->role,
+      'longitude' => $request->longitude,
+      'latitude'=> $request->latitude,
       'status'=> 2
     ]);
 

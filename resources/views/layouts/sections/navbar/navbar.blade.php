@@ -134,18 +134,18 @@
 </div>
 
 <div class="modal fade" id="update_profil_modal" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                {{-- <h4 class="fw-bold py-1 mb-1">{{ __('Change password') }}</h4> --}}
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
                     enctype="multipart/form-data" id="update_profil_form">
                     <div class="row">
+                        <!-- Left side - Form fields -->
                         <div class="col-md-6">
-                            <div class="card-body h-50">
+                            <div class="card-body">
                                 <div class="d-flex align-items-start align-items-sm-center gap-4">
                                     <div hidden><img src="{{ $auth_user->image() }}" alt="image"
                                             class="d-block rounded" height="100" width="100" id="old-avatar" />
@@ -159,78 +159,49 @@
                                             <input type="file" id="avatar" name="image" hidden
                                                 accept="image/png, image/jpeg" />
                                         </label>
-                                        <button type="button" class="btn btn-outline-secondary" id="avatar-reset">
+                                        <button type="button" class="btn btn-outline-secondary mb-3"
+                                            id="avatar-reset">
                                             <i class="bx bx-reset d-block d-sm-none"></i>
                                             <span class="d-none d-sm-block">{{ __('Reset') }}</span>
                                         </button>
-                                        <br>
-                                        {{-- <small class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</small> --}}
                                     </div>
                                 </div>
                             </div>
-                            {{-- <hr class="my-0"> --}}
 
-                            <div class="mb-3">
-                                <label class="form-label" for="name">{{ __('Name') }}</label>
-                                <input type="text" class="form-control" name="name"
-                                    value="{{ $auth_user->name }}">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label" for="enterprise_name">{{ __('Enterprise') }}</label>
-                                <input type="text" class="form-control" name="enterprise_name"
-                                    value="{{ $auth_user->enterprise_name }}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-
-
-                            <div class="mb-3">
-                                <label class="form-label" for="phone">{{ __('Phone') }}</label>
-                                <input type="text" class="form-control" name="phone"
-                                    value="{{ $auth_user->phone }}">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label" for="email">{{ __('Email') }}</label>
-                                <input type="text" class="form-control" name="email"
-                                    value="{{ $auth_user->email }}">
-                            </div>
-
-                            @if ($auth_user->role_is('store'))
-                                <div class="row justify-content-between">
-                                    <div class="col mb-3">
-                                        <label class="form-label" for="state">{{ __('State') }}</label>
-                                        <select class="form-select" id="update_profil_state">
-                                            @foreach ($states as $state)
-                                                <option value="{{ $state->id }}"
-                                                    {{ $state->id == $auth_user_state ? 'selected' : '' }}>
-                                                    {{ $state->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="col mb-3">
-                                        <label class="form-label" for="city">{{ __('City') }}</label>
-                                        <select class="form-select" id="update_profil_city" name="city">
-                                            @foreach ($cities as $city)
-                                                <option value="{{ $city->id }}"
-                                                    {{ $city->id == $auth_user->city_id ? 'selected' : '' }}>
-                                                    {{ $city->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                            <div class="row justify-content-between">
+                                <div class="col mb-3">
+                                    <label class="form-label" for="name">{{ __('Name') }}</label>
+                                    <input type="text" class="form-control" name="name"
+                                        value="{{ $auth_user->name }}">
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label" for="delivery_price">{{ __('Delivery price') }}</label>
-                                    <input type="text" class="form-control" name="delivery_price"
-                                        value="{{ $auth_user->delivery_price }}">
+                                <div class="col mb-3">
+                                    <label class="form-label" for="enterprise_name">{{ __('Enterprise') }}</label>
+                                    <input type="text" class="form-control" name="enterprise_name"
+                                        value="{{ $auth_user->enterprise_name }}">
                                 </div>
-                            @else
-                                <div class="mb-3">
+                            </div>
+
+
+
+
+
+                            <div class="row justify-content-between">
+                                <div class="col mb-3">
+                                    <label class="form-label" for="phone">{{ __('Phone') }}</label>
+                                    <input type="text" class="form-control" name="phone"
+                                        value="{{ $auth_user->phone }}">
+                                </div>
+
+                                <div class="col mb-3">
+                                    <label class="form-label" for="email">{{ __('Email') }}</label>
+                                    <input type="text" class="form-control" name="email"
+                                        value="{{ $auth_user->email }}">
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-between">
+                                <div class="col mb-3">
                                     <label class="form-label" for="state">{{ __('State') }}</label>
                                     <select class="form-select" id="update_profil_state">
                                         @foreach ($states as $state)
@@ -242,7 +213,7 @@
                                     </select>
                                 </div>
 
-                                <div class="mb-3">
+                                <div class="col mb-3">
                                     <label class="form-label" for="city">{{ __('City') }}</label>
                                     <select class="form-select" id="update_profil_city" name="city">
                                         @foreach ($cities as $city)
@@ -253,8 +224,29 @@
                                         @endforeach
                                     </select>
                                 </div>
+                            </div>
+
+                            @if ($auth_user->role_is('store'))
+                                <div class="col mb-3">
+                                    <label class="form-label" for="delivery_price">{{ __('Delivery price') }}</label>
+                                    <input type="text" class="form-control" name="delivery_price"
+                                        value="{{ $auth_user->delivery_price }}">
+                                </div>
                             @endif
 
+                        </div>
+
+                        <!-- Right side - Map -->
+                        <div class="col-md-6">
+                            <div class="h-100">
+                                <label class="form-label">{{ __('Location on Map') }}</label>
+                                <div id="update_profile_map" style="height: 90%; border-radius: 0.375rem;"></div>
+                                <!-- Hidden coordinate inputs -->
+                                <input type="hidden" id="update_profile_latitude" name="latitude"
+                                    value="{{ $auth_user->latitude }}">
+                                <input type="hidden" id="update_profile_longitude" name="longitude"
+                                    value="{{ $auth_user->longitude }}">
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -272,7 +264,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="cartModalLabel">{{__('Cart')}}</h5>
+                <h5 class="modal-title" id="cartModalLabel">{{ __('Cart') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 

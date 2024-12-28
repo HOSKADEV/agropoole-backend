@@ -24,6 +24,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
 
+    <!-- Leaflet JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
 <!-- END: Theme JS-->
 <!-- Pricing Modal JS-->
 @stack('pricing-script')
@@ -33,12 +36,16 @@
 <!-- END: Page JS-->
 
 <script>
+  var updateProfileMap;
+  var updateProfileMarker;
     $('#change_password').on('click', function() {
         $("#change_password_modal").modal("show");
     });
 
     $('#update_profil').on('click', function() {
+      if("{{ auth()->user()?->role_is() }}" != "admin"){
         $("#update_profil_modal").modal("show");
+      }
     });
 
     $('#update_profil_state').on('change', function() {
@@ -292,5 +299,43 @@
         const fileInput = document.querySelector('#avatar');
         fileInput.value = '';
         $('#uploaded-avatar').attr('src', $('#old-avatar').attr('src'));
+    });
+
+    $('#update_profil_modal').on('shown.bs.modal', function () {
+        if (!updateProfileMap) {
+            // Initialize the map centered on Algeria
+            updateProfileMap = L.map('update_profile_map').setView([36.7538, 3.0588], 6);
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(updateProfileMap);
+
+            // Add marker on click
+            updateProfileMap.on('click', function(e) {
+                if (updateProfileMarker) {
+                    updateProfileMap.removeLayer(updateProfileMarker);
+                }
+                updateProfileMarker = L.marker(e.latlng).addTo(updateProfileMap);
+
+                // Update hidden inputs
+                $('#update_profile_latitude').val(e.latlng.lat.toFixed(6));
+                $('#update_profile_longitude').val(e.latlng.lng.toFixed(6));
+            });
+
+            // Set initial marker if coordinates exist
+            var initialLat = $('#update_profile_latitude').val();
+            var initialLng = $('#update_profile_longitude').val();
+
+            if (initialLat && initialLng) {
+                updateProfileMarker = L.marker([initialLat, initialLng]).addTo(updateProfileMap);
+                updateProfileMap.setView([initialLat, initialLng], 13);
+            }
+        }
+
+        // Force a map refresh when modal opens
+        setTimeout(function() {
+            updateProfileMap.invalidateSize();
+        }, 100);
     });
 </script>
