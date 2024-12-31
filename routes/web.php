@@ -208,5 +208,7 @@ Route::get('/auth/logout', 'App\Http\Controllers\authentications\LogoutBasic@log
 //Route::get('/auth/forgot-password-basic', 'App\Http\Controllers\authentications\ForgotPasswordBasic@index')->name('auth-reset-password-basic');
 
 
-
+Route::get('/downloadApp',function(){
+  return view('redirect');
+})->name('');
 
