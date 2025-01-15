@@ -131,7 +131,7 @@ class StockController extends Controller
 
       $stock = Stock::findOrFail($request->stock_id);
 
-      $stock->forceDelete();
+      $stock->delete();
 
       return response()->json([
         'status' => 1,
