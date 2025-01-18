@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products');
-            $table->double('price');
+            $table->double('price')->nullable()->default(null);
             $table->integer('quantity');
             $table->integer('min_quantity');
             $table->integer('show_price');

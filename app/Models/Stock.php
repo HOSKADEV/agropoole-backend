@@ -22,6 +22,11 @@ class Stock extends Model
     'status'
   ];
 
+  public function getPriceAttribute($value)
+  {
+    return floatval($value);
+  }
+
   public function product()
   {
     return $this->belongsTo(Product::class)->withTrashed();

@@ -19,25 +19,31 @@ use App\Http\Resources\PaginatedStockCollection;
 class StockController extends Controller
 {
 
-  public function index(){
-    if (in_array(auth()->user()->role_is(), ['provider','broker','store']) ) {
+  public function index()
+  {
+    if (in_array(auth()->user()->role_is(), ['provider', 'broker', 'store'])) {
       $categories = Category::all();
       return view('content.stocks.list')
-      ->with('categories',$categories);
+        ->with('categories', $categories);
     } else {
       return redirect()->route('pages-misc-error');
     }
   }
 
-  public function create(Request $request){
+  public function create(Request $request)
+  {
     //dd($request->all());
 
     $request->mergeIfMissing(['user_id' => auth()->id()]);
 
+    if (auth()->user()->role_is('store')) {
+      $request->merge(['show_price' => '1']);
+    }
+
     $validator = Validator::make($request->all(), [
       'user_id' => 'required|exists:users,id',
       'product_id' => 'required|exists:products,id',
-      'price' => 'required|numeric',
+      'price' => 'sometimes|nullable|numeric',
       'quantity' => 'required|integer',
       'min_quantity' => 'required|integer',
       'show_price' => 'required|in:0,1',
@@ -46,11 +52,11 @@ class StockController extends Controller
 
     if ($validator->fails()) {
       return response()->json([
-        'status'=> 0,
+        'status' => 0,
         'message' => $validator->errors()->first()
       ]);
     }
-    try{
+    try {
 
 
       $stock = Stock::create($request->all());
@@ -62,35 +68,42 @@ class StockController extends Controller
         'data' => new StockResource($stock)
       ]);
 
-    }catch(Exception $e){
-      return response()->json([
-        'status' => 0,
-        'message' => $e->getMessage()
-      ]
-    );
+    } catch (Exception $e) {
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
+      );
     }
   }
 
-  public function update(Request $request){
+  public function update(Request $request)
+  {
+
+    if (auth()->user()->role_is('store')) {
+      $request->merge(['show_price' => '1']);
+    }
 
     $validator = Validator::make($request->all(), [
       'stock_id' => 'required|exists:stocks,id',
-      'price' => 'sometimes|numeric',
+      'price' => 'sometimes|nullable|numeric',
       'quantity' => 'sometimes|integer',
       'min_quantity' => 'sometimes|integer',
       'show_price' => 'sometimes|in:0,1',
       'status' => 'sometimes|in:available,unavailable'
     ]);
 
-    if ($validator->fails()){
-      return response()->json([
+    if ($validator->fails()) {
+      return response()->json(
+        [
           'status' => 0,
           'message' => $validator->errors()->first()
         ]
       );
     }
 
-    try{
+    try {
 
       $stock = Stock::findOrFail($request->stock_id);
 
@@ -103,31 +116,34 @@ class StockController extends Controller
         'data' => new StockResource($stock)
       ]);
 
-    }catch(Exception $e){
-      return response()->json([
-        'status' => 0,
-        'message' => $e->getMessage()
-      ]
-    );
+    } catch (Exception $e) {
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
+      );
     }
 
   }
 
-  public function delete(Request $request){
+  public function delete(Request $request)
+  {
 
     $validator = Validator::make($request->all(), [
       'stock_id' => 'required',
     ]);
 
-    if ($validator->fails()){
-      return response()->json([
+    if ($validator->fails()) {
+      return response()->json(
+        [
           'status' => 0,
           'message' => $validator->errors()->first()
         ]
       );
     }
 
-    try{
+    try {
 
       $stock = Stock::findOrFail($request->stock_id);
 
@@ -138,31 +154,34 @@ class StockController extends Controller
         'message' => 'success',
       ]);
 
-    }catch(Exception $e){
-      return response()->json([
-        'status' => 0,
-        'message' => $e->getMessage()
-      ]
-    );
+    } catch (Exception $e) {
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
+      );
     }
 
   }
 
-  public function restore(Request $request){
+  public function restore(Request $request)
+  {
 
     $validator = Validator::make($request->all(), [
       'stock_id' => 'required',
     ]);
 
-    if ($validator->fails()){
-      return response()->json([
+    if ($validator->fails()) {
+      return response()->json(
+        [
           'status' => 0,
           'message' => $validator->errors()->first()
         ]
       );
     }
 
-    try{
+    try {
 
       $stock = Stock::withTrashed()->findOrFail($request->stock_id);
 
@@ -174,22 +193,24 @@ class StockController extends Controller
         'data' => new StockResource($stock)
       ]);
 
-    }catch(Exception $e){
-      return response()->json([
-        'status' => 0,
-        'message' => $e->getMessage()
-      ]
-    );
+    } catch (Exception $e) {
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
+      );
     }
 
   }
 
-  public function get(Request $request){  //paginated
+  public function get(Request $request)
+  {  //paginated
 
     $request->mergeIfMissing(['user_id' => $this->get_user_from_token($request->bearerToken())->id]);
 
-    if($request->user()->id != $request->user_id){
-     $request->mergeIfMissing(['status' =>'available']);
+    if ($request->user()->id != $request->user_id) {
+      $request->mergeIfMissing(['status' => 'available']);
     }
 
     $validator = Validator::make($request->all(), [
@@ -200,87 +221,90 @@ class StockController extends Controller
       'search' => 'sometimes|string',
     ]);
 
-    if ($validator->fails()){
-      return response()->json([
+    if ($validator->fails()) {
+      return response()->json(
+        [
           'status' => 0,
           'message' => $validator->errors()->first()
         ]
       );
     }
 
-    try{
+    try {
 
-    $stocks = Stock::join('products', function($join){
-      $join->on('stocks.product_id', '=', 'products.id')
-      ->where('products.deleted_at', null);
-    })
-    ->select('stocks.*','products.subcategory_id','products.unit_name')
-    ->where('stocks.user_id',$request->user_id)->orderBy('stocks.created_at','DESC');
+      $stocks = Stock::join('products', function ($join) {
+        $join->on('stocks.product_id', '=', 'products.id')
+          ->where('products.deleted_at', null);
+      })
+        ->select('stocks.*', 'products.subcategory_id', 'products.unit_name')
+        ->where('stocks.user_id', $request->user_id)->orderBy('stocks.created_at', 'DESC');
 
-    if($request->has('category_id')){
+      if ($request->has('category_id')) {
 
-      $category = Category::findOrFail($request->category_id);
-      $category_subs = $category->subcategories()->pluck('id')->toArray();
-      $stocks = $stocks->whereIn('subcategory_id',$category_subs);
-    }
+        $category = Category::findOrFail($request->category_id);
+        $category_subs = $category->subcategories()->pluck('id')->toArray();
+        $stocks = $stocks->whereIn('subcategory_id', $category_subs);
+      }
 
-    if($request->has('subcategory_id')){
+      if ($request->has('subcategory_id')) {
 
-      $stocks = $stocks->where('subcategory_id',$request->subcategory_id);
-    }
+        $stocks = $stocks->where('subcategory_id', $request->subcategory_id);
+      }
 
-    if($request->has('search')){
+      if ($request->has('search')) {
 
-      $stocks = $stocks->where('unit_name', 'like', '%' . $request->search . '%');
-                            //->orWhere('pack_name', 'like', '%' . $request->search . '%');
-    }
+        $stocks = $stocks->where('unit_name', 'like', '%' . $request->search . '%');
+        //->orWhere('pack_name', 'like', '%' . $request->search . '%');
+      }
 
-    if($request->has('status')){
-      $stocks = $request->status != 'all'
-      ? $stocks->where('stocks.status', $request->status)
-      : $stocks;
-    }
+      if ($request->has('status')) {
+        $stocks = $request->status != 'all'
+          ? $stocks->where('stocks.status', $request->status)
+          : $stocks;
+      }
 
-    if($request->has('all')){
-      $stocks = $stocks->get();
-      return response()->json([
-        'status' => 1,
-        'message' => 'success',
-        'data' => new StockCollection($stocks)
-      ]);
+      if ($request->has('all')) {
+        $stocks = $stocks->get();
+        return response()->json([
+          'status' => 1,
+          'message' => 'success',
+          'data' => new StockCollection($stocks)
+        ]);
 
-    }
+      }
       $stocks = $stocks->paginate(10);
 
 
-    return response()->json([
-      'status' => 1,
-      'message' => 'success',
-      'data' => new PaginatedStockCollection($stocks)
-    ]);
+      return response()->json([
+        'status' => 1,
+        'message' => 'success',
+        'data' => new PaginatedStockCollection($stocks)
+      ]);
 
-  }catch(Exception $e){
-    return response()->json([
-      'status' => 0,
-      'message' => $e->getMessage()
-    ]
-  );
+    } catch (Exception $e) {
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
+      );
+    }
+
   }
 
-  }
+  public function multi_create(Request $request)
+  {
 
-  public function multi_create(Request $request){
-
-    try{
+    try {
 
       DB::beginTransaction();
 
       $user = $request->user();
 
 
-      if($user->role == '1'){
-        $products = $user->products()->whereNotIn('id',$user->stocks()->pluck('product_id')->toArray())->get();
-      }else{
+      if ($user->role == '1') {
+        $products = $user->products()->whereNotIn('id', $user->stocks()->pluck('product_id')->toArray())->get();
+      } else {
         $stocked_products = $user->stocks()->pluck('product_id')->toArray();
         /* $product_owners = Product::whereIn('id',$stocked_products)->pluck('user_id')->toArray();
         $products = Product::whereIn('user_id',$product_owners)
@@ -301,15 +325,16 @@ class StockController extends Controller
         ->whereNotIn('id',$stocked_products)
         ->get(); */
 
-        $products = Product::where('status','available')
-        ->whereNotIn('id',$stocked_products)
-        ->get();
+        $products = Product::where('status', 'available')
+          ->whereNotIn('id', $stocked_products)
+          ->get();
 
       }
 
       $stocks = [];
-        foreach($products as $product){
-          $stocks += [$product->id => [
+      foreach ($products as $product) {
+        $stocks += [
+          $product->id => [
             'product_id' => $product->id,
             'user_id' => $user->id,
             'price' => $product->unit_price,
@@ -317,25 +342,27 @@ class StockController extends Controller
             'min_quantity' => 0,
             'show_price' => 0,
             'status' => 'unavailable'
-          ]] ;
-        }
+          ]
+        ];
+      }
 
-        $stocks = Stock::insert($stocks);
+      $stocks = Stock::insert($stocks);
 
-        DB::commit();
+      DB::commit();
 
       return response()->json([
         'status' => 1,
         'message' => 'success',
       ]);
 
-    }catch(Exception $e){
+    } catch (Exception $e) {
       DB::rollBack();
-      return response()->json([
-        'status' => 0,
-        'message' => $e->getMessage()
-      ]
-    );
+      return response()->json(
+        [
+          'status' => 0,
+          'message' => $e->getMessage()
+        ]
+      );
     }
   }
 

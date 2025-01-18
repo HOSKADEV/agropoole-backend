@@ -135,6 +135,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 });
 
 Route::post('/test', function(){
-  $controller =  new Controller();
-  return $controller->send_fcm_device('title','content','dWsk_c6pTwmb4HFLbI12BX:APA91bE3xFDPPgTcKiIf8j8osN68kBXk45B082xAuiyIIGGrDOkY46VDgyhHddEs-ohYRr5l9dpXsyG9tRVU5vFm8rn4H3CUmvdX1YvcXKRZKyWRM6XFCoZY4oAKLBmcFVpmW-0Z7qUI');
+ \App\Models\Stock::whereHas('owner', function($q){
+   $q->where('role',3);
+ })->update(['show_price'=> 1]);
+
+ return true;
 });

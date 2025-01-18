@@ -194,13 +194,17 @@
 
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="show_price">{{ __('Show price') }}</label>
-                            <select class="form-select" name="show_price">
-                                <option value="1"> {{ __('Yes') }}</option>
-                                <option value="0"> {{ __('No') }}</option>
-                            </select>
-                        </div>
+                        @if (auth()->user()->role_is('store'))
+                            <input type="hidden" name="show_price" id="show_price">
+                        @else
+                            <div class="mb-3">
+                                <label class="form-label" for="show_price">{{ __('Show price') }}</label>
+                                <select class="form-select" name="show_price" id="show_price">
+                                    <option value="1"> {{ __('Yes') }}</option>
+                                    <option value="0"> {{ __('No') }}</option>
+                                </select>
+                            </div>
+                        @endif
 
                         <div class="mb-3">
                             <label class="form-label" for="name">{{ __('Status') }}</label>
