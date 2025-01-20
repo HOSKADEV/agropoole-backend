@@ -412,6 +412,10 @@ class UserController extends Controller
 
   public function get(Request $request)
   {
+    if(empty(auth()->user())){
+      $request->merge(['role' => '3']);
+    }
+
     $validator = Validator::make($request->all(), [
       'role' => 'required|in:1,2,3,4,5',
     ]);

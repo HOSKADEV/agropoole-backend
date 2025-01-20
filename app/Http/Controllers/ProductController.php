@@ -246,7 +246,7 @@ class ProductController extends Controller
     $products = Product::where('user_id',$request->user_id)
     ->orderBy('created_at','DESC');
 
-    if($request->user()->id != $request->user_id){
+    if($request->user()?->id != $request->user_id){
       $products = $products->where('status','available');
     }
 

@@ -267,8 +267,7 @@ class AdController extends Controller
 
     try {
 
-      $user = $this->get_user_from_token($request->bearerToken());
-
+      $user = auth()->user();
 
       $ads = Ad::join('ad_types', function ($join) use ($user) {
         $join->on('ads.id', '=', 'ad_types.ad_id');

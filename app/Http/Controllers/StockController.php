@@ -207,10 +207,10 @@ class StockController extends Controller
   public function get(Request $request)
   {  //paginated
 
-    $request->mergeIfMissing(['user_id' => $this->get_user_from_token($request->bearerToken())->id]);
+    $request->mergeIfMissing(['user_id' => auth()->id()]);
 
-    if ($request->user()->id != $request->user_id) {
-      $request->mergeIfMissing(['status' => 'available']);
+    if (!auth()->id() || auth()->id() != $request->user_id) {
+      $request->merge(['status' => 'available']);
     }
 
     $validator = Validator::make($request->all(), [
@@ -341,7 +341,9 @@ class StockController extends Controller
             'quantity' => 0,
             'min_quantity' => 0,
             'show_price' => 0,
-            'status' => 'unavailable'
+            'status' => 'unavailable',
+            'created_at' => now(),
+            'updated_at' => now(),
           ]
         ];
       }
