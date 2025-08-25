@@ -51,8 +51,8 @@ class StockController extends Controller
       'status' => 'sometimes|in:available,unavailable',
 
       'has_promo' => 'sometimes|boolean',
-      'target_quantity' => 'sometimes|required_if:has_promo,true|integer|min:1',
-      'new_price' => 'sometimes|required_if:has_promo,true|numeric|min:0',
+      'target_quantity' => 'sometimes|nullable|required_if:has_promo,true|integer|min:1',
+      'new_price' => 'sometimes|nullable|required_if:has_promo,true|numeric|min:0',
     ]);
 
     if ($validator->fails()) {
@@ -107,8 +107,8 @@ class StockController extends Controller
       'status' => 'sometimes|in:available,unavailable',
       // promo fields
       'has_promo' => 'sometimes|boolean',
-      'target_quantity' => 'sometimes|required_if:has_promo,true|integer|min:1',
-      'new_price' => 'sometimes|required_if:has_promo,true|numeric|min:0',
+      'target_quantity' => 'sometimes|nullable|required_if:has_promo,true|min:1',
+      'new_price' => 'sometimes|nullable|required_if:has_promo,true|numeric|min:0',
     ]);
 
     if ($validator->fails()) {
