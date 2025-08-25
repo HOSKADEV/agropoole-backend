@@ -418,6 +418,7 @@ class UserController extends Controller
 
     $validator = Validator::make($request->all(), [
       'role' => 'required|in:1,2,3,4,5',
+      'search' => 'sometimes|string'
     ]);
 
     if ($validator->fails()) {
@@ -433,6 +434,9 @@ class UserController extends Controller
 
       $users = User::where('users.status', 'active')->where('users.role', $request->role);
 
+      if($request->filled('search')){
+        $users = $users->where('users.name', 'like', '%' . $request->search . '%');
+      }
 
       if ($request->role != '5') {
         $users = $users->join('stocks', 'users.id', 'stocks.user_id')
