@@ -412,7 +412,7 @@ class UserController extends Controller
 
   public function get(Request $request)
   {
-    if(empty(auth()->user())){
+    if (empty(auth()->user())) {
       $request->merge(['role' => '3']);
     }
 
@@ -434,8 +434,12 @@ class UserController extends Controller
 
       $users = User::where('users.status', 'active')->where('users.role', $request->role);
 
-      if($request->filled('search')){
-        $users = $users->where('users.name', 'like', '%' . $request->search . '%');
+      if ($request->filled('search')) {
+        $search = $request->search;
+        $users = $users->where(function ($query) use ($search) {
+          $query->where('users.name', 'like', '%' . $search . '%')
+            ->orWhere('users.enterprise_name', 'like', '%' . $search . '%');
+        });
       }
 
       if ($request->role != '5') {
