@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Kreait\Laravel\Firebase\Facades\Firebase;
 use Kreait\Firebase\Exception\Auth\FailedToVerifyToken;
 use Kreait\Firebase\JWT\Error\IdTokenVerificationFailed;
+use App\Jobs\SendWelcomeEmail; // added
 
 class AuthController extends Controller
 {
@@ -65,6 +66,10 @@ class AuthController extends Controller
         DB::commit();
 
         $user->refresh();
+
+        // Dispatch welcome email job
+        SendWelcomeEmail::dispatch($user);
+
         $token = $user->createToken($this->random())->plainTextToken;
 
         return response()->json([
