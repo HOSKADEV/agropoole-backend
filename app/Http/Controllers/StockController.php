@@ -15,6 +15,7 @@ use App\Http\Resources\StockResource;
 use App\Http\Resources\StockCollection;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\PaginatedStockCollection;
+use App\Models\Promo;
 
 class StockController extends Controller
 {
@@ -47,7 +48,11 @@ class StockController extends Controller
       'quantity' => 'required|integer',
       'min_quantity' => 'required|integer',
       'show_price' => 'required|in:0,1',
-      'status' => 'sometimes|in:available,unavailable'
+      'status' => 'sometimes|in:available,unavailable',
+
+      'has_promo' => 'sometimes|boolean',
+      'target_quantity' => 'sometimes|required_if:has_promo,true|integer|min:1',
+      'new_price' => 'sometimes|required_if:has_promo,true|numeric|min:0',
     ]);
 
     if ($validator->fails()) {
@@ -59,8 +64,16 @@ class StockController extends Controller
     try {
 
 
-      $stock = Stock::create($request->all());
+      $stock = Stock::create($request->except('has_promo', 'target_quantity', 'new_price'));
 
+
+      if (auth()->user()->role_is('store') && $request->boolean('has_promo')) {
+
+        $stock->promo()->create([
+          'target_quantity' => (int) $request->target_quantity,
+          'new_price' => (float) $request->new_price,
+        ]);
+      }
 
       return response()->json([
         'status' => 1,
@@ -91,7 +104,11 @@ class StockController extends Controller
       'quantity' => 'sometimes|integer',
       'min_quantity' => 'sometimes|integer',
       'show_price' => 'sometimes|in:0,1',
-      'status' => 'sometimes|in:available,unavailable'
+      'status' => 'sometimes|in:available,unavailable',
+      // promo fields
+      'has_promo' => 'sometimes|boolean',
+      'target_quantity' => 'sometimes|required_if:has_promo,true|integer|min:1',
+      'new_price' => 'sometimes|required_if:has_promo,true|numeric|min:0',
     ]);
 
     if ($validator->fails()) {
@@ -107,8 +124,20 @@ class StockController extends Controller
 
       $stock = Stock::findOrFail($request->stock_id);
 
-      $stock->update($request->except('stock_id'));
+      $stock->update($request->except('stock_id', 'has_promo', 'target_quantity', 'new_price'));
 
+      if (auth()->user()->role_is('store') && $request->filled('has_promo')) {
+
+        if ($request->has_promo) {
+          Promo::updateOrCreate(
+            ['stock_id' => $stock->id],
+            $request->only('target_quantity', 'new_price')
+          );
+        } else {
+          Promo::where('stock_id', $stock->id)->delete();
+        }
+
+      }
 
       return response()->json([
         'status' => 1,

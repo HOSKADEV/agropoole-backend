@@ -429,6 +429,12 @@ class DatatablesController extends Controller
 
       })
 
+      ->addColumn('has_promo', function ($row) {
+
+        return $row->promo()->exists();
+
+      })
+
       ->addColumn('created_at', function ($row) {
 
         return date('Y-m-d', strtotime($row->created_at));

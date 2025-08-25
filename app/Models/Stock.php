@@ -41,17 +41,27 @@ class Stock extends Model
     return $this->belongsTo(User::class, 'user_id');
   }
 
+  public function promo()
+  {
+    return $this->hasOne(Promo::class);
+  }
+
   public function add_to_cart($cart_id, $quantity)
   {
 
-    Item::create([
-      'cart_id' => $cart_id,
-      'stock_id' => $this->id,
-      'unit_name' => $this->product->unit_name,
-      'unit_price' => $this->price,
-      'quantity' => $quantity,
-      'amount' => $quantity * $this->price
-    ]);
+    $price = $this->price;
+    if ($this->promo && $quantity >= $this->promo->target_quantity) {
+      $price = $this->promo->price;
+    }
+
+      Item::create([
+        'cart_id' => $cart_id,
+        'stock_id' => $this->id,
+        'unit_name' => $this->product->unit_name,
+        'unit_price' => $price,
+        'quantity' => $quantity,
+        'amount' => $quantity * $price
+      ]);
 
   }
 

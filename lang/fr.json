@@ -259,6 +259,7 @@
   "print_date": "Date d'impression",
   "notes": "Notes",
   "is_available": "Disponible",
+  "Is Available": "Disponible",
   "Availability filter": "Filtre de disponibilité",
   "Enterprise": "Entreprise",
   "Provider": "Fournisseur",
@@ -369,7 +370,6 @@
   "Delivery price": "Prix de la livraison",
   "Ordered quantity": "Quantité commandée",
   "Orders amount": "Montant des commandes",
-
   "I am a Provider": "Je suis un Fournisseur",
   "Create new products and sell to brokers": "Créer de nouveaux produits et vendre aux distributeurs",
   "I am a Broker": "Je suis un Distributeur",
@@ -379,6 +379,9 @@
   "I am a Driver": "Je suis un Livreur",
   "Deliver orders between different roles in the supply chain": "Livrer des commandes entre différents rôles de la chaîne d'approvisionnement",
   "Create an account": "Créer un compte",
-  "New on our platform?" : "Nouveau sur notre plateforme ?",
-  "Back to login" : "Retour à la connexion"
+  "New on our platform?": "Nouveau sur notre plateforme ?",
+  "Back to login": "Retour à la connexion",
+  "Has promo": "A une promo",
+  "Promo target quantity": "Quantité cible de la promotion",
+  "Promo new price": "Nouveau prix promotionnel"
 }

@@ -56,7 +56,8 @@
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Price') }}</th>
                         <th>{{ __('Quantity') }}</th>
-                        <th>{{ __('is_available') }}</th>
+                        <th>{{ __('Is Available') }}</th>
+                        <th>{{ __('Has promo') }}</th>
                         <th>{{ __('Created at') }}</th>
                         <th>{{ __('Actions') }}</th>
                     </tr>
@@ -74,6 +75,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    {{-- Inside the stock update modal form with id="form" --}}
+                    {{-- Update stock modal form: add promo fields (store only) --}}
                     <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
                         enctype="multipart/form-data" id="form">
 
@@ -118,6 +121,22 @@
                             </select>
                         </div>
 
+                        @if (auth()->user()->role_is('store'))
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="has_promo" name="has_promo" value="1">
+                                <label class="form-check-label" for="has_promo">{{ __('Has promo') }}</label>
+                            </div>
+                            <div id="promo_fields" style="display:none;">
+                                <div class="mb-3">
+                                    <label class="form-label" for="target_quantity">{{ __('Promo target quantity') }}</label>
+                                    <input type="number" min="1" class="form-control" id="target_quantity" name="target_quantity" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="new_price">{{ __('Promo new price') }}</label>
+                                    <input type="number" min="0" step="0.01" class="form-control" id="new_price" name="new_price" />
+                                </div>
+                            </div>
+                        @endif
 
                         <div class="mb-3" style="text-align: center">
                             <button type="submit" id="submit" name="submit"
@@ -132,211 +151,343 @@
 @endsection
 
 @section('page-script')
-    <script>
-        $(document).ready(function() {
-            load_data();
+<script>
+$(document).ready(function() {
+    load_data();
 
-            function load_data(category = null, subcategory = null, sufficiency = null, availability = null) {
-                //$.fn.dataTable.moment( 'YYYY-M-D' );
-                var table = $('#laravel_datatable').DataTable({
+    function load_data(category = null, subcategory = null, sufficiency = null, availability = null) {
+        //$.fn.dataTable.moment( 'YYYY-M-D' );
+        var table = $('#laravel_datatable').DataTable({
 
-                    responsive: true,
-                    processing: true,
-                    serverSide: true,
-                    pageLength: 10,
-                    columnDefs: [{
-                        searchable: false,
-                        targets: 1
-                    }],
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            pageLength: 10,
+            columnDefs: [{
+                searchable: false,
+                targets: 1
+            }],
 
-                    ajax: {
-                        url: "{{ url('stock/list') }}",
-                        data: {
-                            category: category,
-                            subcategory: subcategory,
-                            sufficiency: sufficiency,
-                            availability: availability
-                        },
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                    },
+            ajax: {
+                url: "{{ url('stock/list') }}",
+                data: {
+                    category: category,
+                    subcategory: subcategory,
+                    sufficiency: sufficiency,
+                    availability: availability
+                },
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+            },
 
-                    columns: [
+            columns: [
 
-                        {
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex'
-                        },
-                        /* {
-                            data: 'name_image',
-                            name: 'name_image',
-                            render: function(data) {
+                {
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex'
+                },
+                /* {
+                    data: 'name_image',
+                    name: 'name_image',
+                    render: function(data) {
 
-                                return '<div class="d-flex justify-content-start align-items-center stock-name"><div class="avatar-wrapper"><div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
-                                    data[0] +
-                                    '" class="rounded"></div></div><div class="d-flex flex-column"><h6 class="text-nowrap mb-0">' +
-                                    data[1] + '</h6></div></div>';
+                        return '<div class="d-flex justify-content-start align-items-center stock-name"><div class="avatar-wrapper"><div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
+                            data[0] +
+                            '" class="rounded"></div></div><div class="d-flex flex-column"><h6 class="text-nowrap mb-0">' +
+                            data[1] + '</h6></div></div>';
 
-                            }
-                        }, */
-                        {
-                            data: 'image',
-                            name: 'image',
-                            render: function(data) {
+                    }
+                }, */
+                {
+                    data: 'image',
+                    name: 'image',
+                    render: function(data) {
 
-                                return '<div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
-                                    data + '" class="rounded">';
+                        return '<div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
+                            data + '" class="rounded">';
 
-                            }
-                        },
+                    }
+                },
 
-                        {
-                            data: 'name',
-                            name: 'name'
-                        },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
 
-                        {
-                            data: 'price',
-                            name: 'price'
-                        },
+                {
+                    data: 'price',
+                    name: 'price'
+                },
 
-                        {
-                            data: 'quantity',
-                            name: 'quantity',
-                            render: function(data) {
+                {
+                    data: 'quantity',
+                    name: 'quantity',
+                    render: function(data) {
 
-                                if (data[0] <= data[1]) {
-                                    return '<span class="badge bg-label-danger">' + data[0] +
-                                        '</span>';
-                                } else {
-                                    return '<span class="badge bg-label-success">' + data[0] +
-                                        '</span>';
-                                }
-
-                            }
-                        },
-
-                        {
-                            data: 'availability',
-                            name: 'availability',
-                            render: function(data) {
-                                if (data == false) {
-                                    return '<span class="badge bg-label-danger">{{ __('No') }}</span>';
-                                } else {
-                                    return '<span class="badge bg-label-success">{{ __('Yes') }}</span>';
-                                }
-                            }
-                        },
-
-                        {
-                            data: 'created_at',
-                            name: 'created_at'
-                        },
-
-                        /* {
-                            data: 'discount',
-                            name: 'discount'
-                        }, */
-
-                        {
-                            data: 'action',
-                            name: 'action',
-                            render: function(data) {
-                                /* return '<div class="dropdown"><button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button><div class="dropdown-menu">'
-                                  +data+'</div></div>' */
-                                return '<span>' + data + '</span>';
-                            }
+                        if (data[0] <= data[1]) {
+                            return '<span class="badge bg-label-danger">' + data[0] +
+                                '</span>';
+                        } else {
+                            return '<span class="badge bg-label-success">' + data[0] +
+                                '</span>';
                         }
 
-                    ]
-                });
-            }
+                    }
+                },
 
-            function refresh_table() {
-                var category = document.getElementById('category').value;
-                var subcategory = document.getElementById('subcategory').value;
-                var sufficiency = document.getElementById('sufficiency').value;
-                var availability = document.getElementById('availability').value;
-
-                var table = $('#laravel_datatable').DataTable();
-                table.destroy();
-                load_data(category, subcategory, sufficiency, availability);
-            }
-
-            $('#category').on('change', function() {
-
-                var category_id = document.getElementById('category').value;
-
-                $.ajax({
-                    url: '{{ url('subcategory/get?all=1') }}',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    type: 'POST',
-                    data: {
-                        category_id: category_id
-                    },
-                    dataType: 'JSON',
-                    success: function(response) {
-                        if (response.status == 1) {
-
-                            var subcategories = document.getElementById('subcategory');
-                            subcategories.innerHTML =
-                                '<option value="">{{ __('Not selected') }}</option>';
-                            console.log(response.data);
-                            for (var i = 0; i < response.data.length; i++) {
-                                var option = document.createElement('option');
-                                option.value = response.data[i].id;
-                                option.innerHTML = response.data[i].name;
-                                subcategories.appendChild(option);
-                            }
-
+                {
+                    data: 'availability',
+                    name: 'availability',
+                    render: function(data) {
+                        if (data == false) {
+                            return '<span class="badge bg-label-danger">{{ __('No') }}</span>';
+                        } else {
+                            return '<span class="badge bg-label-success">{{ __('Yes') }}</span>';
                         }
                     }
-                });
+                },
+
+                {
+                    data: 'has_promo',
+                    name: 'has_promo',
+                    render: function(data) {
+                        if (data == false) {
+                            return '<span class="badge bg-label-danger">{{ __('No') }}</span>';
+                        } else {
+                            return '<span class="badge bg-label-success">{{ __('Yes') }}</span>';
+                        }
+                    }
+                },
+
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+
+                /* {
+                    data: 'discount',
+                    name: 'discount'
+                }, */
+
+                {
+                    data: 'action',
+                    name: 'action',
+                    render: function(data) {
+                        /* return '<div class="dropdown"><button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button><div class="dropdown-menu">'
+                          +data+'</div></div>' */
+                        return '<span>' + data + '</span>';
+                    }
+                }
+
+            ]
+        });
+    }
+
+    function refresh_table() {
+        var category = document.getElementById('category').value;
+        var subcategory = document.getElementById('subcategory').value;
+        var sufficiency = document.getElementById('sufficiency').value;
+        var availability = document.getElementById('availability').value;
+
+        var table = $('#laravel_datatable').DataTable();
+        table.destroy();
+        load_data(category, subcategory, sufficiency, availability);
+    }
+
+    $('#category').on('change', function() {
+
+        var category_id = document.getElementById('category').value;
+
+        $.ajax({
+            url: '{{ url('subcategory/get?all=1') }}',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'POST',
+            data: {
+                category_id: category_id
+            },
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.status == 1) {
+
+                    var subcategories = document.getElementById('subcategory');
+                    subcategories.innerHTML =
+                        '<option value="">{{ __('Not selected') }}</option>';
+                    console.log(response.data);
+                    for (var i = 0; i < response.data.length; i++) {
+                        var option = document.createElement('option');
+                        option.value = response.data[i].id;
+                        option.innerHTML = response.data[i].name;
+                        subcategories.appendChild(option);
+                    }
+
+                }
+            }
+        });
 
 
-                refresh_table();
-            });
+        refresh_table();
+    });
 
-            $('#subcategory').on('change', function() {
+    $('#subcategory').on('change', function() {
 
-                refresh_table();
+        refresh_table();
 
-            });
+    });
 
-            $('#sufficiency').on('change', function() {
+    $('#sufficiency').on('change', function() {
 
-                refresh_table();
+        refresh_table();
 
-            });
+    });
 
-            $('#availability').on('change', function() {
+    $('#availability').on('change', function() {
 
-                refresh_table();
+        refresh_table();
 
-            });
+    });
 
-            /* $('#create').on('click', function() {
-                document.getElementById('form').reset();
-                document.getElementById('form_type').value = "create";
-                document.getElementById('uploaded-image').src =
-                    "{{ asset('assets/img/icons/file-not-found.jpg') }}";
-                document.getElementById('old-image').src =
-                    "{{ asset('assets/img/icons/file-not-found.jpg') }}";
-                $("#modal").modal('show');
-            }); */
+    /* $('#create').on('click', function() {
+        document.getElementById('form').reset();
+        document.getElementById('form_type').value = "create";
+        document.getElementById('uploaded-image').src =
+            "{{ asset('assets/img/icons/file-not-found.jpg') }}";
+        document.getElementById('old-image').src =
+            "{{ asset('assets/img/icons/file-not-found.jpg') }}";
+        $("#modal").modal('show');
+    }); */
 
 
-            $(document.body).on('click', '.update', function() {
-                document.getElementById('form').reset();
-                var stock_id = $(this).attr('table_id');
-                $("#stock_id").val(stock_id);
+    $(document.body).on('click', '.update', function() {
+        document.getElementById('form').reset();
+        var stock_id = $(this).attr('table_id');
+        $("#stock_id").val(stock_id);
+
+        $.ajax({
+            url: '{{ url('stock/update') }}',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            type: 'POST',
+            data: { stock_id: stock_id },
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.status == 1) {
+                    document.getElementById('price').value = response.data.price;
+                    document.getElementById('quantity').value = response.data.quantity;
+                    document.getElementById('min_quantity').value = response.data.min_quantity;
+                    document.getElementById('show_price').value = response.data.show_price;
+                    document.getElementById('status').value = response.data.status;
+
+                    @if (auth()->user()->role_is('store'))
+                        const promo = response.data.promo;
+                        const hasPromoEl = document.getElementById('has_promo');
+                        const promoFields = document.getElementById('promo_fields');
+                        const targetQtyEl = document.getElementById('target_quantity');
+                        const newPriceEl = document.getElementById('new_price');
+
+                        if (promo) {
+                            hasPromoEl.checked = true;
+                            promoFields.style.display = '';
+                            targetQtyEl.value = promo.target_quantity ?? '';
+                            newPriceEl.value = promo.new_price ?? '';
+                        } else {
+                            hasPromoEl.checked = false;
+                            promoFields.style.display = 'none';
+                            targetQtyEl.value = '';
+                            newPriceEl.value = '';
+                        }
+                    @endif
+
+                    $("#modal").modal("show");
+                }
+            }
+        });
+    });
+
+    @if (auth()->user()->role_is('store'))
+    $(document).on('change', '#has_promo', function() {
+        if (this.checked) {
+            $('#promo_fields').show();
+        } else {
+            $('#promo_fields').hide();
+            $('#target_quantity').val('');
+            $('#new_price').val('');
+        }
+    });
+    @endif
+
+    $('#submit').on('click', function() {
+        var queryString = new FormData($("#form")[0]);
+
+        @if (auth()->user()->role_is('store'))
+        var hasPromoEl = document.getElementById('has_promo');
+        if (hasPromoEl && !hasPromoEl.checked) {
+            queryString.append('has_promo', '0');
+        }
+        @endif
+
+        $("#modal").modal("hide");
+
+        $.ajax({
+            url: "{{ url('stock/update') }}",
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            type: 'POST',
+            data: queryString,
+            dataType: 'JSON',
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.status == 1) {
+                    Swal.fire({
+                        title: "{{ __('Success') }}",
+                        text: "{{ __('success') }}",
+                        icon: 'success',
+                        confirmButtonText: 'Ok'
+                    }).then((result) => {
+                        location.reload();
+                    });
+                } else {
+                    console.log(response.message);
+                    Swal.fire(
+                        "{{ __('Error') }}",
+                        response.message,
+                        'error'
+                    );
+                }
+            },
+            error: function(data) {
+                var errors = data.responseJSON;
+                console.log(errors);
+                Swal.fire(
+                    "{{ __('Error') }}",
+                    errors.message,
+                    'error'
+                );
+                // Render the errors with js ...
+            }
+        });
+    });
+
+    $(document.body).on('click', '.delete', function() {
+
+        var stock_id = $(this).attr('table_id');
+
+        Swal.fire({
+            title: "{{ __('Warning') }}",
+            text: "{{ __('Are you sure?') }}",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: "{{ __('Delete') }}",
+            cancelButtonText: "{{ __('Cancel') }}"
+        }).then((result) => {
+            if (result.isConfirmed) {
 
                 $.ajax({
-                    url: '{{ url('stock/update') }}',
+                    url: "{{ url('stock/delete') }}",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
@@ -348,169 +499,75 @@
                     success: function(response) {
                         if (response.status == 1) {
 
-                            document.getElementById('price').value = response.data.price;
-                            document.getElementById('quantity').value = response.data.quantity;
-                            document.getElementById('min_quantity').value = response.data
-                                .min_quantity;
-                            document.getElementById('show_price').value = response.data
-                                .show_price;
-                            document.getElementById('status').value = response.data.status;
-
-                            $("#modal").modal("show");
+                            Swal.fire(
+                                "{{ __('Success') }}",
+                                "{{ __('success') }}",
+                                'success'
+                            ).then((result) => {
+                                location.reload();
+                            });
                         }
                     }
                 });
-            });
 
 
-            $('#submit').on('click', function() {
+            }
+        })
+    });
 
-                /* var formdata = new FormData($("#form")[0]); */
-                var queryString = new FormData($("#form")[0]);
+    $('#multi_create').on('click', function() {
 
-                $("#modal").modal("hide");
 
+        Swal.fire({
+            title: "{{ __('Warning') }}",
+            text: "{{ __('Are you sure?') }}",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: "{{ __('Yes') }}",
+            cancelButtonText: "{{ __('No') }}"
+        }).then((result) => {
+            if (result.isConfirmed) {
 
                 $.ajax({
-                    url: "{{ url('stock/update') }}",
+                    url: "{{ url('stock/create/multi') }}",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     type: 'POST',
-                    data: queryString,
                     dataType: 'JSON',
-                    contentType: false,
-                    processData: false,
                     success: function(response) {
                         if (response.status == 1) {
-                            Swal.fire({
-                                title: "{{ __('Success') }}",
-                                text: "{{ __('success') }}",
-                                icon: 'success',
-                                confirmButtonText: 'Ok'
-                            }).then((result) => {
+
+                            Swal.fire(
+                                "{{ __('Success') }}",
+                                "{{ __('success') }}",
+                                'success'
+                            ).then((result) => {
                                 location.reload();
                             });
-                        } else {
-                            console.log(response.message);
-                            Swal.fire(
-                                "{{ __('Error') }}",
-                                response.message,
-                                'error'
-                            );
                         }
-                    },
-                    error: function(data) {
-                        var errors = data.responseJSON;
-                        console.log(errors);
-                        Swal.fire(
-                            "{{ __('Error') }}",
-                            errors.message,
-                            'error'
-                        );
-                        // Render the errors with js ...
                     }
                 });
-            });
-
-            $(document.body).on('click', '.delete', function() {
-
-                var stock_id = $(this).attr('table_id');
-
-                Swal.fire({
-                    title: "{{ __('Warning') }}",
-                    text: "{{ __('Are you sure?') }}",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: "{{ __('Delete') }}",
-                    cancelButtonText: "{{ __('Cancel') }}"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-
-                        $.ajax({
-                            url: "{{ url('stock/delete') }}",
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            type: 'POST',
-                            data: {
-                                stock_id: stock_id
-                            },
-                            dataType: 'JSON',
-                            success: function(response) {
-                                if (response.status == 1) {
-
-                                    Swal.fire(
-                                        "{{ __('Success') }}",
-                                        "{{ __('success') }}",
-                                        'success'
-                                    ).then((result) => {
-                                        location.reload();
-                                    });
-                                }
-                            }
-                        });
 
 
-                    }
-                })
-            });
+            }
+        })
+    });
 
-            $('#multi_create').on('click', function() {
-
-
-                Swal.fire({
-                    title: "{{ __('Warning') }}",
-                    text: "{{ __('Are you sure?') }}",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: "{{ __('Yes') }}",
-                    cancelButtonText: "{{ __('No') }}"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-
-                        $.ajax({
-                            url: "{{ url('stock/create/multi') }}",
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            type: 'POST',
-                            dataType: 'JSON',
-                            success: function(response) {
-                                if (response.status == 1) {
-
-                                    Swal.fire(
-                                        "{{ __('Success') }}",
-                                        "{{ __('success') }}",
-                                        'success'
-                                    ).then((result) => {
-                                        location.reload();
-                                    });
-                                }
-                            }
-                        });
-
-
-                    }
-                })
-            });
-
-            $(document.body).on('change', '.image-input', function() {
-                const fileInput = document.querySelector('.image-input');
-                if (fileInput.files[0]) {
-                    document.getElementById('uploaded-image').src = window.URL.createObjectURL(fileInput
-                        .files[0]);
-                }
-            });
-            $(document.body).on('click', '.image-reset', function() {
-                const fileInput = document.querySelector('.image-input');
-                fileInput.value = '';
-                document.getElementById('uploaded-image').src = document.getElementById('old-image').src;
-            });
-        });
-    </script>
+    $(document.body).on('change', '.image-input', function() {
+        const fileInput = document.querySelector('.image-input');
+        if (fileInput.files[0]) {
+            document.getElementById('uploaded-image').src = window.URL.createObjectURL(fileInput
+                .files[0]);
+        }
+    });
+    $(document.body).on('click', '.image-reset', function() {
+        const fileInput = document.querySelector('.image-input');
+        fileInput.value = '';
+        document.getElementById('uploaded-image').src = document.getElementById('old-image').src;
+    });
+});
+</script>
 @endsection
