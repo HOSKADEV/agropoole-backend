@@ -248,6 +248,7 @@ class StockController extends Controller
       'subcategory_id' => 'sometimes|exists:subcategories,id',
       'status' => 'sometimes|in:available,unavailable,all',
       'search' => 'sometimes|string',
+      'has_promo' => 'sometimes|boolean',
     ]);
 
     if ($validator->fails()) {
@@ -261,35 +262,45 @@ class StockController extends Controller
 
     try {
 
-      $stocks = Stock::join('products', function ($join) {
-        $join->on('stocks.product_id', '=', 'products.id')
-          ->where('products.deleted_at', null);
-      })
-        ->select('stocks.*', 'products.subcategory_id', 'products.unit_name')
-        ->where('stocks.user_id', $request->user_id)->orderBy('stocks.created_at', 'DESC');
+      $stocks = Stock::with('product', 'promo')
+        ->where('user_id', $request->user_id)
+        ->latest();
 
       if ($request->has('category_id')) {
-
-        $category = Category::findOrFail($request->category_id);
-        $category_subs = $category->subcategories()->pluck('id')->toArray();
-        $stocks = $stocks->whereIn('subcategory_id', $category_subs);
+        $categoryId = $request->category_id;
+        $stocks = $stocks->whereHas('product', function ($query) use ($categoryId) {
+          $query->whereHas('subcategory', function ($sub) use ($categoryId) {
+            $sub->where('category_id', $categoryId);
+          });
+        });
       }
 
       if ($request->has('subcategory_id')) {
-
-        $stocks = $stocks->where('subcategory_id', $request->subcategory_id);
+        $subCategoryId = $request->subcategory_id;
+        $stocks = $stocks->whereHas('product', function ($query) use ($subCategoryId) {
+          $query->where('subcategory_id', $subCategoryId);
+        });
       }
 
       if ($request->has('search')) {
-
-        $stocks = $stocks->where('unit_name', 'like', '%' . $request->search . '%');
-        //->orWhere('pack_name', 'like', '%' . $request->search . '%');
+        $stocks = $stocks->whereHas('product', function ($query) use ($request) {
+          $query->where('unit_name', 'like', '%' . $request->search . '%');
+          //->orWhere('pack_name', 'like', '%' . $request->search . '%');
+        });
       }
 
       if ($request->has('status')) {
         $stocks = $request->status != 'all'
-          ? $stocks->where('stocks.status', $request->status)
+          ? $stocks->where('status', $request->status)
           : $stocks;
+      }
+
+      if ($request->filled('has_promo')) {
+        if ($request->has_promo) {
+          $stocks = $stocks->whereHas('promo');
+        } else {
+          $stocks = $stocks->whereDoesntHave('promo');
+        }
       }
 
       if ($request->has('all')) {
