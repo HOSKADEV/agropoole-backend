@@ -136,6 +136,10 @@ class AuthController extends Controller
               'image' => $firebase_user->photoUrl,
             ]);
 
+            if ($user->wasRecentlyCreated) {
+                SendWelcomeEmail::dispatch($user);
+            }
+
         }else{
 
           $credentials = $request->only('email', 'password');
