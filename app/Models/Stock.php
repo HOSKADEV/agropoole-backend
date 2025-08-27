@@ -51,7 +51,7 @@ class Stock extends Model
 
     $price = $this->price;
     if ($this->promo && $quantity >= $this->promo->target_quantity) {
-      $price = $this->promo->price;
+      $price = $this->promo->new_price;
     }
 
       Item::create([
