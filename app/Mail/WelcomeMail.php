@@ -26,8 +26,15 @@ class WelcomeMail extends Mailable
      */
     public function build()
     {
+
+      $roleKey = $this->user->role_is();
+
         return $this
             ->subject('Welcome to Agropool')
-            ->view('emails.welcome');
+            ->view('emails.welcome')
+            ->with([
+                'text_ar' => trans("mail.{$roleKey}", [], 'ar'),
+                'text_fr' => trans("mail.{$roleKey}", [], 'fr'),
+            ]);
     }
 }
