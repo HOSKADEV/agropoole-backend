@@ -69,7 +69,7 @@ class AuthController extends Controller
 
       $user->refresh();
 
-      if ($user->role_is() != 'admin') {
+      if (!$user->role_is('admin')) {
         SendWelcomeEmail::dispatch($user);
       }
 
@@ -142,10 +142,6 @@ class AuthController extends Controller
           ]
         );
 
-        if ($user->wasRecentlyCreated && $user->role_is() != 'admin') {
-          SendWelcomeEmail::dispatch($user);
-        }
-
       } else {
 
         $credentials = $request->only('email', 'password');
@@ -175,6 +171,10 @@ class AuthController extends Controller
       if (empty($user->name)) {
         $user->name = 'user#' . $user->id;
         $user->save();
+      }
+
+      if ($user->wasRecentlyCreated && !$user->role_is('admin')) {
+        SendWelcomeEmail::dispatch($user);
       }
 
       $token = $user->createToken($this->random())->plainTextToken;
