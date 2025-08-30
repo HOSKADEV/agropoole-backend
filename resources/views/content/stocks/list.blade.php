@@ -75,8 +75,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    {{-- Inside the stock update modal form with id="form" --}}
-                    {{-- Update stock modal form: add promo fields (store only) --}}
                     <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
                         enctype="multipart/form-data" id="form">
 
@@ -88,7 +86,6 @@
                         </div>
 
                         <div class="row  justify-content-between">
-
                             <div class="form-group col-md-6 p-3">
                                 <label class="form-label" for="quantity">{{ __('Quantity') }}</label>
                                 <input type="number" class="form-control" id="quantity" name="quantity" />
@@ -98,7 +95,6 @@
                                 <label class="form-label" for="min_quantity">{{ __('Min quantity') }}</label>
                                 <input type="number" class="form-control" id="min_quantity" name="min_quantity" />
                             </div>
-
                         </div>
 
                         @if (auth()->user()->role_is('store'))
@@ -121,22 +117,20 @@
                             </select>
                         </div>
 
-                        @if (auth()->user()->role_is('store'))
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="has_promo" name="has_promo" value="1">
-                                <label class="form-check-label" for="has_promo">{{ __('Has promo') }}</label>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="has_promo" name="has_promo" value="1">
+                            <label class="form-check-label" for="has_promo">{{ __('Has promo') }}</label>
+                        </div>
+                        <div id="promo_fields" style="display:none;">
+                            <div class="mb-3">
+                                <label class="form-label" for="target_quantity">{{ __('Promo target quantity') }}</label>
+                                <input type="number" min="1" class="form-control" id="target_quantity" name="target_quantity" />
                             </div>
-                            <div id="promo_fields" style="display:none;">
-                                <div class="mb-3">
-                                    <label class="form-label" for="target_quantity">{{ __('Promo target quantity') }}</label>
-                                    <input type="number" min="1" class="form-control" id="target_quantity" name="target_quantity" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label" for="new_price">{{ __('Promo new price') }}</label>
-                                    <input type="number" min="0" step="0.01" class="form-control" id="new_price" name="new_price" />
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="new_price">{{ __('Promo new price') }}</label>
+                                <input type="number" min="0" step="0.01" class="form-control" id="new_price" name="new_price" />
                             </div>
-                        @endif
+                        </div>
 
                         <div class="mb-3" style="text-align: center">
                             <button type="submit" id="submit" name="submit"
@@ -380,25 +374,24 @@ $(document).ready(function() {
                     document.getElementById('show_price').value = response.data.show_price;
                     document.getElementById('status').value = response.data.status;
 
-                    @if (auth()->user()->role_is('store'))
-                        const promo = response.data.promo;
-                        const hasPromoEl = document.getElementById('has_promo');
-                        const promoFields = document.getElementById('promo_fields');
-                        const targetQtyEl = document.getElementById('target_quantity');
-                        const newPriceEl = document.getElementById('new_price');
+                    // Populate promo fields for all roles
+                    const promo = response.data.promo;
+                    const hasPromoEl = document.getElementById('has_promo');
+                    const promoFields = document.getElementById('promo_fields');
+                    const targetQtyEl = document.getElementById('target_quantity');
+                    const newPriceEl = document.getElementById('new_price');
 
-                        if (promo) {
-                            hasPromoEl.checked = true;
-                            promoFields.style.display = '';
-                            targetQtyEl.value = promo.target_quantity ?? '';
-                            newPriceEl.value = promo.new_price ?? '';
-                        } else {
-                            hasPromoEl.checked = false;
-                            promoFields.style.display = 'none';
-                            targetQtyEl.value = '';
-                            newPriceEl.value = '';
-                        }
-                    @endif
+                    if (promo) {
+                        hasPromoEl.checked = true;
+                        promoFields.style.display = '';
+                        targetQtyEl.value = promo.target_quantity ?? '';
+                        newPriceEl.value = promo.new_price ?? '';
+                    } else {
+                        hasPromoEl.checked = false;
+                        promoFields.style.display = 'none';
+                        targetQtyEl.value = '';
+                        newPriceEl.value = '';
+                    }
 
                     $("#modal").modal("show");
                 }
@@ -406,7 +399,7 @@ $(document).ready(function() {
         });
     });
 
-    @if (auth()->user()->role_is('store'))
+    // Toggle promo fields (all roles)
     $(document).on('change', '#has_promo', function() {
         if (this.checked) {
             $('#promo_fields').show();
@@ -416,7 +409,6 @@ $(document).ready(function() {
             $('#new_price').val('');
         }
     });
-    @endif
 
     $('#submit').on('click', function() {
         var queryString = new FormData($("#form")[0]);

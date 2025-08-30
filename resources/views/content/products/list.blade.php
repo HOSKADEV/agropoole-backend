@@ -170,7 +170,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    {{-- Inside the stock create modal form with id="stock_form" --}}
+
                     <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
                         enctype="multipart/form-data" id="stock_form">
 
@@ -215,24 +215,20 @@
                             </select>
                         </div>
 
-                        <form class="form-horizontal" onsubmit="event.preventDefault()" action="#"
-                            enctype="multipart/form-data" id="stock_form">
-                        @if (auth()->user()->role_is('store'))
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="stock_has_promo" name="has_promo" value="1">
-                                <label class="form-check-label" for="stock_has_promo">{{ __('Has promo') }}</label>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="stock_has_promo" name="has_promo" value="1">
+                            <label class="form-check-label" for="stock_has_promo">{{ __('Has promo') }}</label>
+                        </div>
+                        <div id="stock_promo_fields" style="display:none;">
+                            <div class="mb-3">
+                                <label class="form-label" for="stock_target_quantity">{{ __('Promo target quantity') }}</label>
+                                <input type="number" min="1" class="form-control" id="stock_target_quantity" name="target_quantity" />
                             </div>
-                            <div id="stock_promo_fields" style="display:none;">
-                                <div class="mb-3">
-                                    <label class="form-label" for="stock_target_quantity">{{ __('Promo target quantity') }}</label>
-                                    <input type="number" min="1" class="form-control" id="stock_target_quantity" name="target_quantity" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label" for="stock_new_price">{{ __('Promo new price') }}</label>
-                                    <input type="number" min="0" step="0.01" class="form-control" id="stock_new_price" name="new_price" />
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="stock_new_price">{{ __('Promo new price') }}</label>
+                                <input type="number" min="0" step="0.01" class="form-control" id="stock_new_price" name="new_price" />
                             </div>
-                        @endif
+                        </div>
 
                         <div class="mb-3" style="text-align: center">
                             <button type="submit" id="submit_stock" name="submit_stock"
@@ -732,13 +728,7 @@ $(document).ready(function() {
 
     @if (auth()->user()->role_is('store'))
     $(document).on('change', '#stock_has_promo', function() {
-        if (this.checked) {
-            $('#stock_promo_fields').show();
-        } else {
-            $('#stock_promo_fields').hide();
-            $('#stock_target_quantity').val('');
-            $('#stock_new_price').val('');
-        }
+        $('#stock_promo_fields').toggle(this.checked);
     });
     @endif
 
