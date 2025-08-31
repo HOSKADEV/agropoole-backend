@@ -40,10 +40,52 @@
             position: absolute;
             bottom: 10px;
             right: 10px;
-            background: white;
+            background: rgb(225, 225, 225);
             padding: 8px 12px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+            min-width: 100px;
+        }
+
+        .product-price .unit-price .price-value {
+            font-weight: 600;
+        }
+
+        .product-price .promo-hint small {
+            font-size: 0.75rem;
+        }
+
+        /* Pack units badge - top right corner */
+        .pack-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #1369B9;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Promo badge - top left corner */
+        .promo-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #dc3545;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            z-index: 5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            max-width: 120px;
+            text-align: center;
+            line-height: 1.2;
         }
 
         .image-preview {
@@ -118,6 +160,30 @@
             width: 40px !important;
             height: 40px !important;
         }
+
+        /* Small helper for the pack info line under the title */
+        .pack-inline-info {
+            font-size: 0.8rem;
+        }
+
+        .strike-old {
+            text-decoration: line-through;
+            color: #999;
+            margin-right: 6px;
+            font-size: 0.9rem;
+        }
+
+        /* Unit/Pack toggle buttons */
+        .unit-pack-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .unit-pack-toggle .btn {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+        }
     </style>
 @endsection
 @section('vendor-script')
@@ -184,20 +250,40 @@
 
         @if (count($stocks->items()))
             @foreach ($stocks->items() as $stock)
+                {{-- inside the @foreach ($stocks->items() as $stock) block, update the data extraction --}}
                 @php
                     $stock_id = $stock->id;
                     $stock_price = $stock->show_price ? $stock->price : null;
-                    $product_name = $stock->product->unit_name;
-                    $product_image = $stock->product->image();
+                    $product = $stock->product;
+                    $product_name = $product->unit_name;
+                    $product_image = $product->image();
                     $owner_name = $stock->owner->enterprise();
                     $owner_image = $stock->owner->image();
                     $quantity = $stock->in_cart();
+
+                    // Promo data
+                    $hasPromo = !is_null($stock->promo);
+                    $promoTarget = $hasPromo ? ($stock->promo->target_quantity ?? null) : null;
+                    $promoPrice = $hasPromo ? ($stock->promo->new_price ?? null) : null;
+
+                    // Pack data: show only if pack_units exists (ignore name/price)
+                    $hasPack = !empty($product->pack_units);
+                    $packUnits = $hasPack ? (int) $product->pack_units : null;
                 @endphp
                 <div class="col-md-3 mb-4">
-                    <div class="card product-card" data-stock-id="{{ $stock_id }}"
-                        data-stock-price="{{ $stock_price }}" data-product-name="{{ $product_name }}"
-                        data-product-image="{{ $product_image }}" data-owner-name="{{ $owner_name }}"
-                        data-owner-image="{{ $owner_image }}">
+                    <div class="card product-card"
+                        data-stock-id="{{ $stock_id }}"
+                        data-stock-price="{{ $stock_price }}"
+                        data-product-name="{{ $product_name }}"
+                        data-product-image="{{ $product_image }}"
+                        data-owner-name="{{ $owner_name }}"
+                        data-owner-image="{{ $owner_image }}"
+                        data-has-promo="{{ $hasPromo ? 1 : 0 }}"
+                        data-promo-target="{{ $promoTarget }}"
+                        data-promo-price="{{ $promoPrice }}"
+                        data-has-pack="{{ $hasPack ? 1 : 0 }}"
+                        data-pack-units="{{ $packUnits }}"
+                    >
                         <div class="card-header owner-info p-2 w-100 mx-2">
                             <div class="d-flex align-items-center w-100">
                                 <div class="avatar flex-shrink-0 me-2">
@@ -211,9 +297,31 @@
                         </div>
                         <div class="product-image-container position-relative mx-3 mt-2">
                             <img class="product-image rounded-3" src="{{ $product_image }}" alt="{{ $product_name }}">
+
+                            {{-- Promo badge - top left corner --}}
+                            @if ($hasPromo && $promoTarget && $promoPrice)
+                                <div class="promo-badge">
+                                    <div><i class='bx bx-purchase-tag'></i> {{ __('Promo') }}</div>
+                                    <div style="font-size: 0.65rem;">{{ $promoPrice }} Dzd {{ __('from') }} {{ $promoTarget }}+</div>
+                                </div>
+                            @endif
+
+                            {{-- Pack units badge - top right corner --}}
+                            @if ($hasPack)
+                                <div class="pack-badge">
+                                    <i class='bx bx-package'></i> {{ $packUnits }}
+                                </div>
+                            @endif
+
                             @if ($stock->show_price)
                                 <div class="product-price shadow-lg">
-                                    <span class="h6 mb-0">{{ $stock_price }} Dzd</span>
+                                    <div class="unit-price">
+                                        @if ($hasPromo && $promoTarget && $promoPrice)
+                                            <span class="strike-old d-none" data-role="old-price">{{ $stock_price }} Dzd</span>
+                                        @endif
+                                        <span class="price-value" data-original="{{ $stock_price }}">{{ $stock_price }} Dzd</span>
+                                    </div>
+                                    {{-- Promo hint removed from price box --}}
                                 </div>
                             @endif
                             <div class="image-preview">
@@ -221,22 +329,39 @@
                             </div>
                         </div>
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title product-name mb-1 text-fit text-center" title="{{$product_name}}">{{ $product_name }}</h5>
+                            <h5 class="card-title product-name mb-1 text-fit text-center" title="{{ $product_name }}">{{ $product_name }}</h5>
+
                             <div class="mt-auto">
                                 <button class="btn btn-primary cart-button {{ $quantity ? 'hidden' : '' }}"
                                     onclick="toggleQuantityControls(this)">
                                     <span style="font-size:0.8rem !important"><i class='bx bx-cart mx-1'></i>{{ __('Add to Cart') }}</span>
                                 </button>
                                 <div class="quantity-section {{ $quantity ? 'active' : 'hidden' }}">
-                                    <button class="btn btn-outline-primary btn-sm" onclick="decrementQuantity(this)">
-                                        <i class='bx bx-minus'></i>
-                                    </button>
-                                    <input type="number" class="form-control form-control-sm mx-2"
-                                        value="{{ $quantity }}" min="0" style="width: 60px;"
-                                        onchange="handleQuantityChange(this)">
-                                    <button class="btn btn-outline-primary btn-sm" onclick="incrementQuantity(this)">
-                                        <i class='bx bx-plus'></i>
-                                    </button>
+                                    {{-- Unit/Pack toggle buttons for products with packs - positioned above --}}
+                                    {{-- @if ($hasPack)
+                                        <div class="unit-pack-toggle w-100">
+                                            <div class="btn-group" role="group" aria-label="Unit type">
+                                                <input type="radio" class="btn-check" name="unit-type-{{ $stock_id }}" id="unit-{{ $stock_id }}" autocomplete="off" checked>
+                                                <label class="btn btn-outline-primary" for="unit-{{ $stock_id }}">{{ __('Units') }}</label>
+
+                                                <input type="radio" class="btn-check" name="unit-type-{{ $stock_id }}" id="pack-{{ $stock_id }}" autocomplete="off">
+                                                <label class="btn btn-outline-success" for="pack-{{ $stock_id }}">{{ __('Packs') }}</label>
+                                            </div>
+                                        </div>
+                                    @endif --}}
+
+                                    {{-- Quantity controls positioned below the toggle --}}
+                                    <div class="d-flex align-items-center justify-content-center w-100">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="decrementQuantity(this)">
+                                            <i class='bx bx-minus'></i>
+                                        </button>
+                                        <input type="number" class="form-control form-control-sm mx-2"
+                                            value="{{ $quantity }}" min="0" style="width: 60px;"
+                                            onchange="handleQuantityChange(this)">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="incrementQuantity(this)">
+                                            <i class='bx bx-plus'></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -281,6 +406,10 @@
             // Set initial quantity to 1 when showing controls
             const inputElement = quantitySection.querySelector('input');
             inputElement.value = 1;
+
+            // Update preview price immediately without triggering AJAX
+            updatePricePreview($(inputElement).closest('.card'), 1);
+
             const changeEvent = new Event('change', {
                 bubbles: true
             });
@@ -296,6 +425,40 @@
 
         let updateCartTimer;
         let formdata = new FormData();
+
+        // Update price preview (unit price displayed) based on promo rules
+        function updatePricePreview(card, quantity) {
+            const hasPromo = parseInt(card.data('has-promo')) === 1;
+            const promoTarget = parseInt(card.data('promo-target'));
+            const promoPrice = parseFloat(card.data('promo-price'));
+            const stockPrice = parseFloat(card.data('stock-price'));
+
+            if (isNaN(stockPrice)) {
+                return; // No price to show
+            }
+
+            const priceBox = card.find('.product-price');
+            const priceValueEl = priceBox.find('.unit-price .price-value');
+            const oldPriceEl = priceBox.find('.unit-price [data-role="old-price"]');
+
+            let effectivePrice = stockPrice;
+
+            if (hasPromo && !isNaN(promoTarget) && !isNaN(promoPrice) && quantity >= promoTarget) {
+                effectivePrice = promoPrice;
+                // If we have an old price span, show it and highlight current as promo
+                if (oldPriceEl.length) {
+                    oldPriceEl.removeClass('d-none');
+                }
+                priceValueEl.addClass('text-danger');
+            } else {
+                if (oldPriceEl.length) {
+                    oldPriceEl.addClass('d-none');
+                }
+                priceValueEl.removeClass('text-danger');
+            }
+
+            priceValueEl.text(`${effectivePrice} Dzd`);
+        }
 
         // Function to handle quantity changes
         function handleQuantityChange(input) {
@@ -314,26 +477,39 @@
             }
             const card = $(input).closest('.card');
             const stockId = card.data('stock-id');
-            const stockPrice = card.data('stock-price');
+            const stockPrice = parseFloat(card.data('stock-price'));
             const productName = card.data('product-name');
             const productImage = card.data('product-image');
             const ownerName = card.data('owner-name');
             const ownerImage = card.data('owner-image');
-            const quantity = input.value;
+            const quantity = parseInt(input.value) || 0;
 
+            // Calculate effective price based on promo rules
+            const hasPromo = parseInt(card.data('has-promo')) === 1;
+            const promoTarget = parseInt(card.data('promo-target'));
+            const promoPrice = parseFloat(card.data('promo-price'));
+
+            let effectivePrice = stockPrice;
+            if (hasPromo && !isNaN(promoTarget) && !isNaN(promoPrice) && quantity >= promoTarget) {
+                effectivePrice = promoPrice;
+            }
+
+            // Update the price preview immediately (no server call yet)
+            updatePricePreview(card, quantity);
+
+            // Prepare data for server - use effective price instead of stock price
             formdata.append(`items[stock_${stockId}][stock_id]`, stockId);
-            formdata.append(`items[stock_${stockId}][stock_price]`, stockPrice);
+            formdata.append(`items[stock_${stockId}][stock_price]`, effectivePrice); // Changed from stockPrice to effectivePrice
             formdata.append(`items[stock_${stockId}][product_name]`, productName);
             formdata.append(`items[stock_${stockId}][product_image]`, productImage);
             formdata.append(`items[stock_${stockId}][owner_name]`, ownerName);
             formdata.append(`items[stock_${stockId}][owner_image]`, ownerImage);
             formdata.append(`items[stock_${stockId}][quantity]`, quantity);
 
-
             // Start new timer
             updateCartTimer = setTimeout(() => {
 
-                console.log(formdata);
+                // console.log(formdata);
                 $.ajax({
                     url: '/cart/refresh', // Adjust this to your actual endpoint
                     headers: {
@@ -358,16 +534,32 @@
 
         // Update all quantity change handlers to use the new function
         function incrementQuantity(button) {
+            const card = $(button).closest('.card');
             const section = button.closest('.quantity-section');
             const input = section.querySelector('input[type="number"]');
-            input.value = parseInt(input.value) + 1;
+            const hasPack = parseInt(card.data('has-pack')) === 1;
+            const packUnits = parseInt(card.data('pack-units')) || 1;
+
+            // Check if pack mode is selected
+            const isPackMode = hasPack && section.querySelector('input[name*="unit-type"]:checked')?.id.includes('pack');
+            const increment = isPackMode ? packUnits : 1;
+
+            input.value = parseInt(input.value || '0') + increment;
             handleQuantityChange(input);
         }
 
         function decrementQuantity(button) {
+            const card = $(button).closest('.card');
             const section = button.closest('.quantity-section');
             const input = section.querySelector('input[type="number"]');
-            const newValue = Math.max(0, parseInt(input.value) - 1);
+            const hasPack = parseInt(card.data('has-pack')) === 1;
+            const packUnits = parseInt(card.data('pack-units')) || 1;
+
+            // Check if pack mode is selected
+            const isPackMode = hasPack && section.querySelector('input[name*="unit-type"]:checked')?.id.includes('pack');
+            const decrement = isPackMode ? packUnits : 1;
+
+            const newValue = Math.max(0, parseInt(input.value || '0') - decrement);
             input.value = newValue;
             handleQuantityChange(input);
         }
@@ -408,6 +600,16 @@
                     submitForm();
                 }, 1000);
             })
+
+            // Initialize price preview based on existing quantities in cart
+            $('.card.product-card').each(function() {
+                const card = $(this);
+                const qtyInput = card.find('.quantity-section input[type="number"]');
+                if (qtyInput.length) {
+                    const q = parseInt(qtyInput.val() || '0');
+                    updatePricePreview(card, q);
+                }
+            });
         });
     </script>
 @endsection

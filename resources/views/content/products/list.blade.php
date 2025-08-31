@@ -694,12 +694,10 @@
 
                 var formdata = new FormData($("#stock_form")[0]);
 
-                @if (auth()->user()->role_is('store'))
-                    var hasPromoEl = document.getElementById('stock_has_promo');
-                    if (hasPromoEl && !hasPromoEl.checked) {
-                        formData.append('has_promo', '0');
-                    }
-                @endif
+                var hasPromoEl = document.getElementById('stock_has_promo');
+                if (hasPromoEl && !hasPromoEl.checked) {
+                    formData.append('has_promo', '0');
+                }
 
                 $("#stock_modal").modal("hide");
 
@@ -745,11 +743,9 @@
                 });
             });
 
-            @if (auth()->user()->role_is('store'))
-                $(document).on('change', '#stock_has_promo', function() {
-                    $('#stock_promo_fields').toggle(this.checked);
-                });
-            @endif
+            $(document).on('change', '#stock_has_promo', function() {
+                $('#stock_promo_fields').toggle(this.checked);
+            });
 
             $(document.body).on('change', '.image-input', function() {
                 const fileInput = document.querySelector('.image-input');
