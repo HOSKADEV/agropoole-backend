@@ -30,7 +30,7 @@
                 </select>
             </div>
             @if (!auth()->user()->role_is('provider'))
-            {{-- @if (auth()->user()->role_is('provider'))
+                {{-- @if (auth()->user()->role_is('provider'))
                 <div class="form-group col mx-3 my-3">
                     <label for="type" class="form-label">{{ __('Availability filter') }}</label>
                     <select class="form-select" id="availability" name="availability">
@@ -70,6 +70,7 @@
                         <th>{{ __('Image') }}</th>
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Created at') }}</th>
+                        <th>{{ __('Pack units') }}</th>
                         {{-- <th>{{ __('is_available') }}</th> --}}
                         <th>{{ __('in_stock') }}</th>
                         <th>{{ __('Actions') }}</th>
@@ -121,11 +122,16 @@
                             <label class="form-label" for="name">{{ __('Name') }}</label>
                             <input type="text" class="form-control" id="unit_name" name="unit_name"
                                 placeholder="{{ __('Unit name') }}" />
-
-                            <input type="hidden" class="form-control" id="unit_price" name="unit_price"
-                                value="0" />
-
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="pack_units">{{ __('Pack units') }}</label>
+                            <input type="number" class="form-control" id="pack_units" name="pack_units"
+                                placeholder="{{ __('Pack Units') }}" />
+                        </div>
+
+                        <input type="hidden" class="form-control" id="unit_price" name="unit_price" value="0" />
+
                         <div class="mb-3">
                             <label class="form-label" for="name">{{ __('Subcategory') }}</label>
                             <div class="input-group input-group-merge">
@@ -216,17 +222,21 @@
                         </div>
 
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="stock_has_promo" name="has_promo" value="1">
+                            <input type="checkbox" class="form-check-input" id="stock_has_promo" name="has_promo"
+                                value="1">
                             <label class="form-check-label" for="stock_has_promo">{{ __('Has promo') }}</label>
                         </div>
                         <div id="stock_promo_fields" style="display:none;">
                             <div class="mb-3">
-                                <label class="form-label" for="stock_target_quantity">{{ __('Promo target quantity') }}</label>
-                                <input type="number" min="1" class="form-control" id="stock_target_quantity" name="target_quantity" />
+                                <label class="form-label"
+                                    for="stock_target_quantity">{{ __('Promo target quantity') }}</label>
+                                <input type="number" min="1" class="form-control" id="stock_target_quantity"
+                                    name="target_quantity" />
                             </div>
                             <div class="mb-3">
                                 <label class="form-label" for="stock_new_price">{{ __('Promo new price') }}</label>
-                                <input type="number" min="0" step="0.01" class="form-control" id="stock_new_price" name="new_price" />
+                                <input type="number" min="0" step="0.01" class="form-control"
+                                    id="stock_new_price" name="new_price" />
                             </div>
                         </div>
 
@@ -243,400 +253,228 @@
 @endsection
 
 @section('page-script')
-<script>
-$(document).ready(function() {
-    load_data();
+    <script>
+        $(document).ready(function() {
+            load_data();
 
-    function load_data(category = null, subcategory = null, stock = null, availability = null, provider =
-        null) {
-        //$.fn.dataTable.moment( 'YYYY-M-D' );
-        var table = $('#laravel_datatable').DataTable({
+            function load_data(category = null, subcategory = null, stock = null, availability = null, provider =
+                null) {
+                //$.fn.dataTable.moment( 'YYYY-M-D' );
+                var table = $('#laravel_datatable').DataTable({
 
-            responsive: true,
-            processing: true,
-            serverSide: true,
-            pageLength: 10,
-            columnDefs: [{ searchable: false, targets: 1 }],
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+                    pageLength: 10,
+                    columnDefs: [{
+                        searchable: false,
+                        targets: 1
+                    }],
 
-            ajax: {
-                url: "{{ url('product/list') }}",
-                data: {
-                    category: category,
-                    subcategory: subcategory,
-                    stock: stock,
-                    availability: availability,
-                    provider: provider
-                },
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-            },
+                    ajax: {
+                        url: "{{ url('product/list') }}",
+                        data: {
+                            category: category,
+                            subcategory: subcategory,
+                            stock: stock,
+                            availability: availability,
+                            provider: provider
+                        },
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    },
 
-            columns: [
+                    columns: [
 
-                {
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex'
-                },
-                /* {
-                     data: 'name_image',
-                     name: 'name_image',
-                     render: function(data) {
+                        {
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex'
+                        },
+                        /* {
+                             data: 'name_image',
+                             name: 'name_image',
+                             render: function(data) {
 
-                         return '<div class="d-flex justify-content-start align-items-center product-name"><div class="avatar-wrapper"><div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
-                             data[0] +
-                             '" class="rounded"></div></div><div class="d-flex flex-column"><h6 class="text-nowrap mb-0">' +
-                             data[1] + '</h6></div></div>';
+                                 return '<div class="d-flex justify-content-start align-items-center product-name"><div class="avatar-wrapper"><div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
+                                     data[0] +
+                                     '" class="rounded"></div></div><div class="d-flex flex-column"><h6 class="text-nowrap mb-0">' +
+                                     data[1] + '</h6></div></div>';
 
-                     }
-                 },*/
-                {
-                    data: 'image',
-                    name: 'image',
-                    render: function(data) {
+                             }
+                         },*/
+                        {
+                            data: 'image',
+                            name: 'image',
+                            render: function(data) {
 
-                        return '<div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
-                            data + '" class="rounded">';
+                                return '<div class="avatar avatar me-4 rounded-2 bg-label-secondary"><img src="' +
+                                    data + '" class="rounded">';
 
-                    }
-                },
+                            }
+                        },
 
-                {
-                    data: 'name',
-                    name: 'name'
-                },
+                        {
+                            data: 'name',
+                            name: 'name'
+                        },
 
-                {
-                    data: 'created_at',
-                    name: 'created_at'
-                },
+                        {
+                            data: 'created_at',
+                            name: 'created_at'
+                        },
 
-                /* {
-                    data: 'availability',
-                    name: 'availability',
-                    render: function(data) {
-                        if (data == false) {
-                            return '<span class="badge bg-label-danger">{{ __('No') }}</span>';
-                        } else {
-                            return '<span class="badge bg-label-success">{{ __('Yes') }}</span>';
-                        }
-                    }
-                }, */
+                        /* {
+                            data: 'availability',
+                            name: 'availability',
+                            render: function(data) {
+                                if (data == false) {
+                                    return '<span class="badge bg-label-danger">{{ __('No') }}</span>';
+                                } else {
+                                    return '<span class="badge bg-label-success">{{ __('Yes') }}</span>';
+                                }
+                            }
+                        }, */
 
-                {
-                    data: 'in_stock',
-                    name: 'in_stock',
-                    render: function(data) {
-                        if (data == false) {
-                            return '<span class="badge bg-label-danger">{{ __('No') }}</span>';
-                        } else {
-                            return '<span class="badge bg-label-success">{{ __('Yes') }}</span>';
-                        }
-                    }
-                },
-
-
-                /* {
-                    data: 'stock',
-                    name: 'stock'
-                }, */
-
-
-                {
-                    data: 'action',
-                    name: 'action',
-                    render: function(data) {
-                        /* return '<div class="dropdown"><button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button><div class="dropdown-menu">'
-                          +data+'</div></div>' */
-                        return '<span>' + data + '</span>';
-                    }
-                }
-
-            ]
-        });
-    }
-
-    function refresh_table() {
-        var category = $('#category').val();
-        var subcategory = $('#subcategory').val();
-        var stock = $('#stock').val();
-        var availability = $('#availability').val();
-        var provider = $('#provider').val();
-
-        var table = $('#laravel_datatable').DataTable();
-        table.destroy();
-        load_data(category, subcategory, stock, availability, provider);
-    }
-
-    $('#category').on('change', function() {
-
-        var category_id = document.getElementById('category').value;
-
-        $.ajax({
-            url: '{{ url('subcategory/get?all=1') }}',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            type: 'POST',
-            data: {
-                category_id: category_id
-            },
-            dataType: 'JSON',
-            success: function(response) {
-                if (response.status == 1) {
-
-                    var subcategories = document.getElementById('subcategory');
-                    subcategories.innerHTML =
-                        '<option value="">{{ __('Not selected') }}</option>';
-
-                    for (var i = 0; i < response.data.length; i++) {
-                        var option = document.createElement('option');
-                        option.value = response.data[i].id;
-                        option.innerHTML = response.data[i].name;
-                        subcategories.appendChild(option);
-                    }
-
-                }
-            }
-        });
+                        {
+                            data: 'pack_units',
+                            name: 'pack_units'
+                        },
+                        {
+                            data: 'in_stock',
+                            name: 'in_stock',
+                            render: function(data) {
+                                if (data == false) {
+                                    return '<span class="badge bg-label-danger">{{ __('No') }}</span>';
+                                } else {
+                                    return '<span class="badge bg-label-success">{{ __('Yes') }}</span>';
+                                }
+                            }
+                        },
 
 
-        refresh_table();
-    });
-
-    $('#subcategory').on('change', function() {
-
-        refresh_table();
-
-    });
-
-    $('#stock').on('change', function() {
-
-        refresh_table();
-
-    });
-
-    $('#availability').on('change', function() {
-
-        refresh_table();
-
-    });
-
-    $('#provider').on('change', function() {
-
-        refresh_table();
-
-    });
-
-    /* $('#unit_name').on('blur', function() {
-
-        var unit_name = document.getElementById('unit_name').value;
-
-        document.getElementById('pack_name').value = ' (حزمة) ' + unit_name;
+                        /* {
+                            data: 'stock',
+                            name: 'stock'
+                        }, */
 
 
-    }); */
-
-
-    $('#create').on('click', function() {
-        document.getElementById('form').reset();
-        document.getElementById('form_type').value = "create";
-        document.getElementById('uploaded-image').src =
-            "{{ asset('assets/img/icons/file-not-found.jpg') }}";
-        document.getElementById('old-image').src =
-            "{{ asset('assets/img/icons/file-not-found.jpg') }}";
-        $("#modal").modal('show');
-    });
-
-
-    $(document.body).on('click', '.update', function() {
-        document.getElementById('form').reset();
-        document.getElementById('form_type').value = "update";
-        var product_id = $(this).attr('table_id');
-        $("#id").val(product_id);
-
-        $.ajax({
-            url: '{{ url('product/update') }}',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            type: 'POST',
-            data: {
-                product_id: product_id
-            },
-            dataType: 'JSON',
-            success: function(response) {
-                if (response.status == 1) {
-
-                    document.getElementById('unit_name').value = response.data
-                        .unit_name;
-                    /* document.getElementById('pack_name').value = response.data
-                        .pack_name;
-                    document.getElementById('unit_price').value = response.data
-                        .unit_price;
-                    document.getElementById('pack_price').value = response.data
-                        .pack_price;
-                    document.getElementById('pack_units').value = response.data
-                        .pack_units;
-                    document.getElementById('unit_type').value = response.data
-                        .unit_type; */
-                    //document.getElementById('status').value = response.data.status;
-
-                    var image = response.data.image == null ?
-                        "{{ asset('assets/img/icons/file-not-found.jpg') }}" : response
-                        .data.image;
-
-                    document.getElementById('uploaded-image').src = image;
-                    document.getElementById('old-image').src = image;
-
-                    console.log(response.data.category_id);
-                    document.getElementById('category_id').value = response.data
-                        .category_id;
-
-                    $('#category_id').trigger("change", function() {
-                        document.getElementById('subcategory_id').value =
-                            response.data.subcategory_id;
-                    });
-
-
-
-                    $("#modal").modal("show");
-                }
-            }
-        });
-    });
-
-    $('#category_id').on('change', function(e, callback) {
-        var category_id = document.getElementById('category_id').value;
-        $.when(
-            $.ajax({
-                url: '{{ url('subcategory/get?all=1') }}',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                type: 'POST',
-                data: {
-                    category_id: category_id
-                },
-                dataType: 'JSON',
-                success: function(response) {
-                    if (response.status == 1) {
-
-                        var subcategories = document.getElementById('subcategory_id');
-                        subcategories.innerHTML =
-                            '<option value="">{{ __('Not selected') }}</option>';
-
-                        for (var i = 0; i < response.data.length; i++) {
-                            var option = document.createElement('option');
-                            option.value = response.data[i].id;
-                            option.innerHTML = response.data[i].name;
-                            subcategories.appendChild(option);
+                        {
+                            data: 'action',
+                            name: 'action',
+                            render: function(data) {
+                                /* return '<div class="dropdown"><button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button><div class="dropdown-menu">'
+                                  +data+'</div></div>' */
+                                return '<span>' + data + '</span>';
+                            }
                         }
 
-                    }
-                }
-            })
-        ).done(function(a1, a2) {
-            callback();
-        });
-
-
-
-    });
-
-    $('#submit').on('click', function() {
-      Swal.fire({
-        title: "{{__('Wait a moment')}}",
-        icon: 'info',
-        html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
-        showCloseButton: false,
-        showCancelButton: false,
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        allowEnterKey: false,
-      });
-
-        /* var formdata = new FormData($("#form")[0]); */
-        var queryString = new FormData($("#form")[0]);
-
-        var formtype = document.getElementById('form_type').value;
-        //console.log(formtype);
-        if (formtype == "create") {
-            url = "{{ url('product/create') }}";
-        }
-
-        if (formtype == "update") {
-            url = "{{ url('product/update') }}";
-            queryString.append("product_id", document.getElementById('id').value)
-        }
-
-        $("#modal").modal("hide");
-
-
-        $.ajax({
-            url: url,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            type: 'POST',
-            data: queryString,
-            dataType: 'JSON',
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                Swal.close();
-                if (response.status == 1) {
-                    Swal.fire({
-                        title: "{{ __('Success') }}",
-                        text: "{{ __('success') }}",
-                        icon: 'success',
-                        confirmButtonText: 'Ok'
-                    }).then((result) => {
-                        location.reload();
-                    });
-                } else {
-                    //console.log(response.message);
-                    Swal.fire(
-                        "{{ __('Error') }}",
-                        response.message,
-                        'error'
-                    );
-                }
-            },
-            error: function(data) {
-              Swal.close();
-                //var errors = data.responseJSON;
-                //console.log(errors);
-                Swal.fire(
-                    "{{ __('Error') }}",
-                    errors.message,
-                    'error'
-                );
-                // Render the errors with js ...
+                    ]
+                });
             }
-        });
-    });
 
-    $(document.body).on('click', '.delete', function() {
+            function refresh_table() {
+                var category = $('#category').val();
+                var subcategory = $('#subcategory').val();
+                var stock = $('#stock').val();
+                var availability = $('#availability').val();
+                var provider = $('#provider').val();
 
-        var product_id = $(this).attr('table_id');
+                var table = $('#laravel_datatable').DataTable();
+                table.destroy();
+                load_data(category, subcategory, stock, availability, provider);
+            }
 
-        Swal.fire({
-            title: "{{ __('Warning') }}",
-            text: "{{ __('Are you sure?') }}",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: "{{ __('Delete') }}",
-            cancelButtonText: "{{ __('Cancel') }}"
-        }).then((result) => {
-            if (result.isConfirmed) {
+            $('#category').on('change', function() {
+
+                var category_id = document.getElementById('category').value;
 
                 $.ajax({
-                    url: "{{ url('product/delete') }}",
+                    url: '{{ url('subcategory/get?all=1') }}',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    type: 'POST',
+                    data: {
+                        category_id: category_id
+                    },
+                    dataType: 'JSON',
+                    success: function(response) {
+                        if (response.status == 1) {
+
+                            var subcategories = document.getElementById('subcategory');
+                            subcategories.innerHTML =
+                                '<option value="">{{ __('Not selected') }}</option>';
+
+                            for (var i = 0; i < response.data.length; i++) {
+                                var option = document.createElement('option');
+                                option.value = response.data[i].id;
+                                option.innerHTML = response.data[i].name;
+                                subcategories.appendChild(option);
+                            }
+
+                        }
+                    }
+                });
+
+
+                refresh_table();
+            });
+
+            $('#subcategory').on('change', function() {
+
+                refresh_table();
+
+            });
+
+            $('#stock').on('change', function() {
+
+                refresh_table();
+
+            });
+
+            $('#availability').on('change', function() {
+
+                refresh_table();
+
+            });
+
+            $('#provider').on('change', function() {
+
+                refresh_table();
+
+            });
+
+            /* $('#unit_name').on('blur', function() {
+
+                var unit_name = document.getElementById('unit_name').value;
+
+                document.getElementById('pack_name').value = ' (حزمة) ' + unit_name;
+
+
+            }); */
+
+
+            $('#create').on('click', function() {
+                document.getElementById('form').reset();
+                document.getElementById('form_type').value = "create";
+                document.getElementById('uploaded-image').src =
+                    "{{ asset('assets/img/icons/file-not-found.jpg') }}";
+                document.getElementById('old-image').src =
+                    "{{ asset('assets/img/icons/file-not-found.jpg') }}";
+                $("#modal").modal('show');
+            });
+
+
+            $(document.body).on('click', '.update', function() {
+                document.getElementById('form').reset();
+                document.getElementById('form_type').value = "update";
+                var product_id = $(this).attr('table_id');
+                $("#id").val(product_id);
+
+                $.ajax({
+                    url: '{{ url('product/update') }}',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
@@ -648,102 +486,283 @@ $(document).ready(function() {
                     success: function(response) {
                         if (response.status == 1) {
 
-                            Swal.fire(
-                                "{{ __('Success') }}",
-                                "{{ __('success') }}",
-                                'success'
-                            ).then((result) => {
-                                location.reload();
+                            document.getElementById('unit_name').value = response.data
+                                .unit_name;
+                            document.getElementById('pack_units').value = response.data
+                                .pack_units;
+                            /* document.getElementById('pack_name').value = response.data
+                                .pack_name;
+                            document.getElementById('unit_price').value = response.data
+                                .unit_price;
+                            document.getElementById('pack_price').value = response.data
+                                .pack_price;
+                            document.getElementById('pack_units').value = response.data
+                                .pack_units;
+                            document.getElementById('unit_type').value = response.data
+                                .unit_type; */
+                            //document.getElementById('status').value = response.data.status;
+
+                            var image = response.data.image == null ?
+                                "{{ asset('assets/img/icons/file-not-found.jpg') }}" : response
+                                .data.image;
+
+                            document.getElementById('uploaded-image').src = image;
+                            document.getElementById('old-image').src = image;
+
+                            console.log(response.data.category_id);
+                            document.getElementById('category_id').value = response.data
+                                .category_id;
+
+                            $('#category_id').trigger("change", function() {
+                                document.getElementById('subcategory_id').value =
+                                    response.data.subcategory_id;
                             });
+
+
+
+                            $("#modal").modal("show");
                         }
                     }
                 });
+            });
+
+            $('#category_id').on('change', function(e, callback) {
+                var category_id = document.getElementById('category_id').value;
+                $.when(
+                    $.ajax({
+                        url: '{{ url('subcategory/get?all=1') }}',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        type: 'POST',
+                        data: {
+                            category_id: category_id
+                        },
+                        dataType: 'JSON',
+                        success: function(response) {
+                            if (response.status == 1) {
+
+                                var subcategories = document.getElementById('subcategory_id');
+                                subcategories.innerHTML =
+                                    '<option value="">{{ __('Not selected') }}</option>';
+
+                                for (var i = 0; i < response.data.length; i++) {
+                                    var option = document.createElement('option');
+                                    option.value = response.data[i].id;
+                                    option.innerHTML = response.data[i].name;
+                                    subcategories.appendChild(option);
+                                }
+
+                            }
+                        }
+                    })
+                ).done(function(a1, a2) {
+                    callback();
+                });
 
 
-            }
-        })
-    });
 
-    $(document.body).on('click', '.add_stock', function() {
-        var product_id = $(this).attr('table_id');
-        document.getElementById('stock_form').reset();
-        document.getElementById('product_id').value = product_id;
-        $("#stock_modal").modal('show');
-    });
+            });
 
-    $('#submit_stock').on('click', function() {
+            $('#submit').on('click', function() {
+                Swal.fire({
+                    title: "{{ __('Wait a moment') }}",
+                    icon: 'info',
+                    html: '<div style="height:50px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden"></div></div>',
+                    showCloseButton: false,
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                });
 
-        var formdata = new FormData($("#stock_form")[0]);
+                /* var formdata = new FormData($("#form")[0]); */
+                var queryString = new FormData($("#form")[0]);
 
-        @if (auth()->user()->role_is('store'))
-        var hasPromoEl = document.getElementById('stock_has_promo');
-        if (hasPromoEl && !hasPromoEl.checked) {
-            formData.append('has_promo', '0');
-        }
-        @endif
-
-        $("#stock_modal").modal("hide");
-
-        $.ajax({
-            url: "{{ url('stock/create') }}",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            type: 'POST',
-            data: formdata,
-            dataType: 'JSON',
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response.status == 1) {
-                    Swal.fire({
-                        title: "{{ __('Success') }}",
-                        text: "{{ __('success') }}",
-                        icon: 'success',
-                        confirmButtonText: 'Ok'
-                    }).then((result) => {
-                        location.reload();
-                    });
-                } else {
-                    console.log(response.message);
-                    Swal.fire(
-                        "{{ __('Error') }}",
-                        response.message,
-                        'error'
-                    );
+                var formtype = document.getElementById('form_type').value;
+                //console.log(formtype);
+                if (formtype == "create") {
+                    url = "{{ url('product/create') }}";
                 }
-            },
-            error: function(data) {
-                var errors = data.responseJSON;
-                console.log(errors);
-                Swal.fire(
-                    "{{ __('Error') }}",
-                    errors.message,
-                    'error'
-                );
-                // Render the errors with js ...
-            }
+
+                if (formtype == "update") {
+                    url = "{{ url('product/update') }}";
+                    queryString.append("product_id", document.getElementById('id').value)
+                }
+
+                $("#modal").modal("hide");
+
+
+                $.ajax({
+                    url: url,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    type: 'POST',
+                    data: queryString,
+                    dataType: 'JSON',
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.close();
+                        if (response.status == 1) {
+                            Swal.fire({
+                                title: "{{ __('Success') }}",
+                                text: "{{ __('success') }}",
+                                icon: 'success',
+                                confirmButtonText: 'Ok'
+                            }).then((result) => {
+                                location.reload();
+                            });
+                        } else {
+                            //console.log(response.message);
+                            Swal.fire(
+                                "{{ __('Error') }}",
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(data) {
+                        Swal.close();
+                        //var errors = data.responseJSON;
+                        //console.log(errors);
+                        Swal.fire(
+                            "{{ __('Error') }}",
+                            errors.message,
+                            'error'
+                        );
+                        // Render the errors with js ...
+                    }
+                });
+            });
+
+            $(document.body).on('click', '.delete', function() {
+
+                var product_id = $(this).attr('table_id');
+
+                Swal.fire({
+                    title: "{{ __('Warning') }}",
+                    text: "{{ __('Are you sure?') }}",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: "{{ __('Delete') }}",
+                    cancelButtonText: "{{ __('Cancel') }}"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            url: "{{ url('product/delete') }}",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            type: 'POST',
+                            data: {
+                                product_id: product_id
+                            },
+                            dataType: 'JSON',
+                            success: function(response) {
+                                if (response.status == 1) {
+
+                                    Swal.fire(
+                                        "{{ __('Success') }}",
+                                        "{{ __('success') }}",
+                                        'success'
+                                    ).then((result) => {
+                                        location.reload();
+                                    });
+                                }
+                            }
+                        });
+
+
+                    }
+                })
+            });
+
+            $(document.body).on('click', '.add_stock', function() {
+                var product_id = $(this).attr('table_id');
+                document.getElementById('stock_form').reset();
+                document.getElementById('product_id').value = product_id;
+                $("#stock_modal").modal('show');
+            });
+
+            $('#submit_stock').on('click', function() {
+
+                var formdata = new FormData($("#stock_form")[0]);
+
+                @if (auth()->user()->role_is('store'))
+                    var hasPromoEl = document.getElementById('stock_has_promo');
+                    if (hasPromoEl && !hasPromoEl.checked) {
+                        formData.append('has_promo', '0');
+                    }
+                @endif
+
+                $("#stock_modal").modal("hide");
+
+                $.ajax({
+                    url: "{{ url('stock/create') }}",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    type: 'POST',
+                    data: formdata,
+                    dataType: 'JSON',
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.status == 1) {
+                            Swal.fire({
+                                title: "{{ __('Success') }}",
+                                text: "{{ __('success') }}",
+                                icon: 'success',
+                                confirmButtonText: 'Ok'
+                            }).then((result) => {
+                                location.reload();
+                            });
+                        } else {
+                            console.log(response.message);
+                            Swal.fire(
+                                "{{ __('Error') }}",
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(data) {
+                        var errors = data.responseJSON;
+                        console.log(errors);
+                        Swal.fire(
+                            "{{ __('Error') }}",
+                            errors.message,
+                            'error'
+                        );
+                        // Render the errors with js ...
+                    }
+                });
+            });
+
+            @if (auth()->user()->role_is('store'))
+                $(document).on('change', '#stock_has_promo', function() {
+                    $('#stock_promo_fields').toggle(this.checked);
+                });
+            @endif
+
+            $(document.body).on('change', '.image-input', function() {
+                const fileInput = document.querySelector('.image-input');
+                if (fileInput.files[0]) {
+                    document.getElementById('uploaded-image').src = window.URL.createObjectURL(fileInput
+                        .files[0]);
+                }
+            });
+            $(document.body).on('click', '.image-reset', function() {
+                const fileInput = document.querySelector('.image-input');
+                fileInput.value = '';
+                document.getElementById('uploaded-image').src = document.getElementById('old-image').src;
+            });
         });
-    });
-
-    @if (auth()->user()->role_is('store'))
-    $(document).on('change', '#stock_has_promo', function() {
-        $('#stock_promo_fields').toggle(this.checked);
-    });
-    @endif
-
-    $(document.body).on('change', '.image-input', function() {
-        const fileInput = document.querySelector('.image-input');
-        if (fileInput.files[0]) {
-            document.getElementById('uploaded-image').src = window.URL.createObjectURL(fileInput
-                .files[0]);
-        }
-    });
-    $(document.body).on('click', '.image-reset', function() {
-        const fileInput = document.querySelector('.image-input');
-        fileInput.value = '';
-        document.getElementById('uploaded-image').src = document.getElementById('old-image').src;
-    });
-});
-</script>
+    </script>
 @endsection
